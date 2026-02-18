@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { type PlanTier } from "@prisma/client";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -98,7 +99,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     data: {
       stripeCustomerId: customerId || undefined,
       stripeSubscriptionId: subscriptionId || undefined,
-      plan: plan || undefined,
+      plan: (plan as PlanTier) || undefined,
     },
   });
 }
@@ -156,7 +157,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   await prisma.organization.update({
     where: { id: organizationId },
     data: {
-      plan: plan || undefined,
+      plan: (plan as PlanTier) || undefined,
       stripeCurrentPeriodEnd: new Date(
         subscription.current_period_end * 1000
       ),

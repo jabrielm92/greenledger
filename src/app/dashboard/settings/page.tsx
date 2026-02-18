@@ -140,7 +140,7 @@ export default function GeneralSettingsPage() {
       if (res.ok) {
         router.push("/");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to delete organization");
     } finally {
       setIsDeleting(false);

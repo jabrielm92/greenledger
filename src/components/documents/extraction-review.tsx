@@ -67,7 +67,7 @@ function flattenData(
 }
 
 export function ExtractionReview({
-  documentId,
+  documentId: _documentId,
   documentType,
   extractedData,
   confidence,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { EmissionsSummary, CategoryBreakdown, MonthlyEmission } from "@/types";
+import type { CategoryBreakdown, MonthlyEmission } from "@/types";
 
 interface EmissionEntry {
   id: string;

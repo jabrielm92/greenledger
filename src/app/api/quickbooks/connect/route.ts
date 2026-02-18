@@ -3,7 +3,7 @@ import { getServerSession } from "@/lib/auth";
 import { buildAuthorizationUrl, generateState } from "@/lib/quickbooks/oauth";
 import { cookies } from "next/headers";
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {

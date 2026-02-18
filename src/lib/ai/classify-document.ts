@@ -9,7 +9,7 @@ export async function classifyDocument(
 ): Promise<DocumentClassification> {
   const isImage = mimeType.startsWith("image/");
 
-  const content: Anthropic.Messages.ContentBlockParam[] = isImage
+  const content: (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ImageBlockParam)[] = isImage
     ? [
         {
           type: "image",

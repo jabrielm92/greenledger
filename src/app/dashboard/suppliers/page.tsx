@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { SupplierCard } from "@/components/suppliers/supplier-card";
 import { SupplierForm } from "@/components/suppliers/supplier-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,11 +46,7 @@ export default function SuppliersPage() {
   const [riskFilter, setRiskFilter] = useState("");
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetchSuppliers();
-  }, [riskFilter, search]);
-
-  async function fetchSuppliers() {
+  const fetchSuppliers = useCallback(async () => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -69,7 +64,11 @@ export default function SuppliersPage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [riskFilter, search]);
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, [fetchSuppliers]);
 
   return (
     <div className="space-y-6">

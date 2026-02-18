@@ -113,7 +113,7 @@ async function getCurrentUsage(
       return prisma.document.count({
         where: {
           organizationId,
-          uploadedAt: { gte: periodStart },
+          createdAt: { gte: periodStart },
         },
       });
 
@@ -122,7 +122,7 @@ async function getCurrentUsage(
         where: {
           organizationId,
           status: "EXTRACTED",
-          uploadedAt: { gte: periodStart },
+          createdAt: { gte: periodStart },
         },
       });
 

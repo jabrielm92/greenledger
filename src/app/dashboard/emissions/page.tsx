@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { StatsCards } from "@/components/dashboard/stats-cards";
 import { ScopeBreakdown } from "@/components/emissions/scope-breakdown";
 import { EmissionsTable } from "@/components/emissions/emissions-table";
 import { EmissionsForm } from "@/components/emissions/emissions-form";
@@ -15,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Upload, Download } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatEmissions } from "@/lib/utils";
@@ -27,7 +26,7 @@ export default function EmissionsPage() {
   const [page, setPage] = useState(1);
 
   const { summary, isLoading: summaryLoading } = useEmissionsSummary();
-  const { entries, totalPages, isLoading: entriesLoading, refetch } =
+  const { entries, totalPages, isLoading: entriesLoading } =
     useEmissions({
       page,
       scope: scopeFilter || undefined,

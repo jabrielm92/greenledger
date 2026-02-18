@@ -23,7 +23,7 @@ const createEmissionSchema = z.object({
   location: z.string().optional(),
   notes: z.string().optional(),
   documentId: z.string().optional(),
-  calculationMethodology: z.string().optional(),
+  calculationMethod: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         location: validated.location,
         notes: validated.notes,
         documentId: validated.documentId,
-        calculationMethodology: validated.calculationMethodology,
+        calculationMethod: validated.calculationMethod,
       },
     });
 

@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useReportWizardStore } from "@/store/report-wizard-store";
-import { CSRD_TEMPLATE, getRequiredSectionCodes, getAllSectionCodes } from "@/lib/reports/csrd-template";
+import { CSRD_TEMPLATE, getRequiredSectionCodes } from "@/lib/reports/csrd-template";
 import { GRI_TEMPLATE } from "@/lib/reports/gri-template";
 import { SectionEditor } from "./section-editor";
 import { ReportPreview } from "./report-preview";
@@ -44,6 +44,7 @@ export function ReportWizard({ reportingPeriods }: ReportWizardProps) {
     if (store.selectedSections.length === 0) {
       store.setSelectedSections(getRequiredSectionCodes(template));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.frameworkType]);
 
   const handleGenerate = async () => {

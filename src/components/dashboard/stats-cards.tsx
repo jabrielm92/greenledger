@@ -12,8 +12,6 @@ import {
   FileCheck,
   Gauge,
   Clock,
-  TrendingDown,
-  TrendingUp,
 } from "lucide-react";
 import { formatEmissions } from "@/lib/utils";
 import { cn } from "@/lib/utils";

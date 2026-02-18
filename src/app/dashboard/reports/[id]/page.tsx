@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
-import { ReportPreview } from "@/components/reports/report-preview";
 import { SectionEditor } from "@/components/reports/section-editor";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +43,6 @@ const STATUS_STYLES: Record<string, string> = {
 
 export default function ReportDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const [report, setReport] = useState<ReportDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [edits, setEdits] = useState<Record<string, string>>({});

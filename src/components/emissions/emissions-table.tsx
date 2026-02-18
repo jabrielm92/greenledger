@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatEmissions, formatEnumValue } from "@/lib/utils";
 import { format } from "date-fns";
 import { FileText } from "lucide-react";

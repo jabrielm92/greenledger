@@ -77,7 +77,7 @@ export async function calculateEmissions(
 
 async function getFullFactor(
   factorId: string,
-  category: string
+  _category: string
 ): Promise<{
   co2PerUnit: number | null;
   ch4PerUnit: number | null;

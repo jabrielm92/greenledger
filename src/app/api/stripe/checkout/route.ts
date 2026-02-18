@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
-import { stripe, PLANS, type PlanTier } from "@/lib/stripe";
+import { stripe, PLANS } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 

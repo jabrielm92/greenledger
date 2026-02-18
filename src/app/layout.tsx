@@ -15,9 +15,31 @@ export const metadata: Metadata = {
     "compliance",
     "sustainability",
     "CSRD",
+    "GRI",
+    "SASB",
     "carbon emissions",
     "reporting",
+    "GreenLedger",
   ],
+  authors: [{ name: "GreenLedger" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "GreenLedger",
+    title: "GreenLedger — ESG Compliance on Autopilot",
+    description:
+      "Stop drowning in spreadsheets. GreenLedger automates ESG data collection, emissions calculation, and compliance reporting for SMBs.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GreenLedger — ESG Compliance on Autopilot",
+    description:
+      "AI-powered ESG compliance for small and medium businesses. CSRD, GRI, SASB reports in minutes.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

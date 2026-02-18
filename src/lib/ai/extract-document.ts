@@ -21,7 +21,7 @@ export async function extractDocument(
   const extractionPrompt = getExtractionPrompt(classification.documentType);
   const isImage = mimeType.startsWith("image/");
 
-  const content: Anthropic.Messages.ContentBlockParam[] = isImage
+  const content: (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ImageBlockParam)[] = isImage
     ? [
         {
           type: "image",

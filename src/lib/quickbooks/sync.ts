@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { type DocumentType } from "@prisma/client";
 import { logAudit } from "@/lib/audit/logger";
 import {
   getQuickBooksClient,
@@ -83,6 +84,7 @@ export async function syncQuickBooksData(
     const expenses = await client.getExpenses(startDate, endDate);
     const expResult = await syncExpenses(
       organizationId,
+      userId,
       expenses
     );
     result.expensesImported = expResult.imported;
@@ -96,7 +98,7 @@ export async function syncQuickBooksData(
   // 3. Sync bills
   try {
     const bills = await client.getBills(startDate, endDate);
-    const billResult = await syncBills(organizationId, bills);
+    const billResult = await syncBills(organizationId, userId, bills);
     result.billsImported = billResult.imported;
     result.documentsCreated += billResult.documentsCreated;
   } catch (err) {
@@ -157,6 +159,7 @@ async function syncVendors(
 
 async function syncExpenses(
   organizationId: string,
+  userId: string,
   expenses: QBPurchase[]
 ): Promise<{ imported: number; documentsCreated: number }> {
   let imported = 0;
@@ -185,12 +188,13 @@ async function syncExpenses(
       await prisma.document.create({
         data: {
           organizationId,
+          uploadedById: userId,
           fileName: `QB-Purchase-${expense.Id}-Line-${line.Id}`,
           fileType: "application/json",
           fileSize: 0,
-          storagePath: `quickbooks://purchase/${expense.Id}`,
+          filePath: `quickbooks://purchase/${expense.Id}`,
           status: "EXTRACTED",
-          classification: mapCategoryToClassification(category),
+          documentType: mapCategoryToClassification(category),
           extractedData: {
             source: "quickbooks",
             type: "purchase",
@@ -214,6 +218,7 @@ async function syncExpenses(
 
 async function syncBills(
   organizationId: string,
+  userId: string,
   bills: QBBill[]
 ): Promise<{ imported: number; documentsCreated: number }> {
   let imported = 0;
@@ -239,12 +244,13 @@ async function syncBills(
       await prisma.document.create({
         data: {
           organizationId,
+          uploadedById: userId,
           fileName: `QB-Bill-${bill.Id}-Line-${line.Id}`,
           fileType: "application/json",
           fileSize: 0,
-          storagePath: `quickbooks://bill/${bill.Id}`,
+          filePath: `quickbooks://bill/${bill.Id}`,
           status: "EXTRACTED",
-          classification: mapCategoryToClassification(category),
+          documentType: mapCategoryToClassification(category),
           extractedData: {
             source: "quickbooks",
             type: "bill",
@@ -269,7 +275,7 @@ async function syncBills(
 
 function mapCategoryToClassification(
   category: ExpenseCategory
-): string {
+): DocumentType {
   switch (category) {
     case "utility":
       return "UTILITY_BILL";

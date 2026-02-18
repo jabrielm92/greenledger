@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +36,7 @@ interface SyncHistoryItem {
   };
 }
 
-export default function IntegrationsPage() {
+function IntegrationsPageContent() {
   const searchParams = useSearchParams();
   const successParam = searchParams.get("success");
   const errorParam = searchParams.get("error");
@@ -79,7 +79,7 @@ export default function IntegrationsPage() {
         const err = await res.json();
         setSyncResult(`Error: ${err.error}`);
       }
-    } catch (err) {
+    } catch (_err) {
       setSyncResult("Sync failed");
     } finally {
       setIsSyncing(false);
@@ -293,5 +293,13 @@ export default function IntegrationsPage() {
         </CardHeader>
       </Card>
     </div>
+  );
+}
+
+export default function IntegrationsPage() {
+  return (
+    <Suspense>
+      <IntegrationsPageContent />
+    </Suspense>
   );
 }

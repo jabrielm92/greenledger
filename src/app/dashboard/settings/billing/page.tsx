@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { PlanCard } from "@/components/billing/plan-card";
@@ -9,7 +9,7 @@ import { InvoiceList } from "@/components/billing/invoice-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 
 const PLAN_FEATURES = {
   BASE: {
@@ -67,7 +67,7 @@ interface Invoice {
   pdfUrl?: string;
 }
 
-export default function BillingPage() {
+function BillingPageContent() {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
 
@@ -247,5 +247,13 @@ export default function BillingPage() {
       {/* Invoices */}
       <InvoiceList invoices={invoices} isLoading={isLoading} />
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense>
+      <BillingPageContent />
+    </Suspense>
   );
 }

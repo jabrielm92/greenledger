@@ -37,7 +37,7 @@ export default function ComplianceAlertEmail({
     <Html>
       <Head />
       <Preview>
-        {daysRemaining} days until your {frameworkType} reporting deadline
+        {String(daysRemaining)} days until your {frameworkType} reporting deadline
       </Preview>
       <Body style={main}>
         <Container style={container}>

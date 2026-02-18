@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useOnboardingStore } from "@/store/onboarding-store";
 import { FRAMEWORKS, EU_COUNTRIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";

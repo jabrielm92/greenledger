@@ -187,7 +187,7 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
           endDate,
           location: location || undefined,
           notes: notes || undefined,
-          calculationMethodology: calcResult.methodology,
+          calculationMethod: calcResult.methodology,
         }),
       });
 
