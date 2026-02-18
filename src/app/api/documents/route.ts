@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { uploadFile } from "@/lib/storage";
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads";
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 const ALLOWED_TYPES = [
   "application/pdf",
@@ -45,16 +42,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create upload directory
-    const orgDir = path.join(UPLOAD_DIR, session.user.organizationId);
-    await mkdir(orgDir, { recursive: true });
-
-    // Save file
-    const ext = path.extname(file.name);
-    const uuid = randomUUID();
-    const filePath = path.join(orgDir, `${uuid}${ext}`);
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
+    const { filePath } = await uploadFile(buffer, file.name, session.user.organizationId, file.type);
 
     // Create document record
     const document = await prisma.document.create({

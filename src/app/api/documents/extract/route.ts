@@ -5,6 +5,7 @@ import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
 import { logAudit } from "@/lib/audit/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const extractSchema = z.object({
   documentId: z.string().cuid(),
@@ -15,6 +16,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = checkRateLimit(`extract:${session.user.organizationId}`, { limit: 20, windowSeconds: 60 });
+    if (rl.limited) {
+      return NextResponse.json(rl.response, { status: 429, headers: rl.headers });
     }
 
     const body = await req.json();

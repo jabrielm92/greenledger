@@ -32,14 +32,18 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  async function onSubmit(_data: ForgotPasswordInput) {
+  async function onSubmit(data: ForgotPasswordInput) {
     setIsLoading(true);
-
-    // Simulate API call — actual password reset email would be sent here
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsSubmitted(true);
-    setIsLoading(false);
+    try {
+      await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email }),
+      });
+      setIsSubmitted(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   if (isSubmitted) {

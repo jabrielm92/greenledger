@@ -1,7 +1,14 @@
 import { Resend } from "resend";
 import React from "react";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_EMAIL =
   process.env.RESEND_FROM_EMAIL || "GreenLedger <noreply@greenledger.app>";
@@ -14,7 +21,7 @@ export async function sendEmail(params: {
   subject: string;
   react: React.ReactElement;
 }) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to: params.to,
     subject: params.subject,
