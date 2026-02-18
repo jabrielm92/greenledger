@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { logAudit } from "@/lib/audit/logger";
 import { type PlanTier } from "@prisma/client";
 import Stripe from "stripe";
 
@@ -102,6 +103,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       plan: (plan as PlanTier) || undefined,
     },
   });
+
+  await logAudit({
+    organizationId,
+    userId: "system",
+    action: "billing_updated",
+    entityType: "Organization",
+    entityId: organizationId,
+    metadata: { event: "checkout_completed", plan },
+  });
 }
 
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
@@ -163,6 +173,15 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       ),
     },
   });
+
+  await logAudit({
+    organizationId,
+    userId: "system",
+    action: "billing_updated",
+    entityType: "Organization",
+    entityId: organizationId,
+    metadata: { event: "subscription_updated", plan },
+  });
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -175,5 +194,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       plan: "FREE_TRIAL",
       stripeSubscriptionId: null,
     },
+  });
+
+  await logAudit({
+    organizationId,
+    userId: "system",
+    action: "billing_updated",
+    entityType: "Organization",
+    entityId: organizationId,
+    metadata: { event: "subscription_deleted" },
   });
 }

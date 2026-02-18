@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logAudit } from "@/lib/audit/logger";
 import {
   generateReportHTML,
   generateReportCSV,
@@ -71,12 +72,20 @@ export async function GET(
     });
 
     // Record export
-    await prisma.reportExport.create({
+    const reportExport = await prisma.reportExport.create({
       data: {
         reportId: id,
         format,
         filePath: `exports/${id}.${format}`,
       },
+    });
+
+    await logAudit({
+      organizationId: session.user.organizationId,
+      userId: session.user.id,
+      action: "entity_created",
+      entityType: "ReportExport",
+      entityId: reportExport.id,
     });
 
     return new NextResponse(html, {

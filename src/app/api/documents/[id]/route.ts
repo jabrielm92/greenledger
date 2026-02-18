@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z, ZodError } from "zod";
+import { type DocumentType, type DocumentStatus } from "@prisma/client";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+
+const updateDocumentSchema = z.object({
+  status: z.string().optional().transform((v) => v as DocumentStatus | undefined),
+  extractedData: z.any().optional(),
+  documentType: z.string().optional().transform((v) => v as DocumentType | undefined),
+  extractionConfidence: z.number().optional(),
+});
 
 export async function GET(
   _req: NextRequest,
@@ -54,7 +63,8 @@ export async function PATCH(
     }
 
     const { id } = await params;
-    const body = await req.json();
+    const rawBody = await req.json();
+    const body = updateDocumentSchema.parse(rawBody);
 
     const existing = await prisma.document.findFirst({
       where: {
@@ -94,6 +104,12 @@ export async function PATCH(
 
     return NextResponse.json(document);
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", details: error.errors },
+        { status: 400 }
+      );
+    }
     console.error("[DOCUMENT_PATCH]", error);
     return NextResponse.json(
       { error: "Internal server error" },

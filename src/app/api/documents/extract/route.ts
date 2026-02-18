@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
+import { z, ZodError } from "zod";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
 import { logAudit } from "@/lib/audit/logger";
+
+const extractSchema = z.object({
+  documentId: z.string().cuid(),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,13 +17,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { documentId } = await req.json();
-    if (!documentId) {
-      return NextResponse.json(
-        { error: "documentId is required" },
-        { status: 400 }
-      );
-    }
+    const body = await req.json();
+    const { documentId } = extractSchema.parse(body);
 
     const document = await prisma.document.findFirst({
       where: {
@@ -96,6 +96,12 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", details: error.errors },
+        { status: 400 }
+      );
+    }
     console.error("[DOCUMENTS_EXTRACT]", error);
     return NextResponse.json(
       { error: "Internal server error" },

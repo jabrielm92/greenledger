@@ -65,16 +65,14 @@ export async function GET(req: NextRequest) {
 
     // Audit log
     const session = await getServerSession();
-    if (session?.user?.id) {
-      await logAudit({
-        organizationId,
-        userId: session.user.id,
-        action: "entity_created",
-        entityType: "QuickBooksConnection",
-        entityId: realmId,
-        newValue: { realmId, connectedAt: new Date().toISOString() },
-      });
-    }
+    await logAudit({
+      organizationId,
+      userId: session?.user?.id ?? "system",
+      action: "entity_created",
+      entityType: "QuickBooksConnection",
+      entityId: realmId,
+      newValue: { realmId, connectedAt: new Date().toISOString() },
+    });
 
     return NextResponse.redirect(
       new URL(
