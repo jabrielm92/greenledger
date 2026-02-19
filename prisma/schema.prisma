@@ -1,0 +1,518 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTH & USERS
+// ============================================
+
+model User {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String    @unique
+  emailVerified   DateTime?
+  hashedPassword  String?
+  image           String?
+  role            UserRole  @default(MEMBER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+
+  accounts        Account[]
+  sessions        Session[]
+  auditLogs       AuditLog[]
+  uploadedDocuments Document[] @relation("UploadedBy")
+
+  @@index([organizationId])
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+// ============================================
+// ORGANIZATION (MULTI-TENANT)
+// ============================================
+
+model Organization {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  industry          Industry?
+  employeeCount     Int?
+  country           String?
+  city              String?
+  website           String?
+  fiscalYearStart   Int      @default(1)
+  onboardingComplete Boolean @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Stripe
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  plan                   PlanTier  @default(FREE_TRIAL)
+
+  // QuickBooks
+  quickbooksRealmId      String?
+  quickbooksAccessToken  String?   @db.Text
+  quickbooksRefreshToken String?   @db.Text
+  quickbooksTokenExpiry  DateTime?
+
+  // Relations
+  users               User[]
+  documents            Document[]
+  emissionEntries      EmissionEntry[]
+  emissionFactors      CustomEmissionFactor[]
+  reports              Report[]
+  suppliers            Supplier[]
+  auditLogs            AuditLog[]
+  complianceFrameworks OrgFramework[]
+  reportingPeriods     ReportingPeriod[]
+
+  @@index([slug])
+  @@index([stripeCustomerId])
+}
+
+enum Industry {
+  MANUFACTURING
+  LOGISTICS
+  PROFESSIONAL_SERVICES
+  CONSTRUCTION
+  TECHNOLOGY
+  RETAIL
+  FOOD_BEVERAGE
+  HEALTHCARE
+  ENERGY
+  AGRICULTURE
+  OTHER
+}
+
+enum PlanTier {
+  FREE_TRIAL
+  BASE
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// ============================================
+// COMPLIANCE FRAMEWORKS
+// ============================================
+
+model ComplianceFramework {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  version     String
+  description String?  @db.Text
+  regions     String[]
+  isActive    Boolean  @default(true)
+
+  sections    FrameworkSection[]
+  orgFrameworks OrgFramework[]
+}
+
+model FrameworkSection {
+  id          String   @id @default(cuid())
+  frameworkId String
+  code        String
+  title       String
+  description String?  @db.Text
+  parentId    String?
+  sortOrder   Int      @default(0)
+  isRequired  Boolean  @default(true)
+
+  framework   ComplianceFramework @relation(fields: [frameworkId], references: [id])
+  parent      FrameworkSection?   @relation("SectionHierarchy", fields: [parentId], references: [id])
+  children    FrameworkSection[]  @relation("SectionHierarchy")
+  dataPoints  FrameworkDataPoint[]
+
+  @@index([frameworkId])
+}
+
+model FrameworkDataPoint {
+  id          String   @id @default(cuid())
+  sectionId   String
+  code        String
+  label       String
+  description String?  @db.Text
+  dataType    DataPointType
+  unit        String?
+  isRequired  Boolean  @default(true)
+
+  section     FrameworkSection @relation(fields: [sectionId], references: [id])
+  reportDataPoints ReportDataPoint[]
+
+  @@index([sectionId])
+}
+
+enum DataPointType {
+  NUMERIC
+  TEXT
+  BOOLEAN
+  DATE
+  PERCENTAGE
+  CURRENCY
+  NARRATIVE
+}
+
+model OrgFramework {
+  id             String   @id @default(cuid())
+  organizationId String
+  frameworkId     String
+  targetYear      Int
+  status         FrameworkStatus @default(NOT_STARTED)
+  completionPct  Float   @default(0)
+  dueDate        DateTime?
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  framework      ComplianceFramework @relation(fields: [frameworkId], references: [id])
+
+  @@unique([organizationId, frameworkId, targetYear])
+}
+
+enum FrameworkStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  REVIEW
+  SUBMITTED
+  COMPLETED
+}
+
+// ============================================
+// REPORTING PERIODS
+// ============================================
+
+model ReportingPeriod {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  startDate      DateTime
+  endDate        DateTime
+  isCurrent      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  emissionEntries EmissionEntry[]
+  reports        Report[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+// ============================================
+// DOCUMENTS & AI EXTRACTION
+// ============================================
+
+model Document {
+  id               String   @id @default(cuid())
+  organizationId   String
+  uploadedById     String
+  fileName         String
+  fileType         String
+  filePath         String
+  fileSize         Int
+  documentType     DocumentType?
+  status           DocumentStatus @default(UPLOADED)
+  extractedData    Json?
+  extractionConfidence Float?
+  processingError  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  uploadedBy       User @relation("UploadedBy", fields: [uploadedById], references: [id])
+  emissionEntries  EmissionEntry[]
+  auditReferences  AuditLog[] @relation("AuditDocument")
+
+  @@index([organizationId])
+  @@index([documentType])
+  @@index([status])
+}
+
+enum DocumentType {
+  UTILITY_BILL
+  FUEL_RECEIPT
+  INVOICE
+  SUPPLIER_REPORT
+  TRAVEL_RECORD
+  WASTE_MANIFEST
+  FLEET_LOG
+  REFRIGERANT_LOG
+  OTHER
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  EXTRACTED
+  REVIEWED
+  FAILED
+}
+
+// ============================================
+// EMISSIONS DATA
+// ============================================
+
+model EmissionEntry {
+  id               String   @id @default(cuid())
+  organizationId   String
+  reportingPeriodId String?
+  documentId       String?
+
+  scope            EmissionScope
+  category         String
+  subcategory      String?
+  source           String
+  description      String?
+
+  // Activity data
+  activityValue    Float
+  activityUnit     String
+
+  // Emission factor used
+  emissionFactorId String?
+  emissionFactor   Float
+  emissionFactorSource String?
+
+  // Calculated emissions
+  co2e             Float
+  co2              Float?
+  ch4              Float?
+  n2o              Float?
+
+  // Metadata
+  startDate        DateTime
+  endDate          DateTime
+  location         String?
+  isEstimated      Boolean  @default(false)
+  confidenceScore  Float?
+  notes            String?
+  calculationMethod String?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  reportingPeriod  ReportingPeriod? @relation(fields: [reportingPeriodId], references: [id])
+  document         Document? @relation(fields: [documentId], references: [id])
+
+  @@index([organizationId, scope])
+  @@index([organizationId, startDate, endDate])
+  @@index([reportingPeriodId])
+}
+
+enum EmissionScope {
+  SCOPE_1
+  SCOPE_2
+  SCOPE_3
+}
+
+model EmissionFactor {
+  id           String   @id @default(cuid())
+  category     String
+  subcategory  String?
+  region       String
+  unit         String
+  co2ePerUnit  Float
+  co2PerUnit   Float?
+  ch4PerUnit   Float?
+  n2oPerUnit   Float?
+  source       String
+  year         Int
+  validFrom    DateTime
+  validTo      DateTime?
+  isActive     Boolean  @default(true)
+
+  @@unique([category, subcategory, region, source, year])
+  @@index([category, region])
+}
+
+model CustomEmissionFactor {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  category       String
+  unit           String
+  co2ePerUnit    Float
+  source         String
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+}
+
+// ============================================
+// REPORTS
+// ============================================
+
+model Report {
+  id               String   @id @default(cuid())
+  organizationId   String
+  reportingPeriodId String?
+  frameworkType     String
+  title            String
+  status           ReportStatus @default(DRAFT)
+  generatedContent Json?
+  manualEdits      Json?
+  finalContent     Json?
+  version          Int      @default(1)
+  publishedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  reportingPeriod  ReportingPeriod? @relation(fields: [reportingPeriodId], references: [id])
+  dataPoints       ReportDataPoint[]
+  exports          ReportExport[]
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum ReportStatus {
+  DRAFT
+  GENERATING
+  REVIEW
+  APPROVED
+  PUBLISHED
+}
+
+model ReportDataPoint {
+  id              String   @id @default(cuid())
+  reportId        String
+  dataPointId     String
+  value           String?  @db.Text
+  numericValue    Float?
+  isComplete      Boolean  @default(false)
+  source          String?
+  notes           String?
+
+  report          Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  dataPoint       FrameworkDataPoint @relation(fields: [dataPointId], references: [id])
+
+  @@unique([reportId, dataPointId])
+  @@index([reportId])
+}
+
+model ReportExport {
+  id        String   @id @default(cuid())
+  reportId  String
+  format    String
+  filePath  String
+  createdAt DateTime @default(now())
+
+  report    Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// SUPPLIERS
+// ============================================
+
+model Supplier {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  contactEmail   String?
+  contactName    String?
+  industry       Industry?
+  country        String?
+  website        String?
+  esgRiskLevel   RiskLevel @default(UNKNOWN)
+  esgScore       Float?
+  lastAssessment DateTime?
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([esgRiskLevel])
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  UNKNOWN
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String?
+  action         String
+  entityType     String
+  entityId       String
+  previousValue  Json?
+  newValue       Json?
+  documentId     String?
+  metadata       Json?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User? @relation(fields: [userId], references: [id])
+  document       Document? @relation("AuditDocument", fields: [documentId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action])
+}
