@@ -7,8 +7,31 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 /**
- * Plan definitions with feature limits.
+ * Hardcoded plan definitions — no manual Stripe dashboard setup required.
+ * Products and prices are auto-provisioned via the Stripe API on first checkout.
  */
+
+const PLAN_CONFIGS = {
+  BASE: {
+    name: "GreenLedger Base",
+    description: "ESG compliance essentials for small businesses",
+    priceAmountCents: 24900, // $249/mo
+    lookupKey: "greenledger_base_monthly",
+  },
+  PROFESSIONAL: {
+    name: "GreenLedger Professional",
+    description: "Advanced ESG compliance with multi-framework support",
+    priceAmountCents: 39900, // $399/mo
+    lookupKey: "greenledger_professional_monthly",
+  },
+  ENTERPRISE: {
+    name: "GreenLedger Enterprise",
+    description: "Unlimited ESG compliance for growing organizations",
+    priceAmountCents: 69900, // $699/mo
+    lookupKey: "greenledger_enterprise_monthly",
+  },
+} as const;
+
 export const PLANS = {
   FREE_TRIAL: {
     name: "Free Trial",
@@ -25,7 +48,6 @@ export const PLANS = {
   BASE: {
     name: "Base",
     price: 249,
-    stripePriceId: process.env.STRIPE_BASE_PRICE_ID || "",
     limits: {
       documents: 50,
       extractions: 50,
@@ -38,7 +60,6 @@ export const PLANS = {
   PROFESSIONAL: {
     name: "Professional",
     price: 399,
-    stripePriceId: process.env.STRIPE_PROFESSIONAL_PRICE_ID || "",
     limits: {
       documents: 200,
       extractions: 200,
@@ -51,7 +72,6 @@ export const PLANS = {
   ENTERPRISE: {
     name: "Enterprise",
     price: 699,
-    stripePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID || "",
     limits: {
       documents: Infinity,
       extractions: Infinity,
@@ -64,7 +84,55 @@ export const PLANS = {
 } as const;
 
 export type PlanTier = keyof typeof PLANS;
+export type PaidPlanTier = "BASE" | "PROFESSIONAL" | "ENTERPRISE";
 export type ResourceType = keyof (typeof PLANS)["BASE"]["limits"];
+
+// In-memory cache so we only hit Stripe once per cold start
+const priceIdCache: Partial<Record<PaidPlanTier, string>> = {};
+
+/**
+ * Get or create the Stripe Price ID for a paid plan.
+ * Uses lookup_key to find existing prices, creates product + price if missing.
+ * Results are cached in memory for the lifetime of the process.
+ */
+export async function getStripePriceId(tier: PaidPlanTier): Promise<string> {
+  // Return cached value if available
+  if (priceIdCache[tier]) {
+    return priceIdCache[tier]!;
+  }
+
+  const config = PLAN_CONFIGS[tier];
+
+  // Try to find an existing price by lookup_key
+  const existingPrices = await stripe.prices.list({
+    lookup_keys: [config.lookupKey],
+    limit: 1,
+  });
+
+  if (existingPrices.data.length > 0) {
+    priceIdCache[tier] = existingPrices.data[0].id;
+    return existingPrices.data[0].id;
+  }
+
+  // No existing price — create product and price
+  const product = await stripe.products.create({
+    name: config.name,
+    description: config.description,
+    metadata: { tier },
+  });
+
+  const price = await stripe.prices.create({
+    product: product.id,
+    unit_amount: config.priceAmountCents,
+    currency: "usd",
+    recurring: { interval: "month" },
+    lookup_key: config.lookupKey,
+    metadata: { tier },
+  });
+
+  priceIdCache[tier] = price.id;
+  return price.id;
+}
 
 /**
  * Check whether an organization has capacity for a given resource.
@@ -103,7 +171,6 @@ async function getCurrentUsage(
   resource: ResourceType,
   periodEnd: Date | null
 ): Promise<number> {
-  // Use the current billing period start (30 days before period end, or first of month)
   const periodStart = periodEnd
     ? new Date(new Date(periodEnd).setMonth(new Date(periodEnd).getMonth() - 1))
     : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -145,7 +212,6 @@ async function getCurrentUsage(
       });
 
     case "frameworks":
-      // Count distinct framework types on reports
       const reports = await prisma.report.findMany({
         where: { organizationId },
         select: { frameworkType: true },

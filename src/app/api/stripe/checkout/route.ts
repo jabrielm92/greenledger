@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
-import { stripe, PLANS } from "@/lib/stripe";
+import { stripe, getStripePriceId, type PaidPlanTier } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -18,13 +18,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { plan } = checkoutSchema.parse(body);
 
-    const planConfig = PLANS[plan];
-    if (!planConfig.stripePriceId) {
-      return NextResponse.json(
-        { error: "Price ID not configured for this plan" },
-        { status: 400 }
-      );
-    }
+    // Auto-provision product/price in Stripe if it doesn't exist yet
+    const stripePriceId = await getStripePriceId(plan as PaidPlanTier);
 
     // Check if org already has a Stripe customer
     const org = await prisma.organization.findUnique({
@@ -36,7 +31,7 @@ export async function POST(req: NextRequest) {
       mode: "subscription",
       line_items: [
         {
-          price: planConfig.stripePriceId,
+          price: stripePriceId,
           quantity: 1,
         },
       ],
