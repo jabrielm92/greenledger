@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         where: { id: documentId },
         data: {
           documentType: result.classification.documentType as never,
-          status: result.confidence >= 0.8 ? "EXTRACTED" : "EXTRACTED",
+          status: result.confidence >= 0.8 ? "EXTRACTED" : "REVIEWED",
           extractedData: result.extractedData as never,
           extractionConfidence: result.confidence,
         },
