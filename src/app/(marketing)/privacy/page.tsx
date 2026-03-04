@@ -84,7 +84,7 @@ export default function PrivacyPolicyPage() {
                 </span>{" "}
                 To extract and classify data from your uploaded documents using
                 our AI-powered engine. Document content is sent to our AI
-                processing partner (Anthropic) for extraction and is not
+                processing partner (OpenAI) for extraction and is not
                 retained by them beyond the processing session
               </li>
               <li>
@@ -176,10 +176,10 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  Anthropic AI:
+                  OpenAI:
                 </span>{" "}
                 For AI-powered document extraction and data classification.
-                Document content is processed via Anthropic&apos;s API and is
+                Document content is processed via OpenAI&apos;s API and is
                 not used to train their models
               </li>
               <li>

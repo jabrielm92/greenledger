@@ -1,5 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
-import { anthropic, AI_MODEL } from "@/lib/anthropic";
+import type { ChatCompletionContentPart } from "openai/resources/chat/completions";
+import { openai, AI_MODEL } from "@/lib/openai";
 import { getExtractionPrompt } from "./prompts";
 import { classifyDocument } from "./classify-document";
 import type { DocumentClassification, ExtractedData } from "@/types";
@@ -21,14 +21,12 @@ export async function extractDocument(
   const extractionPrompt = getExtractionPrompt(classification.documentType);
   const isImage = mimeType.startsWith("image/");
 
-  const content: (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ImageBlockParam)[] = isImage
+  const content: ChatCompletionContentPart[] = isImage
     ? [
         {
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
-            data: fileContent,
+          type: "image_url",
+          image_url: {
+            url: `data:${mimeType};base64,${fileContent}`,
           },
         },
         {
@@ -43,15 +41,16 @@ export async function extractDocument(
         },
       ];
 
-  const response = await anthropic.messages.create({
+  const response = await openai.chat.completions.create({
     model: AI_MODEL,
     max_tokens: 2048,
-    system: extractionPrompt,
-    messages: [{ role: "user", content }],
+    messages: [
+      { role: "system", content: extractionPrompt },
+      { role: "user", content },
+    ],
   });
 
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
+  const text = response.choices[0]?.message?.content ?? "";
 
   let extractedData: ExtractedData | Record<string, unknown>;
   let confidence: number;

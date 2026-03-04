@@ -1,4 +1,4 @@
-import { anthropic, AI_MODEL } from "@/lib/anthropic";
+import { openai, AI_MODEL } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import { CSRD_TEMPLATE, getSectionByCode } from "@/lib/reports/csrd-template";
 import { GRI_TEMPLATE } from "@/lib/reports/gri-template";
@@ -87,14 +87,13 @@ export async function generateReport(
       sectionData
     );
 
-    const response = await anthropic.messages.create({
+    const response = await openai.chat.completions.create({
       model: AI_MODEL,
       max_tokens: 4096,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const text =
-      response.content[0].type === "text" ? response.content[0].text : "";
+    const text = response.choices[0]?.message?.content ?? "";
 
     try {
       const parsed = JSON.parse(

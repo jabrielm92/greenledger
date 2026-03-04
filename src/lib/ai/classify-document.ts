@@ -1,5 +1,5 @@
-import type Anthropic from "@anthropic-ai/sdk";
-import { anthropic, AI_MODEL } from "@/lib/anthropic";
+import type { ChatCompletionContentPart } from "openai/resources/chat/completions";
+import { openai, AI_MODEL } from "@/lib/openai";
 import { CLASSIFY_DOCUMENT_SYSTEM } from "./prompts";
 import type { DocumentClassification } from "@/types";
 
@@ -9,14 +9,12 @@ export async function classifyDocument(
 ): Promise<DocumentClassification> {
   const isImage = mimeType.startsWith("image/");
 
-  const content: (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ImageBlockParam)[] = isImage
+  const content: ChatCompletionContentPart[] = isImage
     ? [
         {
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
-            data: fileContent,
+          type: "image_url",
+          image_url: {
+            url: `data:${mimeType};base64,${fileContent}`,
           },
         },
         {
@@ -31,15 +29,16 @@ export async function classifyDocument(
         },
       ];
 
-  const response = await anthropic.messages.create({
+  const response = await openai.chat.completions.create({
     model: AI_MODEL,
     max_tokens: 256,
-    system: CLASSIFY_DOCUMENT_SYSTEM,
-    messages: [{ role: "user", content }],
+    messages: [
+      { role: "system", content: CLASSIFY_DOCUMENT_SYSTEM },
+      { role: "user", content },
+    ],
   });
 
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
+  const text = response.choices[0]?.message?.content ?? "";
 
   try {
     const parsed = JSON.parse(text) as DocumentClassification;
