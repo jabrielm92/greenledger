@@ -255,5 +255,5 @@ export const RISK_LEVELS = [
 
 export const APP_NAME = "GreenLedger";
 export const APP_DESCRIPTION = "ESG compliance on autopilot.";
-export const SUPPORT_EMAIL = "support@greenledger.app";
+export const SUPPORT_EMAIL = "greenledger@arisolutionsinc.com";
 export const ITEMS_PER_PAGE = 20;

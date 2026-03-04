@@ -24,7 +24,7 @@ export default function TermsOfServicePage() {
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-3">
               By accessing or using GreenLedger (&quot;the Service&quot;),
-              operated by GreenLedger Inc. (&quot;we,&quot; &quot;us,&quot; or
+              operated by ARI Solutions Inc. (&quot;we,&quot; &quot;us,&quot; or
               &quot;our&quot;), you agree to be bound by these Terms of Service
               (&quot;Terms&quot;). If you do not agree to these Terms, you may
               not access or use the Service.
@@ -136,9 +136,9 @@ export default function TermsOfServicePage() {
               </li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-3">
-              Free-tier accounts are subject to usage limits as described on our
-              pricing page. We reserve the right to modify free-tier limits at
-              any time.
+              All plans are subject to usage limits as described on our pricing
+              page. We reserve the right to modify plan limits with at least 30
+              days&apos; notice.
             </p>
           </section>
 
@@ -150,7 +150,7 @@ export default function TermsOfServicePage() {
             <p className="text-muted-foreground leading-relaxed mb-3">
               The Service, including its original content, features,
               functionality, and underlying technology, is and remains the
-              exclusive property of GreenLedger Inc. and its licensors. The
+              exclusive property of ARI Solutions Inc. and its licensors. The
               Service is protected by copyright, trademark, and other laws of
               both the United States and foreign countries.
             </p>
@@ -293,7 +293,7 @@ export default function TermsOfServicePage() {
             <ul className="space-y-1 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                legal@greenledger.io
+                greenledger@arisolutionsinc.com
               </li>
               <li>
                 <span className="font-medium text-foreground">Website:</span>{" "}
@@ -301,13 +301,12 @@ export default function TermsOfServicePage() {
                   href="/contact"
                   className="text-brand-primary hover:underline"
                 >
-                  greenledger.io/contact
+                  greenledger.app/contact
                 </Link>
               </li>
               <li>
-                <span className="font-medium text-foreground">Address:</span>{" "}
-                GreenLedger Inc., 123 Sustainability Ave, San Francisco, CA
-                94105
+                <span className="font-medium text-foreground">Company:</span>{" "}
+                ARI Solutions Inc.
               </li>
             </ul>
           </section>
