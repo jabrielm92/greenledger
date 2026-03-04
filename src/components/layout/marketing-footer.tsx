@@ -5,22 +5,19 @@ const footerLinks = {
   Product: [
     { label: "Features", href: "/#features" },
     { label: "Pricing", href: "/pricing" },
-    { label: "Integrations", href: "/#features" },
+    { label: "How It Works", href: "/#how-it-works" },
   ],
   Company: [
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
-    { label: "Careers", href: "/contact" },
   ],
   Resources: [
-    { label: "Documentation", href: "/contact" },
-    { label: "CSRD Guide", href: "/about" },
-    { label: "Blog", href: "/about" },
+    { label: "CSRD Guide", href: "/#features" },
+    { label: "FAQ", href: "/pricing#faq" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/privacy" },
   ],
 };
 
@@ -68,32 +65,6 @@ export function MarketingFooter() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} GreenLedger. All rights reserved.
           </p>
-          <div className="flex gap-4">
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Twitter
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              GitHub
-            </a>
-          </div>
         </div>
       </div>
     </footer>

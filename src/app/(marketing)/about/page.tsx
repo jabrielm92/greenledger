@@ -138,7 +138,7 @@ export default function AboutPage() {
             Have questions? We&apos;d love to hear from you.
           </p>
           <p className="text-sm text-brand-primary font-medium">
-            hello@greenledger.io
+            support@greenledger.app
           </p>
         </div>
       </section>

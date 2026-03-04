@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <p className="text-muted-foreground leading-relaxed mb-10">
-            GreenLedger Inc. (&quot;we,&quot; &quot;us,&quot; or
+            ARI Solutions Inc. (&quot;we,&quot; &quot;us,&quot; or
             &quot;our&quot;) is committed to protecting your privacy. This
             Privacy Policy explains how we collect, use, disclose, and safeguard
             your information when you use our ESG compliance platform
@@ -313,7 +313,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-muted-foreground leading-relaxed mt-3">
               To exercise any of these rights, please contact us at{" "}
               <span className="text-brand-primary font-medium">
-                privacy@greenledger.io
+                privacy@greenledger.app
               </span>
               . We will respond to your request within 30 days.
             </p>
@@ -364,7 +364,7 @@ export default function PrivacyPolicyPage() {
               If you believe a child under 16 has provided us with personal
               data, please contact us at{" "}
               <span className="text-brand-primary font-medium">
-                privacy@greenledger.io
+                privacy@greenledger.app
               </span>
               .
             </p>
@@ -402,7 +402,7 @@ export default function PrivacyPolicyPage() {
             <ul className="space-y-1 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                privacy@greenledger.io
+                privacy@greenledger.app
               </li>
               <li>
                 <span className="font-medium text-foreground">Website:</span>{" "}
@@ -410,19 +410,18 @@ export default function PrivacyPolicyPage() {
                   href="/contact"
                   className="text-brand-primary hover:underline"
                 >
-                  greenledger.io/contact
+                  greenledger.app/contact
                 </Link>
               </li>
               <li>
-                <span className="font-medium text-foreground">Address:</span>{" "}
-                GreenLedger Inc., 123 Sustainability Ave, San Francisco, CA
-                94105
+                <span className="font-medium text-foreground">Company:</span>{" "}
+                ARI Solutions Inc.
               </li>
               <li>
                 <span className="font-medium text-foreground">
                   Data Protection Officer:
                 </span>{" "}
-                dpo@greenledger.io
+                dpo@greenledger.app
               </li>
             </ul>
           </section>

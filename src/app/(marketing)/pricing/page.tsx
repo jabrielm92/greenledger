@@ -6,7 +6,7 @@ const plans = [
     name: "Base",
     price: "$249",
     description: "For small teams getting started with ESG reporting",
-    cta: "Start Free Trial",
+    cta: "Get Started",
     highlighted: false,
     features: {
       employees: "Up to 100",
@@ -25,7 +25,7 @@ const plans = [
     name: "Professional",
     price: "$399",
     description: "For growing companies with multiple reporting needs",
-    cta: "Start Free Trial",
+    cta: "Get Started",
     highlighted: true,
     badge: "Most Popular",
     features: {
@@ -45,7 +45,7 @@ const plans = [
     name: "Enterprise",
     price: "$699",
     description: "For organizations needing unlimited access and audit support",
-    cta: "Start Free Trial",
+    cta: "Get Started",
     highlighted: false,
     features: {
       employees: "Up to 500",
@@ -77,8 +77,8 @@ const featureRows = [
 
 const faqs = [
   {
-    q: "Is there a free trial?",
-    a: "Yes! Every account starts with a 14-day free trial on the Professional plan. No credit card required.",
+    q: "Can I get a demo before purchasing?",
+    a: "Of course! Contact our sales team to schedule a personalized demo and see how GreenLedger can work for your organization.",
   },
   {
     q: "Can I change plans at any time?",
@@ -112,7 +112,7 @@ export default function PricingPage() {
             Simple, Transparent Pricing
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            14-day free trial on every plan. No credit card required.
+            Choose the plan that fits your organization. No hidden fees. Cancel anytime.
           </p>
         </div>
       </section>
