@@ -138,7 +138,7 @@ export default function ContactPage() {
                   </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  support@greenledger.app
+                  greenledger@arisolutionsinc.com
                 </p>
               </div>
 
@@ -165,7 +165,7 @@ export default function ContactPage() {
                   See GreenLedger in action with a personalized demo.
                 </p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="mailto:support@greenledger.app?subject=Demo%20Request">
+                  <a href="mailto:greenledger@arisolutionsinc.com?subject=Demo%20Request">
                     Schedule Demo
                   </a>
                 </Button>

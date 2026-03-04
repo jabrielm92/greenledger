@@ -293,7 +293,7 @@ export default function TermsOfServicePage() {
             <ul className="space-y-1 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                legal@greenledger.app
+                greenledger@arisolutionsinc.com
               </li>
               <li>
                 <span className="font-medium text-foreground">Website:</span>{" "}

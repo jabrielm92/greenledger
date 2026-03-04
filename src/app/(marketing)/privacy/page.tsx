@@ -313,7 +313,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-muted-foreground leading-relaxed mt-3">
               To exercise any of these rights, please contact us at{" "}
               <span className="text-brand-primary font-medium">
-                privacy@greenledger.app
+                greenledger@arisolutionsinc.com
               </span>
               . We will respond to your request within 30 days.
             </p>
@@ -364,7 +364,7 @@ export default function PrivacyPolicyPage() {
               If you believe a child under 16 has provided us with personal
               data, please contact us at{" "}
               <span className="text-brand-primary font-medium">
-                privacy@greenledger.app
+                greenledger@arisolutionsinc.com
               </span>
               .
             </p>
@@ -402,7 +402,7 @@ export default function PrivacyPolicyPage() {
             <ul className="space-y-1 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                privacy@greenledger.app
+                greenledger@arisolutionsinc.com
               </li>
               <li>
                 <span className="font-medium text-foreground">Website:</span>{" "}
@@ -421,7 +421,7 @@ export default function PrivacyPolicyPage() {
                 <span className="font-medium text-foreground">
                   Data Protection Officer:
                 </span>{" "}
-                dpo@greenledger.app
+                dpo@arisolutionsinc.com
               </li>
             </ul>
           </section>

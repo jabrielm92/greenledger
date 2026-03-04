@@ -37,6 +37,9 @@ export function MarketingFooter() {
             <p className="mt-3 text-sm text-muted-foreground">
               ESG compliance on autopilot for small and mid-size businesses.
             </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              greenledger@arisolutionsinc.com
+            </p>
           </div>
 
           {/* Link groups */}
