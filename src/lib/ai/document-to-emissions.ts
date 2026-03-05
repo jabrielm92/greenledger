@@ -197,7 +197,7 @@ function mapWasteManifest(
 }
 
 function mapUtilityTypeToCategory(utilityType: string): {
-  scope: "SCOPE_1" | "SCOPE_2";
+  scope: "SCOPE_1" | "SCOPE_2" | "SCOPE_3";
   category: string;
 } {
   switch (utilityType) {
@@ -208,7 +208,7 @@ function mapUtilityTypeToCategory(utilityType: string): {
     case "district_heating":
       return { scope: "SCOPE_2", category: "district_heating" };
     case "water":
-      return { scope: "SCOPE_2", category: "water" };
+      return { scope: "SCOPE_3", category: "water" };
     default:
       return { scope: "SCOPE_2", category: "electricity" };
   }

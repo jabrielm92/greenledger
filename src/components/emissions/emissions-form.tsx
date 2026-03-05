@@ -36,6 +36,8 @@ const SCOPE_2_CATEGORIES = [
 
 const SCOPE_3_CATEGORIES = [
   { value: "air_travel", label: "Business Air Travel" },
+  { value: "employee_commute", label: "Employee Commuting" },
+  { value: "upstream_transport", label: "Upstream Transportation" },
   { value: "waste", label: "Waste Disposal" },
   { value: "water", label: "Water Supply & Treatment" },
 ];
@@ -96,6 +98,14 @@ const UNITS_BY_CATEGORY: Record<string, { value: string; label: string }[]> = {
   water: [
     { value: "m3", label: "Cubic Meters (m³)" },
   ],
+  employee_commute: [
+    { value: "km", label: "Kilometers" },
+    { value: "miles", label: "Miles" },
+  ],
+  upstream_transport: [
+    { value: "tonne_km", label: "Tonne-Kilometers" },
+    { value: "tonne_miles", label: "Tonne-Miles" },
+  ],
 };
 
 const VEHICLE_SUBCATEGORIES = [
@@ -131,6 +141,20 @@ const WASTE_SUBCATEGORIES = [
 const WATER_SUBCATEGORIES = [
   { value: "supply", label: "Water Supply" },
   { value: "treatment", label: "Water Treatment" },
+];
+
+const EMPLOYEE_COMMUTE_SUBCATEGORIES = [
+  { value: "average_car", label: "Car (Average)" },
+  { value: "bus", label: "Bus" },
+  { value: "rail", label: "Rail / Train" },
+  { value: "motorcycle", label: "Motorcycle" },
+];
+
+const UPSTREAM_TRANSPORT_SUBCATEGORIES = [
+  { value: "road_freight", label: "Road Freight (HGV)" },
+  { value: "rail_freight", label: "Rail Freight" },
+  { value: "sea_freight", label: "Sea Freight" },
+  { value: "air_freight", label: "Air Freight" },
 ];
 
 interface EmissionsFormProps {
@@ -169,6 +193,8 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
     air_travel: AIR_TRAVEL_SUBCATEGORIES,
     waste: WASTE_SUBCATEGORIES,
     water: WATER_SUBCATEGORIES,
+    employee_commute: EMPLOYEE_COMMUTE_SUBCATEGORIES,
+    upstream_transport: UPSTREAM_TRANSPORT_SUBCATEGORIES,
   };
   const subcategories = SUBCATEGORY_MAP[category] || [];
   const showSubcategory = subcategories.length > 0;
