@@ -61,7 +61,7 @@ export default function ContactPage() {
 
       <section className="pb-20">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-[1fr_340px] gap-12 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-[1fr_340px] gap-8 md:gap-12 max-w-4xl mx-auto">
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid sm:grid-cols-2 gap-4">

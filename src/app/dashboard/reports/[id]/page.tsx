@@ -163,6 +163,8 @@ export default function ReportDetailPage() {
               content={edits[section.code] ?? section.content}
               isAIGenerated={!edits[section.code]}
               confidence={section.confidence}
+              dataGaps={section.dataGaps}
+              recommendations={section.recommendations}
               onEdit={(content) =>
                 setEdits((prev) => ({ ...prev, [section.code]: content }))
               }

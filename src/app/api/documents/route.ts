@@ -104,8 +104,8 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "20");
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1") || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "20") || 20));
     const documentType = searchParams.get("documentType");
     const status = searchParams.get("status");
 

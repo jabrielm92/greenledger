@@ -70,9 +70,9 @@ export default function ReportsPage() {
         </Button>
       </PageHeader>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
@@ -86,7 +86,7 @@ export default function ReportsPage() {
         </Select>
 
         <Select value={frameworkFilter} onValueChange={setFrameworkFilter}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="All frameworks" />
           </SelectTrigger>
           <SelectContent>

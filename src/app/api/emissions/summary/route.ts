@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
     // Scope totals
     let totalScope1 = 0;
     let totalScope2 = 0;
+    let totalScope3 = 0;
 
     // Category breakdown
     const categoryMap = new Map<
@@ -45,12 +46,13 @@ export async function GET(req: NextRequest) {
     // Monthly breakdown
     const monthlyMap = new Map<
       string,
-      { scope1: number; scope2: number }
+      { scope1: number; scope2: number; scope3: number }
     >();
 
     for (const entry of entries) {
       if (entry.scope === "SCOPE_1") totalScope1 += entry.co2e;
       if (entry.scope === "SCOPE_2") totalScope2 += entry.co2e;
+      if (entry.scope === "SCOPE_3") totalScope3 += entry.co2e;
 
       // Category
       const catKey = `${entry.scope}:${entry.category}`;
@@ -65,18 +67,19 @@ export async function GET(req: NextRequest) {
 
       // Monthly
       const month = entry.startDate.toISOString().slice(0, 7);
-      const monthData = monthlyMap.get(month) || { scope1: 0, scope2: 0 };
+      const monthData = monthlyMap.get(month) || { scope1: 0, scope2: 0, scope3: 0 };
       if (entry.scope === "SCOPE_1") monthData.scope1 += entry.co2e;
       if (entry.scope === "SCOPE_2") monthData.scope2 += entry.co2e;
+      if (entry.scope === "SCOPE_3") monthData.scope3 += entry.co2e;
       monthlyMap.set(month, monthData);
     }
 
-    const totalEmissions = totalScope1 + totalScope2;
+    const totalEmissions = totalScope1 + totalScope2 + totalScope3;
 
     const byCategory = Array.from(categoryMap.entries()).map(
       ([key, val]) => ({
         category: key.split(":")[1],
-        scope: val.scope as "SCOPE_1" | "SCOPE_2",
+        scope: val.scope as "SCOPE_1" | "SCOPE_2" | "SCOPE_3",
         totalCo2e: val.totalCo2e,
         percentage: totalEmissions > 0 ? (val.totalCo2e / totalEmissions) * 100 : 0,
         entryCount: val.entryCount,
@@ -89,14 +92,14 @@ export async function GET(req: NextRequest) {
         month,
         scope1: data.scope1,
         scope2: data.scope2,
-        scope3: 0,
-        total: data.scope1 + data.scope2,
+        scope3: data.scope3,
+        total: data.scope1 + data.scope2 + data.scope3,
       }));
 
     return NextResponse.json({
       totalScope1,
       totalScope2,
-      totalScope3: 0,
+      totalScope3,
       totalEmissions,
       byCategory,
       byMonth,

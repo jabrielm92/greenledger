@@ -29,14 +29,14 @@ export default function EmissionsPage() {
   const { entries, totalPages, isLoading: entriesLoading } =
     useEmissions({
       page,
-      scope: scopeFilter || undefined,
+      scope: scopeFilter && scopeFilter !== "all" ? scopeFilter : undefined,
     });
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Emissions"
-        description="Track and manage your Scope 1 & 2 greenhouse gas emissions"
+        description="Track and manage your Scope 1, 2 & 3 greenhouse gas emissions"
       >
         <Button asChild variant="outline">
           <Link href="/dashboard/documents">
@@ -95,12 +95,12 @@ export default function EmissionsPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-slate-500">
-                  Total Emissions
+                  Scope 3 Emissions
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">
-                  {formatEmissions(summary?.totalEmissions ?? 0)}
+                <p className="text-2xl font-bold text-amber-600">
+                  {formatEmissions(summary?.totalScope3 ?? 0)}
                 </p>
               </CardContent>
             </Card>
@@ -132,13 +132,14 @@ export default function EmissionsPage() {
       {/* Filters & table */}
       <div className="flex items-center gap-3">
         <Select value={scopeFilter} onValueChange={setScopeFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="All scopes" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All scopes</SelectItem>
             <SelectItem value="SCOPE_1">Scope 1</SelectItem>
             <SelectItem value="SCOPE_2">Scope 2</SelectItem>
+            <SelectItem value="SCOPE_3">Scope 3</SelectItem>
           </SelectContent>
         </Select>
       </div>

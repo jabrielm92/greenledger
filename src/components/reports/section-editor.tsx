@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit3, Eye } from "lucide-react";
+import { AlertTriangle, Edit3, Eye, Lightbulb } from "lucide-react";
 
 interface SectionEditorProps {
   code: string;
@@ -13,6 +13,8 @@ interface SectionEditorProps {
   content: string;
   isAIGenerated: boolean;
   confidence: number;
+  dataGaps?: string[];
+  recommendations?: string[];
   onEdit: (content: string) => void;
 }
 
@@ -22,6 +24,8 @@ export function SectionEditor({
   content,
   isAIGenerated,
   confidence,
+  dataGaps,
+  recommendations,
   onEdit,
 }: SectionEditorProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -140,6 +144,38 @@ export function SectionEditor({
                 </p>
               );
             })}
+          </div>
+        )}
+
+        {dataGaps && dataGaps.length > 0 && (
+          <div className="mt-4 rounded-lg bg-amber-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-amber-700">
+              <AlertTriangle className="h-3 w-3" />
+              Data Gaps
+            </div>
+            <ul className="space-y-0.5">
+              {dataGaps.map((gap, i) => (
+                <li key={i} className="text-xs text-amber-600">
+                  {gap}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {recommendations && recommendations.length > 0 && (
+          <div className="mt-3 rounded-lg bg-blue-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-blue-700">
+              <Lightbulb className="h-3 w-3" />
+              Recommendations
+            </div>
+            <ul className="space-y-0.5">
+              {recommendations.map((rec, i) => (
+                <li key={i} className="text-xs text-blue-600">
+                  {rec}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </CardContent>

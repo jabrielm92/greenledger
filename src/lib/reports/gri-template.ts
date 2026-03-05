@@ -81,6 +81,11 @@ export const GRI_TEMPLATE: ReportTemplate = {
           required: true,
         },
         {
+          code: "GRI-305-3",
+          title: "Other Indirect (Scope 3) GHG Emissions",
+          required: false,
+        },
+        {
           code: "GRI-305-4",
           title: "GHG Emissions Intensity",
           required: false,

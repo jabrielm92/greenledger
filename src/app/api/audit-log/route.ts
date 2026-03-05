@@ -10,8 +10,8 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "25");
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1") || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "25") || 25));
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const userId = searchParams.get("userId");

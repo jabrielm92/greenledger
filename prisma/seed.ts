@@ -119,6 +119,23 @@ async function seedEmissionFactors() {
     // ============================================
     { category: "water", subcategory: "supply", region: "GB", unit: "kgCO2e/m3", co2ePerUnit: 0.149, co2PerUnit: 0.149, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
     { category: "water", subcategory: "treatment", region: "GB", unit: "kgCO2e/m3", co2ePerUnit: 0.272, co2PerUnit: 0.272, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
+
+    // ============================================
+    // EMPLOYEE COMMUTING (Scope 3)
+    // ============================================
+    { category: "employee_commute", subcategory: "average_car", region: "GLOBAL", unit: "kgCO2e/km", co2ePerUnit: 0.171, co2PerUnit: 0.170, ch4PerUnit: 0.0005, n2oPerUnit: 0.0005, source: "DEFRA", year: 2025 },
+    { category: "employee_commute", subcategory: "bus", region: "GLOBAL", unit: "kgCO2e/km", co2ePerUnit: 0.089, co2PerUnit: 0.088, ch4PerUnit: 0.0003, n2oPerUnit: 0.0007, source: "DEFRA", year: 2025 },
+    { category: "employee_commute", subcategory: "rail", region: "GLOBAL", unit: "kgCO2e/km", co2ePerUnit: 0.035, co2PerUnit: 0.035, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
+    { category: "employee_commute", subcategory: "motorcycle", region: "GLOBAL", unit: "kgCO2e/km", co2ePerUnit: 0.113, co2PerUnit: 0.112, ch4PerUnit: 0.0005, n2oPerUnit: 0.0005, source: "DEFRA", year: 2025 },
+    { category: "employee_commute", subcategory: "average_car", region: "GLOBAL", unit: "kgCO2e/mile", co2ePerUnit: 0.275, co2PerUnit: 0.273, ch4PerUnit: 0.001, n2oPerUnit: 0.001, source: "EPA", year: 2024 },
+
+    // ============================================
+    // UPSTREAM TRANSPORTATION (Scope 3)
+    // ============================================
+    { category: "upstream_transport", subcategory: "road_freight", region: "GLOBAL", unit: "kgCO2e/tonne_km", co2ePerUnit: 0.107, co2PerUnit: 0.106, ch4PerUnit: 0.0004, n2oPerUnit: 0.0006, source: "DEFRA", year: 2025 },
+    { category: "upstream_transport", subcategory: "rail_freight", region: "GLOBAL", unit: "kgCO2e/tonne_km", co2ePerUnit: 0.028, co2PerUnit: 0.028, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
+    { category: "upstream_transport", subcategory: "sea_freight", region: "GLOBAL", unit: "kgCO2e/tonne_km", co2ePerUnit: 0.016, co2PerUnit: 0.016, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
+    { category: "upstream_transport", subcategory: "air_freight", region: "GLOBAL", unit: "kgCO2e/tonne_km", co2ePerUnit: 1.128, co2PerUnit: 1.100, ch4PerUnit: 0.003, n2oPerUnit: 0.025, source: "DEFRA", year: 2025 },
   ];
 
   for (const factor of factors) {

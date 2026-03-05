@@ -38,14 +38,27 @@ export default function DocumentDetailPage() {
   const handleConfirm = async (data: Record<string, unknown>) => {
     setIsSubmitting(true);
     try {
-      await fetch(`/api/documents/${document.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "REVIEWED",
-          extractedData: data,
-        }),
-      });
+      const res = await fetch(
+        `/api/documents/${document.id}/create-emission`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ extractedData: data }),
+        }
+      );
+
+      if (!res.ok) {
+        // Fall back to just saving the reviewed data if emission creation fails
+        // (e.g. unsupported document type, missing emission factor)
+        const err = await res.json().catch(() => ({}));
+        console.warn("[CREATE_EMISSION]", err.error || "Failed");
+        await fetch(`/api/documents/${document.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "REVIEWED", extractedData: data }),
+        });
+      }
+
       refetch();
     } finally {
       setIsSubmitting(false);

@@ -5,7 +5,7 @@ import { logAudit } from "@/lib/audit/logger";
 import { z } from "zod";
 
 const createEmissionSchema = z.object({
-  scope: z.enum(["SCOPE_1", "SCOPE_2"]),
+  scope: z.enum(["SCOPE_1", "SCOPE_2", "SCOPE_3"]),
   category: z.string().min(1),
   subcategory: z.string().optional(),
   source: z.string().min(1),
@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const validated = createEmissionSchema.parse(body);
+
+    if (new Date(validated.endDate) < new Date(validated.startDate)) {
+      return NextResponse.json(
+        { error: "End date must be on or after start date" },
+        { status: 400 }
+      );
+    }
 
     const entry = await prisma.emissionEntry.create({
       data: {
@@ -98,8 +105,8 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "20");
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1") || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "20") || 20));
     const scope = searchParams.get("scope");
     const category = searchParams.get("category");
 

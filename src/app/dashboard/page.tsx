@@ -8,6 +8,7 @@ import { EmissionsChart } from "@/components/dashboard/emissions-chart";
 import { FrameworkProgress } from "@/components/dashboard/framework-progress";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { useEmissionsSummary } from "@/hooks/use-emissions";
 import type { DashboardStats, AuditLogEntry } from "@/types";
 
 interface FrameworkItem {
@@ -28,6 +29,7 @@ interface DashboardData {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { summary } = useEmissionsSummary();
 
   useEffect(() => {
     async function fetchDashboard() {
@@ -61,7 +63,7 @@ export default function DashboardPage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <EmissionsChart data={[]} />
+        <EmissionsChart data={summary?.byMonth ?? []} />
         <ComplianceScore score={data?.stats.complianceScore ?? 0} />
       </div>
 

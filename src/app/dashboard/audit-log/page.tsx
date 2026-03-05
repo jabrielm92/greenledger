@@ -146,7 +146,7 @@ export default function AuditLogPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-end gap-3">
-        <div className="relative flex-1 min-w-[200px] max-w-xs">
+        <div className="relative flex-1 min-w-[150px] max-w-xs">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             placeholder="Search..."
@@ -165,7 +165,7 @@ export default function AuditLogPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="All actions" />
           </SelectTrigger>
           <SelectContent>
@@ -184,7 +184,7 @@ export default function AuditLogPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="All entities" />
           </SelectTrigger>
           <SelectContent>
@@ -203,7 +203,7 @@ export default function AuditLogPage() {
             setStartDate(e.target.value);
             setPage(1);
           }}
-          className="w-[150px]"
+          className="w-full sm:w-[150px]"
           placeholder="From"
         />
         <Input
@@ -213,7 +213,7 @@ export default function AuditLogPage() {
             setEndDate(e.target.value);
             setPage(1);
           }}
-          className="w-[150px]"
+          className="w-full sm:w-[150px]"
           placeholder="To"
         />
       </div>
@@ -232,7 +232,7 @@ export default function AuditLogPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -292,7 +292,7 @@ export default function AuditLogPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-500">
             {total} total entries
           </p>

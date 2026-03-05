@@ -139,14 +139,27 @@ export class QuickBooksClient {
   }
 
   /**
+   * Validate and sanitize a date string to YYYY-MM-DD format.
+   */
+  private sanitizeDate(date: string): string {
+    const match = /^\d{4}-\d{2}-\d{2}$/.exec(date);
+    if (!match) {
+      throw new Error(`Invalid date format: expected YYYY-MM-DD, got "${date}"`);
+    }
+    return match[0];
+  }
+
+  /**
    * Fetch expense purchases for a date range.
    */
   async getExpenses(
     startDate: string,
     endDate: string
   ): Promise<QBPurchase[]> {
+    const safeStart = this.sanitizeDate(startDate);
+    const safeEnd = this.sanitizeDate(endDate);
     const result = await this.query<{ QueryResponse: { Purchase?: QBPurchase[] } }>(
-      `SELECT * FROM Purchase WHERE TxnDate >= '${startDate}' AND TxnDate <= '${endDate}'`
+      `SELECT * FROM Purchase WHERE TxnDate >= '${safeStart}' AND TxnDate <= '${safeEnd}'`
     );
     return result.QueryResponse.Purchase || [];
   }
@@ -155,8 +168,10 @@ export class QuickBooksClient {
    * Fetch bills for a date range.
    */
   async getBills(startDate: string, endDate: string): Promise<QBBill[]> {
+    const safeStart = this.sanitizeDate(startDate);
+    const safeEnd = this.sanitizeDate(endDate);
     const result = await this.query<{ QueryResponse: { Bill?: QBBill[] } }>(
-      `SELECT * FROM Bill WHERE TxnDate >= '${startDate}' AND TxnDate <= '${endDate}'`
+      `SELECT * FROM Bill WHERE TxnDate >= '${safeStart}' AND TxnDate <= '${safeEnd}'`
     );
     return result.QueryResponse.Bill || [];
   }

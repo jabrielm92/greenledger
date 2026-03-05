@@ -34,6 +34,8 @@ interface GeneratedSectionData {
   title: string;
   content: string;
   dataPointsUsed: string[];
+  dataGaps?: string[];
+  recommendations?: string[];
   confidence: number;
 }
 
