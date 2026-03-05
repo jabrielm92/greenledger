@@ -66,6 +66,7 @@ export function useEmissionsSummary(year?: number) {
   const [summary, setSummary] = useState<{
     totalScope1: number;
     totalScope2: number;
+    totalScope3: number;
     totalEmissions: number;
     entryCount: number;
     byCategory: CategoryBreakdown[];

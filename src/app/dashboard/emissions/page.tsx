@@ -36,7 +36,7 @@ export default function EmissionsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Emissions"
-        description="Track and manage your Scope 1 & 2 greenhouse gas emissions"
+        description="Track and manage your Scope 1, 2 & 3 greenhouse gas emissions"
       >
         <Button asChild variant="outline">
           <Link href="/dashboard/documents">
@@ -95,12 +95,12 @@ export default function EmissionsPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-slate-500">
-                  Total Emissions
+                  Scope 3 Emissions
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">
-                  {formatEmissions(summary?.totalEmissions ?? 0)}
+                <p className="text-2xl font-bold text-amber-600">
+                  {formatEmissions(summary?.totalScope3 ?? 0)}
                 </p>
               </CardContent>
             </Card>
@@ -139,6 +139,7 @@ export default function EmissionsPage() {
             <SelectItem value="all">All scopes</SelectItem>
             <SelectItem value="SCOPE_1">Scope 1</SelectItem>
             <SelectItem value="SCOPE_2">Scope 2</SelectItem>
+            <SelectItem value="SCOPE_3">Scope 3</SelectItem>
           </SelectContent>
         </Select>
       </div>

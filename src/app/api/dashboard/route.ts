@@ -60,9 +60,11 @@ export async function GET() {
     // Calculate scope totals
     let totalScope1 = 0;
     let totalScope2 = 0;
+    let totalScope3 = 0;
     for (const entry of emissionEntries) {
       if (entry.scope === "SCOPE_1") totalScope1 = entry._sum.co2e ?? 0;
       if (entry.scope === "SCOPE_2") totalScope2 = entry._sum.co2e ?? 0;
+      if (entry.scope === "SCOPE_3") totalScope3 = entry._sum.co2e ?? 0;
     }
 
     // Calculate compliance score (simplified: based on framework completion)
@@ -91,7 +93,8 @@ export async function GET() {
       stats: {
         totalScope1,
         totalScope2,
-        totalEmissions: totalScope1 + totalScope2,
+        totalScope3,
+        totalEmissions: totalScope1 + totalScope2 + totalScope3,
         complianceScore,
         documentsCount,
         reportsCount,

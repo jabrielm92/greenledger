@@ -68,15 +68,16 @@ export function ScopeBreakdown({
                     }
                   />
                   <Tooltip
-                    formatter={(value: number, name: string) => [
-                      formatEmissions(value),
-                      name === "scope1" ? "Scope 1" : "Scope 2",
-                    ]}
+                    formatter={(value: number, name: string) => {
+                      const labels: Record<string, string> = { scope1: "Scope 1", scope2: "Scope 2", scope3: "Scope 3" };
+                      return [formatEmissions(value), labels[name] || name];
+                    }}
                   />
                   <Legend
-                    formatter={(v) =>
-                      v === "scope1" ? "Scope 1" : "Scope 2"
-                    }
+                    formatter={(v) => {
+                      const labels: Record<string, string> = { scope1: "Scope 1", scope2: "Scope 2", scope3: "Scope 3" };
+                      return labels[v] || v;
+                    }}
                   />
                   <Bar
                     dataKey="scope1"
@@ -88,6 +89,12 @@ export function ScopeBreakdown({
                     dataKey="scope2"
                     stackId="a"
                     fill="#3b82f6"
+                    radius={[0, 0, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="scope3"
+                    stackId="a"
+                    fill="#d97706"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>

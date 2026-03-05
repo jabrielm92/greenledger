@@ -22,6 +22,7 @@ interface EmissionsDataPoint {
   month: string;
   scope1: number;
   scope2: number;
+  scope3: number;
 }
 
 interface EmissionsChartProps {
@@ -29,19 +30,25 @@ interface EmissionsChartProps {
   className?: string;
 }
 
+const SCOPE_LABELS: Record<string, string> = {
+  scope1: "Scope 1",
+  scope2: "Scope 2",
+  scope3: "Scope 3",
+};
+
 const defaultData: EmissionsDataPoint[] = [
-  { month: "Jan", scope1: 0, scope2: 0 },
-  { month: "Feb", scope1: 0, scope2: 0 },
-  { month: "Mar", scope1: 0, scope2: 0 },
-  { month: "Apr", scope1: 0, scope2: 0 },
-  { month: "May", scope1: 0, scope2: 0 },
-  { month: "Jun", scope1: 0, scope2: 0 },
-  { month: "Jul", scope1: 0, scope2: 0 },
-  { month: "Aug", scope1: 0, scope2: 0 },
-  { month: "Sep", scope1: 0, scope2: 0 },
-  { month: "Oct", scope1: 0, scope2: 0 },
-  { month: "Nov", scope1: 0, scope2: 0 },
-  { month: "Dec", scope1: 0, scope2: 0 },
+  { month: "Jan", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Feb", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Mar", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Apr", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "May", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Jun", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Jul", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Aug", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Sep", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Oct", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Nov", scope1: 0, scope2: 0, scope3: 0 },
+  { month: "Dec", scope1: 0, scope2: 0, scope3: 0 },
 ];
 
 export function EmissionsChart({ data, className }: EmissionsChartProps) {
@@ -52,7 +59,7 @@ export function EmissionsChart({ data, className }: EmissionsChartProps) {
       <CardHeader>
         <CardTitle className="text-base">Emissions Over Time</CardTitle>
         <CardDescription>
-          Monthly Scope 1 & 2 emissions (tCO2e)
+          Monthly Scope 1, 2 & 3 emissions (tCO2e)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -78,13 +85,11 @@ export function EmissionsChart({ data, className }: EmissionsChartProps) {
                 }}
                 formatter={(value: number, name: string) => [
                   `${value.toFixed(1)} tCO2e`,
-                  name === "scope1" ? "Scope 1" : "Scope 2",
+                  SCOPE_LABELS[name] || name,
                 ]}
               />
               <Legend
-                formatter={(value) =>
-                  value === "scope1" ? "Scope 1" : "Scope 2"
-                }
+                formatter={(value) => SCOPE_LABELS[value] || value}
               />
               <Area
                 type="monotone"
@@ -100,6 +105,14 @@ export function EmissionsChart({ data, className }: EmissionsChartProps) {
                 stackId="1"
                 stroke="#2563eb"
                 fill="#2563eb"
+                fillOpacity={0.3}
+              />
+              <Area
+                type="monotone"
+                dataKey="scope3"
+                stackId="1"
+                stroke="#d97706"
+                fill="#d97706"
                 fillOpacity={0.3}
               />
             </AreaChart>

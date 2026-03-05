@@ -35,6 +35,7 @@ export interface SessionUser {
 export interface DashboardStats {
   totalScope1: number;
   totalScope2: number;
+  totalScope3: number;
   totalEmissions: number;
   complianceScore: number;
   documentsCount: number;

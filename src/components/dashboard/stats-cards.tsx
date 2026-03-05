@@ -62,7 +62,7 @@ export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsPr
     {
       title: "Total Emissions",
       value: stats ? formatEmissions(stats.totalEmissions) : "0 tCO2e",
-      subtitle: `Scope 1: ${stats ? formatEmissions(stats.totalScope1) : "0"} | Scope 2: ${stats ? formatEmissions(stats.totalScope2) : "0"}`,
+      subtitle: `S1: ${stats ? formatEmissions(stats.totalScope1) : "0"} | S2: ${stats ? formatEmissions(stats.totalScope2) : "0"} | S3: ${stats ? formatEmissions(stats.totalScope3) : "0"}`,
       icon: BarChart3,
       color: "text-blue-600",
     },
