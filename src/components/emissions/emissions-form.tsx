@@ -284,7 +284,7 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
         {/* Scope */}
         <div className="space-y-2">
           <Label>Scope</Label>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {(["SCOPE_1", "SCOPE_2", "SCOPE_3"] as const).map((s) => (
               <label key={s} className="flex items-center gap-2 cursor-pointer">
                 <input

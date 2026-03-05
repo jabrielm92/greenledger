@@ -132,7 +132,7 @@ export default function EmissionsPage() {
       {/* Filters & table */}
       <div className="flex items-center gap-3">
         <Select value={scopeFilter} onValueChange={setScopeFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="All scopes" />
           </SelectTrigger>
           <SelectContent>

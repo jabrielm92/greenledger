@@ -47,7 +47,7 @@ export function ScopeBreakdown({
           <CardTitle className="text-base">Monthly Emissions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
+          <div className="h-[250px] sm:h-[300px]">
             {byMonth.length === 0 ? (
               <div className="flex h-full items-center justify-center text-sm text-slate-500">
                 No monthly data available
@@ -110,7 +110,7 @@ export function ScopeBreakdown({
           <CardTitle className="text-base">Emissions by Category</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
+          <div className="h-[250px] sm:h-[300px]">
             {byCategory.length === 0 ? (
               <div className="flex h-full items-center justify-center text-sm text-slate-500">
                 No category data available

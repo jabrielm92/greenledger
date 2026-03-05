@@ -50,7 +50,7 @@ export function EmissionsTable({ entries, isLoading }: EmissionsTableProps) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

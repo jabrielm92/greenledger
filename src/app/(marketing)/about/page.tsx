@@ -259,7 +259,7 @@ export default function AboutPage() {
           <p className="text-slate-300 mb-8 max-w-md mx-auto">
             See how GreenLedger can simplify ESG compliance for your organization.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/pricing"
               className="inline-flex items-center justify-center rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/25"

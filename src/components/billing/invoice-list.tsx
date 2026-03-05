@@ -58,7 +58,7 @@ export function InvoiceList({ invoices, isLoading }: InvoiceListProps) {
         {invoices.length === 0 ? (
           <p className="text-sm text-slate-500">No invoices yet.</p>
         ) : (
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

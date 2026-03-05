@@ -172,7 +172,7 @@ export default function PricingPage() {
                 key={plan.name}
                 className={`relative rounded-2xl border p-8 transition-all bg-white ${
                   plan.highlighted
-                    ? "border-brand-primary shadow-xl ring-2 ring-brand-primary/20 scale-[1.02]"
+                    ? "border-brand-primary shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]"
                     : "border-slate-200 hover:border-slate-300 hover:shadow-lg"
                 }`}
               >
@@ -258,7 +258,7 @@ export default function PricingPage() {
             See exactly what each tier includes
           </p>
           <div className="overflow-x-auto max-w-4xl mx-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-slate-200">
                   <th className="py-4 pr-4 text-left font-semibold text-brand-secondary">

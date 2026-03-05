@@ -113,7 +113,7 @@ export default function Home() {
               <Leaf className="mr-2 h-4 w-4" />
               AI-Powered ESG Compliance Platform
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-brand-secondary max-w-4xl mx-auto leading-[1.08]">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight text-brand-secondary max-w-4xl mx-auto leading-[1.08]">
               ESG Compliance on{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-emerald-500">
                 Autopilot
@@ -165,43 +165,43 @@ export default function Home() {
                   <div className="h-3 w-3 rounded-full bg-[#28C840]" />
                   <span className="ml-4 text-xs font-medium text-muted-foreground tracking-wide">GreenLedger Dashboard</span>
                 </div>
-                <div className="p-6 md:p-8">
-                  <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="p-4 sm:p-6 md:p-8">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
                     <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Emissions</p>
+                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Emissions</p>
                         <TrendingDown className="h-3.5 w-3.5 text-emerald-600" />
                       </div>
-                      <p className="text-2xl font-bold text-brand-secondary">1,247 <span className="text-xs font-normal text-muted-foreground">tCO2e</span></p>
+                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">1,247 <span className="text-xs font-normal text-muted-foreground">tCO2e</span></p>
                       <p className="text-xs font-medium text-emerald-600 mt-1">-12.4% vs last quarter</p>
                     </div>
                     <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Docs Processed</p>
+                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Docs Processed</p>
                         <FileText className="h-3.5 w-3.5 text-blue-600" />
                       </div>
-                      <p className="text-2xl font-bold text-brand-secondary">342</p>
+                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">342</p>
                       <p className="text-xs font-medium text-blue-600 mt-1">99.2% extraction accuracy</p>
                     </div>
                     <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100 p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">CSRD Score</p>
+                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">CSRD Score</p>
                         <Target className="h-3.5 w-3.5 text-amber-600" />
                       </div>
-                      <p className="text-2xl font-bold text-brand-secondary">87%</p>
+                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">87%</p>
                       <p className="text-xs font-medium text-amber-600 mt-1">+9 pts this period</p>
                     </div>
                     <div className="rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-100 p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Suppliers</p>
+                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Suppliers</p>
                         <Building2 className="h-3.5 w-3.5 text-violet-600" />
                       </div>
-                      <p className="text-2xl font-bold text-brand-secondary">24</p>
+                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">24</p>
                       <p className="text-xs font-medium text-violet-600 mt-1">3 need attention</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2 h-40 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100 flex items-end justify-center p-4 pb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="sm:col-span-2 h-32 sm:h-40 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100 flex items-end justify-center p-4 pb-6">
                       <div className="flex items-end gap-1 w-full max-w-md">
                         {[32, 48, 38, 56, 42, 62, 52, 68, 48, 72, 58, 78].map((h, i) => (
                           <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -214,7 +214,7 @@ export default function Home() {
                         ))}
                       </div>
                     </div>
-                    <div className="h-40 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-100 p-4 flex flex-col justify-between">
+                    <div className="h-32 sm:h-40 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-100 p-4 flex flex-col justify-between">
                       <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Scope Breakdown</p>
                       <div className="space-y-2">
                         <div>
@@ -250,7 +250,7 @@ export default function Home() {
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60 mb-8 font-medium">
                 Trusted by sustainability-focused organizations
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-6">
+              <div className="flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6">
                 {[
                   "Meridian Tech",
                   "Atlas Group",
@@ -260,7 +260,7 @@ export default function Home() {
                 ].map((name) => (
                   <div
                     key={name}
-                    className="flex items-center gap-2.5 text-base font-semibold tracking-wide text-slate-300/80"
+                    className="flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base font-semibold tracking-wide text-slate-300/80"
                   >
                     <div className="h-8 w-8 rounded-lg bg-slate-100/80" />
                     {name}
@@ -474,7 +474,7 @@ export default function Home() {
               {/* Feature 2 */}
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="order-2 md:order-1 rounded-2xl bg-gradient-to-br from-blue-50 to-violet-50 border border-slate-100 p-8 shadow-sm">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       { framework: "CSRD", status: "Complete", progress: 87, color: "emerald" },
                       { framework: "GRI", status: "In Progress", progress: 64, color: "blue" },
@@ -662,7 +662,7 @@ export default function Home() {
                 { value: "4.9/5", label: "Customer satisfaction" },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
-                  <p className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-emerald-500">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-emerald-500">
                     {stat.value}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground font-medium uppercase tracking-wider">
@@ -791,7 +791,7 @@ export default function Home() {
                   key={plan.name}
                   className={`relative rounded-2xl border p-8 ${
                     plan.highlighted
-                      ? "border-brand-primary shadow-xl ring-2 ring-brand-primary/20 scale-[1.02]"
+                      ? "border-brand-primary shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]"
                       : "border-slate-200 hover:border-slate-300 hover:shadow-md"
                   } transition-all bg-white`}
                 >

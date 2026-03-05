@@ -90,8 +90,8 @@ export default function SuppliersPage() {
       )}
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-xs">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[180px] max-w-xs">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             placeholder="Search suppliers..."
@@ -101,7 +101,7 @@ export default function SuppliersPage() {
           />
         </div>
         <Select value={riskFilter} onValueChange={setRiskFilter}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="All risk levels" />
           </SelectTrigger>
           <SelectContent>
@@ -127,7 +127,7 @@ export default function SuppliersPage() {
           No suppliers found.
         </div>
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

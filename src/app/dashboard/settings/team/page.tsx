@@ -203,7 +203,7 @@ export default function TeamSettingsPage() {
           ) : members.length === 0 ? (
             <p className="text-sm text-slate-500">No team members yet.</p>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
