@@ -82,6 +82,16 @@ export async function POST(
       );
     }
 
+    // Validate date order
+    const start = new Date(draft.startDate);
+    const end = new Date(draft.endDate);
+    if (end < start) {
+      return NextResponse.json(
+        { error: "End date must be on or after start date" },
+        { status: 400 }
+      );
+    }
+
     // Create the emission entry
     const entry = await prisma.emissionEntry.create({
       data: {

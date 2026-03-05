@@ -34,6 +34,12 @@ const SCOPE_2_CATEGORIES = [
   { value: "district_cooling", label: "Purchased Cooling" },
 ];
 
+const SCOPE_3_CATEGORIES = [
+  { value: "air_travel", label: "Business Air Travel" },
+  { value: "waste", label: "Waste Disposal" },
+  { value: "water", label: "Water Supply & Treatment" },
+];
+
 const UNITS_BY_CATEGORY: Record<string, { value: string; label: string }[]> = {
   natural_gas: [
     { value: "therms", label: "Therms" },
@@ -79,6 +85,17 @@ const UNITS_BY_CATEGORY: Record<string, { value: string; label: string }[]> = {
     { value: "kWh", label: "kWh" },
     { value: "MWh", label: "MWh" },
   ],
+  air_travel: [
+    { value: "km", label: "Kilometers" },
+    { value: "miles", label: "Miles" },
+  ],
+  waste: [
+    { value: "tonnes", label: "Tonnes" },
+    { value: "kg", label: "Kilograms" },
+  ],
+  water: [
+    { value: "m3", label: "Cubic Meters (m³)" },
+  ],
 };
 
 const VEHICLE_SUBCATEGORIES = [
@@ -99,13 +116,30 @@ const REFRIGERANT_SUBCATEGORIES = [
   { value: "R-22", label: "R-22" },
 ];
 
+const AIR_TRAVEL_SUBCATEGORIES = [
+  { value: "domestic", label: "Domestic" },
+  { value: "short_haul", label: "Short-Haul International" },
+  { value: "long_haul", label: "Long-Haul International" },
+];
+
+const WASTE_SUBCATEGORIES = [
+  { value: "landfill_general", label: "Landfill (General)" },
+  { value: "recycling_mixed", label: "Recycling (Mixed)" },
+  { value: "incineration", label: "Incineration" },
+];
+
+const WATER_SUBCATEGORIES = [
+  { value: "supply", label: "Water Supply" },
+  { value: "treatment", label: "Water Treatment" },
+];
+
 interface EmissionsFormProps {
   className?: string;
 }
 
 export function EmissionsForm({ className }: EmissionsFormProps) {
   const router = useRouter();
-  const [scope, setScope] = useState<"SCOPE_1" | "SCOPE_2">("SCOPE_1");
+  const [scope, setScope] = useState<"SCOPE_1" | "SCOPE_2" | "SCOPE_3">("SCOPE_1");
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
   const [source, setSource] = useState("");
@@ -122,15 +156,22 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const categories = scope === "SCOPE_1" ? SCOPE_1_CATEGORIES : SCOPE_2_CATEGORIES;
+  const categories =
+    scope === "SCOPE_1"
+      ? SCOPE_1_CATEGORIES
+      : scope === "SCOPE_2"
+      ? SCOPE_2_CATEGORIES
+      : SCOPE_3_CATEGORIES;
   const units = UNITS_BY_CATEGORY[category] || [];
-  const showSubcategory = category === "vehicle" || category === "refrigerant";
-  const subcategories =
-    category === "vehicle"
-      ? VEHICLE_SUBCATEGORIES
-      : category === "refrigerant"
-      ? REFRIGERANT_SUBCATEGORIES
-      : [];
+  const SUBCATEGORY_MAP: Record<string, { value: string; label: string }[]> = {
+    vehicle: VEHICLE_SUBCATEGORIES,
+    refrigerant: REFRIGERANT_SUBCATEGORIES,
+    air_travel: AIR_TRAVEL_SUBCATEGORIES,
+    waste: WASTE_SUBCATEGORIES,
+    water: WATER_SUBCATEGORIES,
+  };
+  const subcategories = SUBCATEGORY_MAP[category] || [];
+  const showSubcategory = subcategories.length > 0;
 
   const handleCalculate = async () => {
     setError("");
@@ -218,7 +259,7 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
         <div className="space-y-2">
           <Label>Scope</Label>
           <div className="flex gap-4">
-            {(["SCOPE_1", "SCOPE_2"] as const).map((s) => (
+            {(["SCOPE_1", "SCOPE_2", "SCOPE_3"] as const).map((s) => (
               <label key={s} className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -235,7 +276,11 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
                   className="accent-emerald-600"
                 />
                 <span className="text-sm">
-                  {s === "SCOPE_1" ? "Scope 1 (Direct)" : "Scope 2 (Indirect)"}
+                  {s === "SCOPE_1"
+                    ? "Scope 1 (Direct)"
+                    : s === "SCOPE_2"
+                    ? "Scope 2 (Indirect)"
+                    : "Scope 3 (Value Chain)"}
                 </span>
               </label>
             ))}
@@ -398,6 +443,10 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
           />
         </div>
 
+        {startDate && endDate && endDate < startDate && (
+          <p className="text-sm text-red-600">End date must be on or after start date</p>
+        )}
+
         {error && (
           <p className="text-sm text-red-600">{error}</p>
         )}
@@ -418,7 +467,7 @@ export function EmissionsForm({ className }: EmissionsFormProps) {
             <CalculationDetail result={calcResult} />
             <Button
               onClick={handleSave}
-              disabled={isSaving || !source || !startDate || !endDate}
+              disabled={isSaving || !source || !startDate || !endDate || endDate < startDate}
               className="w-full bg-emerald-600 hover:bg-emerald-700"
             >
               {isSaving ? "Saving..." : "Confirm & Save Entry"}

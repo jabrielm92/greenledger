@@ -36,6 +36,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validated = createEmissionSchema.parse(body);
 
+    if (new Date(validated.endDate) < new Date(validated.startDate)) {
+      return NextResponse.json(
+        { error: "End date must be on or after start date" },
+        { status: 400 }
+      );
+    }
+
     const entry = await prisma.emissionEntry.create({
       data: {
         organizationId: session.user.organizationId,
