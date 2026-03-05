@@ -48,26 +48,31 @@ export async function POST(req: Request) {
       },
     });
 
-    // Generate verification token and send verification email
-    const verifyToken = crypto.randomBytes(32).toString("hex");
-    const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    // Generate verification token and send verification email (non-blocking)
+    try {
+      const verifyToken = crypto.randomBytes(32).toString("hex");
+      const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    await prisma.verificationToken.create({
-      data: {
-        identifier: `verify:${email.toLowerCase()}`,
-        token: verifyToken,
-        expires: verifyExpires,
-      },
-    });
+      await prisma.verificationToken.create({
+        data: {
+          identifier: `verify:${email.toLowerCase()}`,
+          token: verifyToken,
+          expires: verifyExpires,
+        },
+      });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const verifyUrl = `${appUrl}/api/auth/verify-email?token=${verifyToken}&email=${encodeURIComponent(email.toLowerCase())}`;
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const verifyUrl = `${appUrl}/api/auth/verify-email?token=${verifyToken}&email=${encodeURIComponent(email.toLowerCase())}`;
 
-    await sendEmail({
-      to: email.toLowerCase(),
-      subject: "Verify your GreenLedger email",
-      react: VerifyEmail({ userName: name || "there", verifyUrl }),
-    });
+      await sendEmail({
+        to: email.toLowerCase(),
+        subject: "Verify your GreenLedger email",
+        react: VerifyEmail({ userName: name || "there", verifyUrl }),
+      });
+    } catch (emailError) {
+      console.error("[USERS_POST] Failed to send verification email:", emailError);
+      // Registration still succeeds — user can request verification email later
+    }
 
     return NextResponse.json(user, { status: 201 });
   } catch (error) {
