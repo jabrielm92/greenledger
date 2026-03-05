@@ -5,7 +5,7 @@ import { logAudit } from "@/lib/audit/logger";
 import { z } from "zod";
 
 const createEmissionSchema = z.object({
-  scope: z.enum(["SCOPE_1", "SCOPE_2"]),
+  scope: z.enum(["SCOPE_1", "SCOPE_2", "SCOPE_3"]),
   category: z.string().min(1),
   subcategory: z.string().optional(),
   source: z.string().min(1),
