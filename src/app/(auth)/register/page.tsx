@@ -57,8 +57,15 @@ export default function RegisterPage() {
         redirect: false,
       });
 
-      if (signInResult?.error) {
-        // Registration succeeded but auto-login failed — redirect to login
+      if (signInResult?.error || !signInResult?.ok) {
+        router.push("/login?registered=true");
+        return;
+      }
+
+      // Verify session was actually created before navigating
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      if (!session?.user) {
         router.push("/login?registered=true");
         return;
       }

@@ -46,8 +46,16 @@ function LoginPageContent() {
         redirect: false,
       });
 
-      if (result?.error) {
+      if (result?.error || !result?.ok) {
         setError("Invalid email or password. Please try again.");
+        return;
+      }
+
+      // Verify session was actually created
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      if (!session?.user) {
+        setError("Sign-in failed. Please try again.");
         return;
       }
 
