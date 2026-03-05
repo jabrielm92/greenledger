@@ -305,6 +305,8 @@ export function ReportWizard({ reportingPeriods }: ReportWizardProps) {
                 }
                 isAIGenerated={!store.manualEdits[section.code]}
                 confidence={section.confidence}
+                dataGaps={section.dataGaps}
+                recommendations={section.recommendations}
                 onEdit={(content) =>
                   store.setManualEdit(section.code, content)
                 }
@@ -345,6 +347,8 @@ export function ReportWizard({ reportingPeriods }: ReportWizardProps) {
               sections={Object.values(store.generatedSections).map((s) => ({
                 ...s,
                 dataPointsUsed: s.dataPointsUsed,
+                dataGaps: s.dataGaps || [],
+                recommendations: s.recommendations || [],
                 methodology: "",
               }))}
             />

@@ -78,6 +78,26 @@ export async function PATCH(
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
+    // When manual edits are provided, merge them into finalContent
+    let mergedFinalContent = validated.finalContent;
+    if (validated.manualEdits && !validated.finalContent) {
+      const baseContent = (existing.finalContent || existing.generatedContent) as Record<
+        string,
+        Record<string, unknown>
+      > | null;
+      if (baseContent) {
+        mergedFinalContent = { ...baseContent };
+        for (const [sectionCode, editedText] of Object.entries(validated.manualEdits)) {
+          if (mergedFinalContent[sectionCode]) {
+            mergedFinalContent[sectionCode] = {
+              ...mergedFinalContent[sectionCode],
+              content: editedText,
+            };
+          }
+        }
+      }
+    }
+
     const updated = await prisma.report.update({
       where: { id },
       data: {
@@ -86,8 +106,8 @@ export async function PATCH(
         ...(validated.manualEdits
           ? { manualEdits: validated.manualEdits as never }
           : {}),
-        ...(validated.finalContent
-          ? { finalContent: validated.finalContent as never }
+        ...(mergedFinalContent
+          ? { finalContent: mergedFinalContent as never }
           : {}),
         ...(validated.status === "PUBLISHED"
           ? { publishedAt: new Date() }

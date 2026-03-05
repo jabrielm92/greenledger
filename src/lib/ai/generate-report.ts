@@ -104,6 +104,8 @@ export async function generateReport(
         title: sectionInfo.title,
         content: parsed.content || "",
         dataPointsUsed: parsed.dataPointsCovered || [],
+        dataGaps: parsed.dataGaps || [],
+        recommendations: parsed.recommendations || [],
         confidence: parsed.confidence || 0,
         methodology: `AI-generated using ${input.frameworkType} template with available emissions and organizational data`,
       };
@@ -114,6 +116,8 @@ export async function generateReport(
         title: sectionInfo.title,
         content: text,
         dataPointsUsed: [],
+        dataGaps: [],
+        recommendations: [],
         confidence: 0.5,
         methodology: "AI-generated (raw text response)",
       };
@@ -126,6 +130,7 @@ export async function generateReport(
 interface EmissionsSummaryAgg {
   scope1Total: number;
   scope2Total: number;
+  scope3Total: number;
   totalEmissions: number;
   byCategory: Record<string, number>;
   entryCount: number;
@@ -136,18 +141,21 @@ function aggregateEmissions(
 ): EmissionsSummaryAgg {
   let scope1Total = 0;
   let scope2Total = 0;
+  let scope3Total = 0;
   const byCategory: Record<string, number> = {};
 
   for (const e of emissions) {
     if (e.scope === "SCOPE_1") scope1Total += e.co2e;
     if (e.scope === "SCOPE_2") scope2Total += e.co2e;
+    if (e.scope === "SCOPE_3") scope3Total += e.co2e;
     byCategory[e.category] = (byCategory[e.category] || 0) + e.co2e;
   }
 
   return {
     scope1Total,
     scope2Total,
-    totalEmissions: scope1Total + scope2Total,
+    scope3Total,
+    totalEmissions: scope1Total + scope2Total + scope3Total,
     byCategory,
     entryCount: emissions.length,
   };
@@ -163,6 +171,7 @@ function buildSectionData(
     return {
       scope1Emissions: emissions.scope1Total,
       scope2Emissions: emissions.scope2Total,
+      scope3Emissions: emissions.scope3Total,
       totalEmissions: emissions.totalEmissions,
       emissionsByCategory: emissions.byCategory,
       dataEntryCount: emissions.entryCount,

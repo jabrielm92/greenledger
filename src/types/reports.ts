@@ -21,6 +21,8 @@ export interface GeneratedSection {
   title: string;
   content: string;
   dataPointsUsed: string[];
+  dataGaps: string[];
+  recommendations: string[];
   confidence: number;
   methodology: string;
 }
