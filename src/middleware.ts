@@ -1,19 +1,18 @@
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/lib/auth-options";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 const publicRoutes = ["/", "/pricing", "/about", "/contact", "/privacy", "/terms"];
 const authRoutes = ["/login", "/register", "/verify-email", "/forgot-password"];
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
 
   // Public/marketing routes — always accessible
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Static assets & API routes (except auth check routes) — skip
+  // Static assets & API routes — skip
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -22,51 +21,45 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-  });
+  const session = req.auth;
 
   // Auth routes (login, register, etc.)
   if (authRoutes.includes(pathname)) {
-    if (token) {
+    if (session?.user) {
       // Already logged in — redirect to dashboard or onboarding
-      if (!token.organizationId) {
-        return NextResponse.redirect(new URL("/onboarding", request.url));
+      const user = session.user as { organizationId?: string };
+      if (!user.organizationId) {
+        return NextResponse.redirect(new URL("/onboarding", req.url));
       }
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return NextResponse.next();
   }
 
   // Protected routes — require authentication
-  if (!token) {
-    const loginUrl = new URL("/login", request.url);
+  if (!session?.user) {
+    const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Onboarding routes
+  const user = session.user as { organizationId?: string };
+
+  // Onboarding routes — allow access
   if (pathname.startsWith("/onboarding")) {
-    // If user already has a completed org, redirect to dashboard
-    if (token.organizationId) {
-      // Check if onboarding is complete by looking up org
-      // For simplicity, allow access to onboarding even with org (they may not have finished)
-      return NextResponse.next();
-    }
     return NextResponse.next();
   }
 
   // Dashboard routes — require organization
   if (pathname.startsWith("/dashboard")) {
-    if (!token.organizationId) {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
+    if (!user.organizationId) {
+      return NextResponse.redirect(new URL("/onboarding", req.url));
     }
     return NextResponse.next();
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [

@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
@@ -20,37 +20,58 @@ const result = NextAuth({
     error: "/login",
   },
   providers: [
-    CredentialsProvider({
-      name: "credentials",
+    Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+        try {
+          const email = credentials?.email as string | undefined;
+          const password = credentials?.password as string | undefined;
 
-        const { email, password } = parsed.data;
+          if (!email || !password) {
+            console.error("[AUTH] Missing email or password");
+            return null;
+          }
 
-        const user = await prisma.user.findUnique({
-          where: { email: email.toLowerCase() },
-          include: { organization: true },
-        });
+          const parsed = loginSchema.safeParse({ email, password });
+          if (!parsed.success) {
+            console.error("[AUTH] Validation failed:", parsed.error.flatten());
+            return null;
+          }
 
-        if (!user || !user.hashedPassword) return null;
+          const user = await prisma.user.findUnique({
+            where: { email: parsed.data.email.toLowerCase() },
+            include: { organization: true },
+          });
 
-        const isValid = await bcrypt.compare(password, user.hashedPassword);
-        if (!isValid) return null;
+          if (!user || !user.hashedPassword) {
+            console.error("[AUTH] User not found or no password:", parsed.data.email);
+            return null;
+          }
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          organizationId: user.organizationId,
-          role: user.role,
-          plan: user.organization?.plan ?? "FREE_TRIAL",
-        };
+          const isValid = await bcrypt.compare(parsed.data.password, user.hashedPassword);
+          if (!isValid) {
+            console.error("[AUTH] Invalid password for:", parsed.data.email);
+            return null;
+          }
+
+          console.log("[AUTH] Authorize success for:", user.email, "id:", user.id);
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            organizationId: user.organizationId,
+            role: user.role,
+            plan: user.organization?.plan ?? "FREE_TRIAL",
+          };
+        } catch (error) {
+          console.error("[AUTH] Authorize error:", error);
+          return null;
+        }
       },
     }),
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -64,6 +85,13 @@ const result = NextAuth({
       : []),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      // Explicitly allow credentials sign-in (adapter won't interfere)
+      if (account?.provider === "credentials") {
+        return !!user;
+      }
+      return true;
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id!;
@@ -81,14 +109,18 @@ const result = NextAuth({
 
       // Refresh org data on each request if user has an org
       if (token.id && !token.organizationId) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          include: { organization: true },
-        });
-        if (dbUser?.organizationId) {
-          token.organizationId = dbUser.organizationId;
-          token.role = dbUser.role;
-          token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            include: { organization: true },
+          });
+          if (dbUser?.organizationId) {
+            token.organizationId = dbUser.organizationId;
+            token.role = dbUser.role;
+            token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
+          }
+        } catch (error) {
+          console.error("[AUTH] JWT refresh error:", error);
         }
       }
 
