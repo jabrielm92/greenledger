@@ -6,7 +6,7 @@ import type { CalculationInput } from "@/types";
  */
 
 export interface EmissionDraft {
-  scope: "SCOPE_1" | "SCOPE_2";
+  scope: "SCOPE_1" | "SCOPE_2" | "SCOPE_3";
   category: string;
   subcategory?: string;
   source: string;
@@ -33,6 +33,10 @@ export function mapExtractedDataToEmission(
       return mapUtilityBill(extractedData, region);
     case "FUEL_RECEIPT":
       return mapFuelReceipt(extractedData, region);
+    case "TRAVEL_RECORD":
+      return mapTravelRecord(extractedData, region);
+    case "WASTE_MANIFEST":
+      return mapWasteManifest(extractedData, region);
     default:
       return null;
   }
@@ -114,6 +118,78 @@ function mapFuelReceipt(
       activityValue: quantity.value,
       activityUnit: quantity.unit,
       category: fuelType,
+      region,
+      year,
+    },
+  };
+}
+
+function mapTravelRecord(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  const distance = data.distance as
+    | { value: number; unit: string }
+    | null
+    | undefined;
+  if (!distance?.value || !distance?.unit) return null;
+
+  const travelType = (data.travelType as string) || "domestic";
+  const description = (data.description as string) || "Business travel";
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  return {
+    scope: "SCOPE_3",
+    category: "air_travel",
+    subcategory: travelType,
+    source: description,
+    description: `Business air travel — ${travelType}`,
+    activityValue: distance.value,
+    activityUnit: distance.unit,
+    startDate: date,
+    endDate: date,
+    calculationInput: {
+      activityValue: distance.value,
+      activityUnit: distance.unit,
+      category: "air_travel",
+      subcategory: travelType,
+      region,
+      year,
+    },
+  };
+}
+
+function mapWasteManifest(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  const weight = data.weight as
+    | { value: number; unit: string }
+    | null
+    | undefined;
+  if (!weight?.value || !weight?.unit) return null;
+
+  const wasteType = (data.wasteType as string) || "landfill_general";
+  const handler = (data.handler as string) || "Unknown waste handler";
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  return {
+    scope: "SCOPE_3",
+    category: "waste",
+    subcategory: wasteType,
+    source: handler,
+    description: `Waste disposal (${wasteType}) by ${handler}`,
+    activityValue: weight.value,
+    activityUnit: weight.unit,
+    startDate: date,
+    endDate: date,
+    calculationInput: {
+      activityValue: weight.value,
+      activityUnit: weight.unit,
+      category: "waste",
+      subcategory: wasteType,
       region,
       year,
     },

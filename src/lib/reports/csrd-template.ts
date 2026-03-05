@@ -62,6 +62,11 @@ export const CSRD_TEMPLATE: ReportTemplate = {
           required: true,
         },
         {
+          code: "E1-6-S3",
+          title: "Scope 3 GHG Emissions — Value Chain Breakdown",
+          required: false,
+        },
+        {
           code: "E1-7",
           title: "GHG Removals & Carbon Credits",
           required: false,

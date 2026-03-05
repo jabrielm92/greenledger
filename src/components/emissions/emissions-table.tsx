@@ -75,10 +75,16 @@ export function EmissionsTable({ entries, isLoading }: EmissionsTableProps) {
                   className={
                     entry.scope === "SCOPE_1"
                       ? "bg-orange-100 text-orange-700"
+                      : entry.scope === "SCOPE_3"
+                      ? "bg-amber-100 text-amber-700"
                       : "bg-blue-100 text-blue-700"
                   }
                 >
-                  {entry.scope === "SCOPE_1" ? "Scope 1" : "Scope 2"}
+                  {entry.scope === "SCOPE_1"
+                    ? "Scope 1"
+                    : entry.scope === "SCOPE_3"
+                    ? "Scope 3"
+                    : "Scope 2"}
                 </Badge>
               </TableCell>
               <TableCell className="text-sm">

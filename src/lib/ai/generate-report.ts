@@ -209,7 +209,11 @@ export function buildReportSectionPrompt(
   },
   sectionData: Record<string, unknown>
 ): string {
-  return `You are an expert sustainability report writer helping a small-to-medium business comply with the EU Corporate Sustainability Reporting Directive (CSRD) under the European Sustainability Reporting Standards (ESRS).
+  const frameworkContext = sectionCode.startsWith("GRI")
+    ? "the Global Reporting Initiative (GRI) Standards"
+    : "the EU Corporate Sustainability Reporting Directive (CSRD) under the European Sustainability Reporting Standards (ESRS)";
+
+  return `You are an expert sustainability report writer helping a small-to-medium business comply with ${frameworkContext}.
 
 COMPANY CONTEXT:
 - Company: ${orgContext.name}
@@ -226,7 +230,7 @@ AVAILABLE DATA:
 ${JSON.stringify(sectionData, null, 2)}
 
 INSTRUCTIONS:
-1. Write a professional, audit-ready narrative section for this ESRS disclosure requirement.
+1. Write a professional, audit-ready narrative section for this disclosure requirement.
 2. Use the provided data to support all claims with specific numbers.
 3. Where data is missing, note it as a disclosure gap and suggest what data is needed.
 4. Write in third person referring to the company by name.
@@ -234,7 +238,7 @@ INSTRUCTIONS:
 6. Include relevant metrics, percentages, and year-over-year comparisons where data allows.
 7. Structure the section with appropriate subheadings if the content warrants it.
 8. Keep the tone factual and balanced — do not overstate achievements.
-9. Reference specific ESRS data point codes where applicable (e.g., "As required by E1-6...").
+9. Reference specific data point codes where applicable (e.g., "As required by ${sectionCode}...").
 
 RESPONSE FORMAT:
 Respond with ONLY a valid JSON object:

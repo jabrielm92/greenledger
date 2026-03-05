@@ -29,7 +29,7 @@ export default function EmissionsPage() {
   const { entries, totalPages, isLoading: entriesLoading } =
     useEmissions({
       page,
-      scope: scopeFilter || undefined,
+      scope: scopeFilter && scopeFilter !== "all" ? scopeFilter : undefined,
     });
 
   return (
