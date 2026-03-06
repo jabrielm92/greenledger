@@ -29,6 +29,7 @@ model User {
   accounts        Account[]
   sessions        Session[]
   auditLogs       AuditLog[]
+  notifications   Notification[]
   uploadedDocuments Document[] @relation("UploadedBy")
 
   @@index([organizationId])
@@ -118,6 +119,7 @@ model Organization {
   auditLogs            AuditLog[]
   complianceFrameworks OrgFramework[]
   reportingPeriods     ReportingPeriod[]
+  notifications        Notification[]
 
   @@index([slug])
   @@index([stripeCustomerId])
@@ -489,6 +491,30 @@ enum RiskLevel {
   HIGH
   CRITICAL
   UNKNOWN
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String?
+  type           String
+  title          String
+  message        String   @db.Text
+  link           String?
+  entityType     String?
+  entityId       String?
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User? @relation(fields: [userId], references: [id])
+
+  @@index([organizationId, isRead, createdAt])
+  @@index([userId, isRead])
 }
 
 // ============================================
