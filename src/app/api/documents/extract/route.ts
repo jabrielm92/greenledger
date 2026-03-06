@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
 import { logAudit } from "@/lib/audit/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { emit } from "@/lib/events";
 
 const extractSchema = z.object({
   documentId: z.string().cuid(),
@@ -81,6 +82,18 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // Trigger post-extraction pipeline (auto-create emissions, detect suppliers, notify)
+      emit("document.extracted", {
+        documentId,
+        organizationId: session.user.organizationId,
+        userId: session.user.id,
+        documentType: result.classification.documentType,
+        extractedData: result.extractedData as Record<string, unknown>,
+        confidence: result.confidence,
+      }).catch((err) =>
+        console.error("[POST_EXTRACTION_PIPELINE]", err)
+      );
+
       return NextResponse.json(updatedDocument);
     } catch (extractionError) {
       // Mark as failed
@@ -94,6 +107,18 @@ export async function POST(req: NextRequest) {
               : "Extraction failed",
         },
       });
+
+      // Notify about extraction failure
+      emit("document.extraction_failed", {
+        documentId,
+        organizationId: session.user.organizationId,
+        userId: session.user.id,
+        error: extractionError instanceof Error
+          ? extractionError.message
+          : "Extraction failed",
+      }).catch((err) =>
+        console.error("[EXTRACTION_FAILED_NOTIFY]", err)
+      );
 
       console.error("[EXTRACTION_ERROR]", extractionError);
       return NextResponse.json(
