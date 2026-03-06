@@ -6,6 +6,7 @@ import { z } from "zod";
 
 const checkoutSchema = z.object({
   plan: z.enum(["BASE", "PROFESSIONAL", "ENTERPRISE"]),
+  returnTo: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -16,10 +17,18 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { plan } = checkoutSchema.parse(body);
+    const { plan, returnTo } = checkoutSchema.parse(body);
 
     // Auto-provision product/price in Stripe if it doesn't exist yet
     const stripePriceId = await getStripePriceId(plan as PaidPlanTier);
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const successUrl = returnTo === "onboarding"
+      ? `${appUrl}/onboarding/plan?upgraded=true`
+      : `${appUrl}/dashboard/settings/billing?success=true`;
+    const cancelUrl = returnTo === "onboarding"
+      ? `${appUrl}/onboarding/plan`
+      : `${appUrl}/dashboard/settings/billing`;
 
     // Check if org already has a Stripe customer
     const org = await prisma.organization.findUnique({
@@ -35,8 +44,8 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings/billing?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings/billing`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       customer_email: org?.stripeCustomerId ? undefined : session.user.email,
       customer: org?.stripeCustomerId || undefined,
       metadata: {

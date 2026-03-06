@@ -67,6 +67,7 @@ const result = NextAuth({
             organizationId: user.organizationId,
             role: user.role,
             plan: user.organization?.plan ?? "FREE_TRIAL",
+            emailVerified: !!user.emailVerified,
           };
         } catch (error) {
           console.error("[AUTH] Authorize error:", error);
@@ -98,26 +99,31 @@ const result = NextAuth({
         token.organizationId = (user as Record<string, unknown>).organizationId as string | null;
         token.role = (user as Record<string, unknown>).role as string;
         token.plan = (user as Record<string, unknown>).plan as string;
+        token.emailVerified = !!(user as Record<string, unknown>).emailVerified;
       }
 
-      // Allow session updates (e.g., after onboarding completes)
+      // Allow session updates (e.g., after onboarding completes or email verified)
       if (trigger === "update" && session) {
         if (session.organizationId) token.organizationId = session.organizationId;
         if (session.role) token.role = session.role;
         if (session.plan) token.plan = session.plan;
+        if (session.emailVerified !== undefined) token.emailVerified = session.emailVerified;
       }
 
-      // Refresh org data on each request if user has an org
-      if (token.id && !token.organizationId) {
+      // Refresh user data from DB on each request if missing org or not yet verified
+      if (token.id && (!token.organizationId || !token.emailVerified)) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
             include: { organization: true },
           });
-          if (dbUser?.organizationId) {
-            token.organizationId = dbUser.organizationId;
-            token.role = dbUser.role;
-            token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
+          if (dbUser) {
+            if (dbUser.organizationId) {
+              token.organizationId = dbUser.organizationId;
+              token.role = dbUser.role;
+              token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
+            }
+            token.emailVerified = !!dbUser.emailVerified;
           }
         } catch (error) {
           console.error("[AUTH] JWT refresh error:", error);
@@ -132,6 +138,7 @@ const result = NextAuth({
         session.user.organizationId = token.organizationId as string | null;
         session.user.role = token.role as string;
         session.user.plan = token.plan as string;
+        session.user.emailVerified = token.emailVerified as boolean;
       }
       return session;
     },

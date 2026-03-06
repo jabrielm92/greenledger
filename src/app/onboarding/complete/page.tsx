@@ -54,7 +54,7 @@ export default function OnboardingCompletePage() {
 
   return (
     <div className="space-y-8">
-      <Stepper currentStep={4} />
+      <Stepper currentStep={5} />
 
       <Card>
         <CardHeader className="text-center">
