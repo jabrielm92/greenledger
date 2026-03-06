@@ -9,7 +9,7 @@ declare module "next-auth" {
       role: string;
       plan: string;
       emailVerified: boolean;
-    } & DefaultSession["user"];
+    } & Omit<DefaultSession["user"], "emailVerified">;
   }
 
   interface User extends DefaultUser {
