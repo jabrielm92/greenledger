@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth-options";
 import { NextResponse } from "next/server";
 
 const publicRoutes = ["/", "/pricing", "/about", "/contact", "/privacy", "/terms"];
-const authRoutes = ["/login", "/register", "/verify-email", "/forgot-password"];
+const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
@@ -26,13 +26,25 @@ export default auth((req) => {
   // Auth routes (login, register, etc.)
   if (authRoutes.includes(pathname)) {
     if (session?.user) {
-      // Already logged in — redirect to dashboard or onboarding
-      const user = session.user as { organizationId?: string };
+      const user = session.user as { organizationId?: string; emailVerified?: boolean };
+      if (!user.emailVerified) {
+        return NextResponse.redirect(new URL(`/verify-email?email=${encodeURIComponent(session.user.email || "")}`, req.url));
+      }
       if (!user.organizationId) {
         return NextResponse.redirect(new URL("/onboarding", req.url));
       }
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
+    return NextResponse.next();
+  }
+
+  // Verify-email page — accessible when logged in but unverified, or not logged in
+  if (pathname === "/verify-email") {
+    return NextResponse.next();
+  }
+
+  // Invite accept page — always accessible for signed-in users
+  if (pathname.startsWith("/invite/")) {
     return NextResponse.next();
   }
 
@@ -43,7 +55,12 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  const user = session.user as { organizationId?: string };
+  const user = session.user as { organizationId?: string; emailVerified?: boolean };
+
+  // Gate: unverified email → redirect to verify-email
+  if (!user.emailVerified) {
+    return NextResponse.redirect(new URL(`/verify-email?email=${encodeURIComponent(session.user.email || "")}`, req.url));
+  }
 
   // Onboarding routes — allow access
   if (pathname.startsWith("/onboarding")) {

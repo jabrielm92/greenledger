@@ -70,7 +70,8 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/onboarding");
+      // Redirect to verify-email — middleware will enforce this gate
+      router.push(`/verify-email?email=${encodeURIComponent(data.email.toLowerCase())}`);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");

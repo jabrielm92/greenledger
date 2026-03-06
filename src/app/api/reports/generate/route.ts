@@ -7,7 +7,7 @@ import { z } from "zod";
 
 const generateSchema = z.object({
   reportId: z.string(),
-  reportingPeriodId: z.string(),
+  reportingPeriodId: z.string().optional().default(""),
   frameworkType: z.string(),
   sections: z.array(z.string()).min(1),
 });
@@ -40,13 +40,34 @@ export async function POST(req: NextRequest) {
       data: { status: "GENERATING" },
     });
 
-    // Generate content
-    const generatedContent = await generateReport({
-      organizationId: session.user.organizationId,
-      reportingPeriodId: validated.reportingPeriodId,
-      frameworkType: validated.frameworkType,
-      sections: validated.sections,
-    });
+    let generatedContent;
+    try {
+      // Generate content with AI
+      generatedContent = await generateReport({
+        organizationId: session.user.organizationId,
+        reportingPeriodId: validated.reportingPeriodId,
+        frameworkType: validated.frameworkType,
+        sections: validated.sections,
+      });
+    } catch (genError) {
+      console.error("[REPORTS_GENERATE_AI]", genError);
+      // Fallback: generate template-based content without AI
+      generatedContent = Object.fromEntries(
+        validated.sections.map((code) => [
+          code,
+          {
+            code,
+            title: code,
+            content: `## ${code}\n\nThis section requires data input. Please review and add your organization's specific information for this disclosure requirement.\n\n*To auto-generate content, configure the OPENAI_API_KEY environment variable.*`,
+            dataPointsUsed: [],
+            dataGaps: ["AI generation unavailable - manual input required"],
+            recommendations: ["Configure AI integration for automated content generation"],
+            confidence: 0,
+            methodology: "Template placeholder",
+          },
+        ])
+      );
+    }
 
     // Save generated content and update status
     const updated = await prisma.report.update({
@@ -55,7 +76,7 @@ export async function POST(req: NextRequest) {
         generatedContent: generatedContent as never,
         finalContent: generatedContent as never,
         status: "REVIEW",
-        reportingPeriodId: validated.reportingPeriodId,
+        ...(validated.reportingPeriodId ? { reportingPeriodId: validated.reportingPeriodId } : {}),
       },
     });
 

@@ -104,12 +104,26 @@ async function uploadToLocal(
   buffer: Buffer,
   key: string
 ): Promise<StorageResult> {
-  const uploadDir = process.env.UPLOAD_DIR || "./uploads";
+  const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
   const filePath = path.join(uploadDir, key);
   const dir = path.dirname(filePath);
 
-  await mkdir(dir, { recursive: true });
-  await writeFile(filePath, buffer);
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (err: unknown) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "EACCES") throw new Error(`Upload directory permission denied: ${dir}`);
+    throw err;
+  }
+
+  try {
+    await writeFile(filePath, buffer);
+  } catch (err: unknown) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "ENOSPC") throw new Error("Disk full: cannot save uploaded file");
+    if (code === "EACCES") throw new Error(`Write permission denied: ${filePath}`);
+    throw err;
+  }
 
   return { filePath };
 }

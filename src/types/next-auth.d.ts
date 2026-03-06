@@ -8,6 +8,7 @@ declare module "next-auth" {
       organizationId: string | null;
       role: string;
       plan: string;
+      emailVerified: boolean;
     } & DefaultSession["user"];
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     organizationId?: string | null;
     role?: string;
     plan?: string;
+    emailVerified?: boolean;
   }
 }
 
@@ -24,5 +26,6 @@ declare module "next-auth/jwt" {
     organizationId: string | null;
     role: string;
     plan: string;
+    emailVerified: boolean;
   }
 }

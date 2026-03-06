@@ -53,7 +53,7 @@ export function IndustryPicker() {
 
       setSelectedFrameworks(selected);
       setStep(3);
-      router.push("/onboarding/integrations");
+      router.push("/onboarding/plan");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

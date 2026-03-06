@@ -59,20 +59,20 @@ export default function OnboardingStep3Page() {
   const { setStep } = useOnboardingStore();
 
   function handleSkip() {
-    setStep(4);
+    setStep(5);
     router.push("/onboarding/complete");
   }
 
   function handleConnectQuickBooks() {
     // In production, this would initiate QuickBooks OAuth
     // For now, skip to completion
-    setStep(4);
+    setStep(5);
     router.push("/onboarding/complete");
   }
 
   return (
     <div className="space-y-8">
-      <Stepper currentStep={3} />
+      <Stepper currentStep={4} />
 
       <Card>
         <CardHeader>

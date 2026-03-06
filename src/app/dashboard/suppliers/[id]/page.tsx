@@ -43,6 +43,7 @@ export default function SupplierDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isScoring, setIsScoring] = useState(false);
 
   const supplierId = params.id as string;
 
@@ -231,19 +232,43 @@ export default function SupplierDetailPage() {
         </Card>
       </div>
 
-      {/* Placeholder for future features */}
+      {/* AI ESG Assessment */}
       <Card>
-        <CardContent className="flex items-center gap-3 py-6">
-          <Info className="h-5 w-5 text-slate-400" />
-          <div>
-            <p className="text-sm font-medium text-slate-600">
-              Automated ESG Data Collection
-            </p>
-            <p className="text-xs text-slate-400">
-              Automated supplier ESG data collection and scoring coming in a
-              future release.
-            </p>
+        <CardContent className="flex items-center justify-between gap-3 py-6">
+          <div className="flex items-center gap-3">
+            <Info className="h-5 w-5 text-slate-400" />
+            <div>
+              <p className="text-sm font-medium text-slate-600">
+                AI ESG Risk Assessment
+              </p>
+              <p className="text-xs text-slate-400">
+                Analyze supplier data to automatically determine ESG risk level and score.
+              </p>
+            </div>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isScoring}
+            onClick={async () => {
+              setIsScoring(true);
+              try {
+                const res = await fetch(`/api/suppliers/${supplierId}/score`, {
+                  method: "POST",
+                });
+                if (res.ok) {
+                  const updated = await res.json();
+                  setSupplier(updated);
+                }
+              } catch (err) {
+                console.error("Scoring failed:", err);
+              } finally {
+                setIsScoring(false);
+              }
+            }}
+          >
+            {isScoring ? "Analyzing..." : "Run Assessment"}
+          </Button>
         </CardContent>
       </Card>
     </div>

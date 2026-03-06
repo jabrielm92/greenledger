@@ -36,15 +36,18 @@ const MAX_SIZE = 25 * 1024 * 1024;
 export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
   const [files, setFiles] = useState<UploadFile[]>([]);
 
-  const uploadFile = useCallback(
-    async (uploadFile: UploadFile, index: number) => {
+  const uploadSingleFile = useCallback(
+    async (file: File) => {
+      // Mark as uploading using file reference for stable identity
       setFiles((prev) =>
-        prev.map((f, i) => (i === index ? { ...f, status: "uploading" } : f))
+        prev.map((f) =>
+          f.file === file ? { ...f, status: "uploading" } : f
+        )
       );
 
       try {
         const formData = new FormData();
-        formData.append("file", uploadFile.file);
+        formData.append("file", file);
 
         const res = await fetch("/api/documents", {
           method: "POST",
@@ -52,15 +55,15 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
         });
 
         if (!res.ok) {
-          const err = await res.json();
+          const err = await res.json().catch(() => ({ error: "Upload failed" }));
           throw new Error(err.error || "Upload failed");
         }
 
         const doc = await res.json();
 
         setFiles((prev) =>
-          prev.map((f, i) =>
-            i === index
+          prev.map((f) =>
+            f.file === file
               ? { ...f, status: "complete", progress: 100, documentId: doc.id }
               : f
           )
@@ -69,8 +72,8 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
         onUploadComplete?.(doc.id);
       } catch (err) {
         setFiles((prev) =>
-          prev.map((f, i) =>
-            i === index
+          prev.map((f) =>
+            f.file === file
               ? {
                   ...f,
                   status: "error",
@@ -94,13 +97,12 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
 
       setFiles((prev) => [...prev, ...newFiles]);
 
-      // Upload each file
-      newFiles.forEach((f, i) => {
-        const index = files.length + i;
-        uploadFile(f, index);
+      // Upload each file using file reference for stable identity
+      newFiles.forEach((f) => {
+        uploadSingleFile(f.file);
       });
     },
-    [files.length, uploadFile]
+    [uploadSingleFile]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

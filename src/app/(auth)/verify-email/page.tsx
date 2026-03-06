@@ -47,13 +47,13 @@ function VerifyEmailPageContent() {
           </div>
           <CardTitle className="text-2xl font-bold">Email verified!</CardTitle>
           <CardDescription>
-            Your email has been successfully verified. You can now sign in.
+            Your email has been successfully verified. Let&apos;s set up your workspace.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
-          <Link href="/login">
+          <Link href="/onboarding">
             <Button className="bg-emerald-600 hover:bg-emerald-700">
-              Sign in to your account
+              Continue to setup
             </Button>
           </Link>
         </CardContent>

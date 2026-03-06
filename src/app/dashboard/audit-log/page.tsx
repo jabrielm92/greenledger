@@ -105,31 +105,57 @@ export default function AuditLogPage() {
     fetchEntries();
   }, [fetchEntries]);
 
-  const handleExportCSV = () => {
-    const params = new URLSearchParams({ pageSize: "10000" });
-    if (actionFilter && actionFilter !== "all")
-      params.set("action", actionFilter);
-    if (entityTypeFilter && entityTypeFilter !== "all")
-      params.set("entityType", entityTypeFilter);
-    if (startDate) params.set("startDate", startDate);
-    if (endDate) params.set("endDate", endDate);
+  const handleExportCSV = async () => {
+    try {
+      // Fetch all matching entries (not just current page)
+      const params = new URLSearchParams({ page: "1", pageSize: "100" });
+      if (search) params.set("search", search);
+      if (actionFilter && actionFilter !== "all")
+        params.set("action", actionFilter);
+      if (entityTypeFilter && entityTypeFilter !== "all")
+        params.set("entityType", entityTypeFilter);
+      if (startDate) params.set("startDate", startDate);
+      if (endDate) params.set("endDate", endDate);
 
-    // Build CSV client-side from current data
-    const header = "Timestamp,User,Action,Entity Type,Entity ID\n";
-    const rows = entries
-      .map(
-        (e) =>
-          `${e.createdAt},${e.user?.name || e.user?.email || "System"},${e.action},${e.entityType},${e.entityId}`
-      )
-      .join("\n");
+      let allEntries: AuditEntry[] = [];
+      let currentPage = 1;
+      let hasMore = true;
 
-    const blob = new Blob([header + rows], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+      while (hasMore) {
+        params.set("page", String(currentPage));
+        const res = await fetch(`/api/audit-log?${params}`);
+        if (!res.ok) break;
+        const data = await res.json();
+        allEntries = [...allEntries, ...data.items];
+        hasMore = currentPage < data.totalPages;
+        currentPage++;
+      }
+
+      const escapeCsv = (val: string) => {
+        if (val.includes(",") || val.includes('"') || val.includes("\n")) {
+          return `"${val.replace(/"/g, '""')}"`;
+        }
+        return val;
+      };
+
+      const header = "Timestamp,User,Action,Entity Type,Entity ID\n";
+      const rows = allEntries
+        .map(
+          (e) =>
+            `${escapeCsv(e.createdAt)},${escapeCsv(e.user?.name || e.user?.email || "System")},${escapeCsv(e.action)},${escapeCsv(e.entityType)},${escapeCsv(e.entityId)}`
+        )
+        .join("\n");
+
+      const blob = new Blob([header + rows], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to export CSV:", err);
+    }
   };
 
   return (
