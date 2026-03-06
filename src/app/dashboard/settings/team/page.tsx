@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,10 +124,11 @@ export default function TeamSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Team Management"
-        description="Manage team members and their roles"
-      >
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">Team Management</h2>
+          <p className="text-sm text-slate-500">Manage team members and their roles</p>
+        </div>
         <Button
           onClick={() => setShowInvite(!showInvite)}
           className="bg-emerald-600 hover:bg-emerald-700"
@@ -136,7 +136,7 @@ export default function TeamSettingsPage() {
           <Plus className="mr-2 h-4 w-4" />
           Invite Member
         </Button>
-      </PageHeader>
+      </div>
 
       {/* Invite form */}
       {showInvite && (
