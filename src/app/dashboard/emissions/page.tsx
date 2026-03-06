@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { ScopeBreakdown } from "@/components/emissions/scope-breakdown";
 import { EmissionsTable } from "@/components/emissions/emissions-table";
@@ -24,6 +24,13 @@ export default function EmissionsPage() {
   const [scopeFilter, setScopeFilter] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showForm) {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showForm]);
 
   const { summary, isLoading: summaryLoading } = useEmissionsSummary();
   const { entries, totalPages, isLoading: entriesLoading } =
@@ -127,7 +134,11 @@ export default function EmissionsPage() {
       />
 
       {/* Add entry form */}
-      {showForm && <EmissionsForm />}
+      {showForm && (
+        <div ref={formRef}>
+          <EmissionsForm />
+        </div>
+      )}
 
       {/* Filters & table */}
       <div className="flex items-center gap-3">
