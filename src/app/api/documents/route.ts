@@ -89,8 +89,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(document, { status: 201 });
   } catch (error) {
     console.error("[DOCUMENTS_POST]", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const isStorageError = message.includes("permission denied") || message.includes("Disk full");
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: isStorageError ? message : "Failed to upload document. Please try again." },
       { status: 500 }
     );
   }
