@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,7 +149,6 @@ export default function GeneralSettingsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <PageHeader title="General Settings" />
         <Skeleton className="h-96 rounded-lg" />
       </div>
     );
@@ -158,10 +156,6 @@ export default function GeneralSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="General Settings"
-        description="Manage your organization profile"
-      />
 
       {/* Company profile */}
       <Card>

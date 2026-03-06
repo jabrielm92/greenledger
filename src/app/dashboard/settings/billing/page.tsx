@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
 import { PlanCard } from "@/components/billing/plan-card";
 import { UsageMeter } from "@/components/billing/usage-meter";
 import { InvoiceList } from "@/components/billing/invoice-list";
@@ -125,17 +124,18 @@ function BillingPageContent() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        title="Billing & Plans"
-        description="Manage your subscription and view usage"
-      >
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">Billing & Plans</h2>
+          <p className="text-sm text-slate-500">Manage your subscription and view usage</p>
+        </div>
         {currentPlan !== "FREE_TRIAL" && (
           <Button variant="outline" onClick={handleManageBilling}>
             <Settings className="mr-2 h-4 w-4" />
             Manage Billing
           </Button>
         )}
-      </PageHeader>
+      </div>
 
       {success && (
         <Card className="border-emerald-200 bg-emerald-50">

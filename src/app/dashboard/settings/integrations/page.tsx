@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -103,10 +102,10 @@ function IntegrationsPageContent() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Integrations"
-        description="Connect external services to auto-import data"
-      />
+      <div>
+        <h2 className="text-lg font-semibold text-slate-900">Integrations</h2>
+        <p className="text-sm text-slate-500">Connect external services to auto-import data</p>
+      </div>
 
       {successParam === "quickbooks_connected" && (
         <Card className="border-emerald-200 bg-emerald-50">
