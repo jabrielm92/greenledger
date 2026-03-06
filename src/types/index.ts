@@ -29,6 +29,7 @@ export interface SessionUser {
   organizationId?: string | null;
   role: "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
   plan: "FREE_TRIAL" | "BASE" | "PROFESSIONAL" | "ENTERPRISE";
+  trialEndsAt?: string | null;
 }
 
 // Dashboard stats type

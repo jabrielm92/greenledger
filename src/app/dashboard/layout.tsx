@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
+import { TrialBanner } from "@/components/dashboard/trial-banner";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -17,6 +18,7 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar />
         <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
+          <TrialBanner />
           {children}
         </main>
       </div>

@@ -55,7 +55,12 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  const user = session.user as { organizationId?: string; emailVerified?: boolean };
+  const user = session.user as {
+    organizationId?: string;
+    emailVerified?: boolean;
+    plan?: string;
+    trialEndsAt?: string | null;
+  };
 
   // Gate: unverified email → redirect to verify-email
   if (!user.emailVerified) {
@@ -72,6 +77,24 @@ export default auth((req) => {
     if (!user.organizationId) {
       return NextResponse.redirect(new URL("/onboarding", req.url));
     }
+
+    // Trial grace period expired → force upgrade page
+    // (allow access to upgrade, billing, and settings pages)
+    if (
+      user.plan === "FREE_TRIAL" &&
+      user.trialEndsAt &&
+      !pathname.startsWith("/dashboard/upgrade") &&
+      !pathname.startsWith("/dashboard/settings")
+    ) {
+      const trialEnd = new Date(user.trialEndsAt);
+      const gracePeriodMs = 7 * 24 * 60 * 60 * 1000; // 7 days
+      const graceExpired = Date.now() > trialEnd.getTime() + gracePeriodMs;
+
+      if (graceExpired) {
+        return NextResponse.redirect(new URL("/dashboard/upgrade", req.url));
+      }
+    }
+
     return NextResponse.next();
   }
 

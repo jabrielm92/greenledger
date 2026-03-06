@@ -72,6 +72,7 @@ export async function POST(req: Request) {
           website: validated.website || null,
           fiscalYearStart,
           plan: "FREE_TRIAL",
+          trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         },
       });
 

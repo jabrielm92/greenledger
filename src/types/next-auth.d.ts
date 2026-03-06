@@ -12,6 +12,7 @@ declare module "@auth/core/types" {
       role: string;
       plan: string;
       emailVerified: boolean;
+      trialEndsAt?: string | null;
     };
   }
 
@@ -20,6 +21,7 @@ declare module "@auth/core/types" {
     role?: string;
     plan?: string;
     emailVerified?: boolean;
+    trialEndsAt?: string | null;
   }
 }
 
@@ -34,6 +36,7 @@ declare module "next-auth" {
       role: string;
       plan: string;
       emailVerified: boolean;
+      trialEndsAt?: string | null;
     };
   }
 
@@ -42,6 +45,7 @@ declare module "next-auth" {
     role?: string;
     plan?: string;
     emailVerified?: boolean;
+    trialEndsAt?: string | null;
   }
 }
 
@@ -52,5 +56,6 @@ declare module "next-auth/jwt" {
     role: string;
     plan: string;
     emailVerified: boolean;
+    trialEndsAt?: string | null;
   }
 }
