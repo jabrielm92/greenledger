@@ -138,7 +138,8 @@ const result = NextAuth({
         session.user.organizationId = token.organizationId as string | null;
         session.user.role = token.role as string;
         session.user.plan = token.plan as string;
-        session.user.emailVerified = token.emailVerified as boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).emailVerified = token.emailVerified;
       }
       return session;
     },
