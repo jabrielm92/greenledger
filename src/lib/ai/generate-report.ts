@@ -35,7 +35,7 @@ export async function generateReport(
   const emissions = await prisma.emissionEntry.findMany({
     where: {
       organizationId: input.organizationId,
-      reportingPeriodId: input.reportingPeriodId,
+      ...(input.reportingPeriodId ? { reportingPeriodId: input.reportingPeriodId } : {}),
     },
   });
 

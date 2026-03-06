@@ -105,6 +105,27 @@ export function convertToStandardUnit(
     }
   }
 
+  // Employee commute (distance-based)
+  if (category === "employee_commute") {
+    const factor = TO_KM[normalizedUnit];
+    if (factor) {
+      return { value: value * factor, unit: "km", conversionFactor: factor };
+    }
+    if (normalizedUnit === "miles" || normalizedUnit === "mile") {
+      return { value, unit: "mile", conversionFactor: 1 };
+    }
+  }
+
+  // Upstream transport (tonne-distance)
+  if (category === "upstream_transport") {
+    if (normalizedUnit === "tonne_km" || normalizedUnit === "tonne-km") {
+      return { value, unit: "tonne_km", conversionFactor: 1 };
+    }
+    if (normalizedUnit === "tonne_miles" || normalizedUnit === "tonne-miles") {
+      return { value: value * 1.60934, unit: "tonne_km", conversionFactor: 1.60934 };
+    }
+  }
+
   // Vehicle / distance categories
   if (["vehicle", "air_travel"].includes(category)) {
     const factor = TO_KM[normalizedUnit];
@@ -117,8 +138,19 @@ export function convertToStandardUnit(
     }
   }
 
+  // Water (volume-based, m3)
+  if (category === "water") {
+    if (normalizedUnit === "m3") {
+      return { value, unit: "m3", conversionFactor: 1 };
+    }
+    const volFactor = TO_LITERS[normalizedUnit];
+    if (volFactor) {
+      return { value: (value * volFactor) / 1000, unit: "m3", conversionFactor: volFactor / 1000 };
+    }
+  }
+
   // Mass categories (refrigerants, waste, coal)
-  if (["refrigerant", "waste", "coal", "water"].includes(category)) {
+  if (["refrigerant", "waste", "coal"].includes(category)) {
     const factor = TO_KG[normalizedUnit];
     if (factor) {
       return { value: value * factor, unit: "kg", conversionFactor: factor };
@@ -126,10 +158,6 @@ export function convertToStandardUnit(
     // Waste often in tonnes
     if (category === "waste" && (normalizedUnit === "tonnes" || normalizedUnit === "tonne")) {
       return { value, unit: "tonne", conversionFactor: 1 };
-    }
-    // Water in m3
-    if (category === "water" && normalizedUnit === "m3") {
-      return { value, unit: "m3", conversionFactor: 1 };
     }
   }
 
@@ -162,6 +190,8 @@ export function mapToFactorUnit(
     coal: { kg: "kgCO2e/kg" },
     waste: { tonne: "kgCO2e/tonne", kg: "kgCO2e/kg" },
     water: { m3: "kgCO2e/m3" },
+    employee_commute: { km: "kgCO2e/km", mile: "kgCO2e/mile" },
+    upstream_transport: { tonne_km: "kgCO2e/tonne_km", tonne_miles: "kgCO2e/tonne_miles" },
     district_heating: { kWh: "kgCO2e/kWh" },
     district_cooling: { kWh: "kgCO2e/kWh" },
   };

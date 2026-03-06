@@ -66,6 +66,18 @@ export async function POST(req: NextRequest) {
       newValue: { name: supplier.name, esgRiskLevel: supplier.esgRiskLevel },
     });
 
+    // Trigger AI ESG risk scoring asynchronously
+    const baseUrl = req.nextUrl.origin;
+    fetch(`${baseUrl}/api/suppliers/${supplier.id}/score`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
+    }).catch((err) =>
+      console.error("[SUPPLIER_SCORE_TRIGGER]", err)
+    );
+
     return NextResponse.json(supplier, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

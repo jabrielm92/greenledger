@@ -119,6 +119,8 @@ async function seedEmissionFactors() {
     // ============================================
     { category: "water", subcategory: "supply", region: "GB", unit: "kgCO2e/m3", co2ePerUnit: 0.149, co2PerUnit: 0.149, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
     { category: "water", subcategory: "treatment", region: "GB", unit: "kgCO2e/m3", co2ePerUnit: 0.272, co2PerUnit: 0.272, ch4PerUnit: null, n2oPerUnit: null, source: "DEFRA", year: 2025 },
+    { category: "water", subcategory: "supply", region: "GLOBAL", unit: "kgCO2e/m3", co2ePerUnit: 0.344, co2PerUnit: 0.344, ch4PerUnit: null, n2oPerUnit: null, source: "IEA", year: 2024 },
+    { category: "water", subcategory: "treatment", region: "GLOBAL", unit: "kgCO2e/m3", co2ePerUnit: 0.708, co2PerUnit: 0.708, ch4PerUnit: null, n2oPerUnit: null, source: "IEA", year: 2024 },
 
     // ============================================
     // EMPLOYEE COMMUTING (Scope 3)
