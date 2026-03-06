@@ -35,7 +35,7 @@ const STEPS = [
 export function ReportWizard({ reportingPeriods }: ReportWizardProps) {
   const router = useRouter();
   const store = useReportWizardStore();
-  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [_generationError, _setGenerationError] = useState<string | null>(null);
 
   const template =
     store.frameworkType === "GRI" ? GRI_TEMPLATE : CSRD_TEMPLATE;
