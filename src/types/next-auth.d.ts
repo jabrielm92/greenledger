@@ -1,15 +1,40 @@
-import { DefaultSession, DefaultUser } from "next-auth";
+import { DefaultUser } from "next-auth";
 import { DefaultJWT } from "next-auth/jwt";
+
+declare module "@auth/core/types" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      organizationId: string | null;
+      role: string;
+      plan: string;
+      emailVerified: boolean;
+    };
+  }
+
+  interface User extends DefaultUser {
+    organizationId?: string | null;
+    role?: string;
+    plan?: string;
+    emailVerified?: boolean;
+  }
+}
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
       organizationId: string | null;
       role: string;
       plan: string;
       emailVerified: boolean;
-    } & Omit<DefaultSession["user"], "emailVerified">;
+    };
   }
 
   interface User extends DefaultUser {
