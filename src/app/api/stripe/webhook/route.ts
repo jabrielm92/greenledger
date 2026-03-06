@@ -101,6 +101,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       stripeCustomerId: customerId || undefined,
       stripeSubscriptionId: subscriptionId || undefined,
       plan: (plan as PlanTier) || undefined,
+      trialEndsAt: null, // Clear trial on upgrade
     },
   });
 
@@ -193,6 +194,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     data: {
       plan: "FREE_TRIAL",
       stripeSubscriptionId: null,
+      trialEndsAt: new Date(), // Immediately expired — no fresh 14-day trial
     },
   });
 

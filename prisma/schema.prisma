@@ -102,6 +102,7 @@ model Organization {
   stripePriceId          String?
   stripeCurrentPeriodEnd DateTime?
   plan                   PlanTier  @default(FREE_TRIAL)
+  trialEndsAt            DateTime?
 
   // QuickBooks
   quickbooksRealmId      String?

@@ -68,6 +68,7 @@ const result = NextAuth({
             role: user.role,
             plan: user.organization?.plan ?? "FREE_TRIAL",
             emailVerified: !!user.emailVerified,
+            trialEndsAt: user.organization?.trialEndsAt?.toISOString() ?? null,
           };
         } catch (error) {
           console.error("[AUTH] Authorize error:", error);
@@ -100,6 +101,7 @@ const result = NextAuth({
         token.role = (user as Record<string, unknown>).role as string;
         token.plan = (user as Record<string, unknown>).plan as string;
         token.emailVerified = !!(user as Record<string, unknown>).emailVerified;
+        token.trialEndsAt = (user as Record<string, unknown>).trialEndsAt as string | null;
       }
 
       // Allow session updates (e.g., after onboarding completes or email verified)
@@ -108,6 +110,7 @@ const result = NextAuth({
         if (session.role) token.role = session.role;
         if (session.plan) token.plan = session.plan;
         if (session.emailVerified !== undefined) token.emailVerified = session.emailVerified;
+        if (session.trialEndsAt !== undefined) token.trialEndsAt = session.trialEndsAt;
       }
 
       // Refresh user data from DB on each request if missing org or not yet verified
@@ -122,6 +125,7 @@ const result = NextAuth({
               token.organizationId = dbUser.organizationId;
               token.role = dbUser.role;
               token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
+              token.trialEndsAt = dbUser.organization?.trialEndsAt?.toISOString() ?? null;
             }
             token.emailVerified = !!dbUser.emailVerified;
           }
@@ -140,6 +144,7 @@ const result = NextAuth({
         session.user.plan = token.plan as string;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).emailVerified = token.emailVerified;
+        session.user.trialEndsAt = token.trialEndsAt;
       }
       return session;
     },

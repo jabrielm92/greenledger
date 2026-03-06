@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   BarChart3,
   FileText,
@@ -12,6 +13,7 @@ import {
   Users,
   ClipboardList,
   Shield,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +26,68 @@ const navItems = [
   { href: "/dashboard/audit-log", label: "Audit Log", icon: ClipboardList },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
+
+function TrialBadge() {
+  const { user } = useCurrentUser();
+
+  if (!user || user.plan !== "FREE_TRIAL") return null;
+
+  const trialEndsAt = user.trialEndsAt ? new Date(user.trialEndsAt) : null;
+
+  let daysRemaining = 14;
+  if (trialEndsAt) {
+    daysRemaining = Math.max(
+      0,
+      Math.ceil((trialEndsAt.getTime() - Date.now()) / 86400000)
+    );
+  }
+
+  const expired = daysRemaining <= 0;
+  const urgent = daysRemaining <= 3 && !expired;
+
+  const bgColor = expired
+    ? "bg-red-50"
+    : urgent
+      ? "bg-amber-50"
+      : "bg-emerald-50";
+  const textColor = expired
+    ? "text-red-700"
+    : urgent
+      ? "text-amber-700"
+      : "text-emerald-700";
+  const subColor = expired
+    ? "text-red-600"
+    : urgent
+      ? "text-amber-600"
+      : "text-emerald-600";
+  const IconComponent = expired ? Shield : urgent ? Shield : Shield;
+
+  return (
+    <div className="border-t p-4">
+      <Link href="/dashboard/settings/billing">
+        <div
+          className={cn(
+            "flex items-center gap-2 rounded-lg p-3 transition-colors hover:opacity-80",
+            bgColor
+          )}
+        >
+          <IconComponent className={cn("h-5 w-5 shrink-0", textColor)} />
+          <div className="min-w-0 text-xs">
+            <p className={cn("font-medium", textColor)}>
+              {expired ? "Trial Expired" : "Free Trial"}
+            </p>
+            <p className={subColor}>
+              {expired
+                ? "Upgrade to continue"
+                : `${daysRemaining} day${daysRemaining !== 1 ? "s" : ""} remaining`}
+            </p>
+          </div>
+          <Sparkles className={cn("ml-auto h-4 w-4 shrink-0", subColor)} />
+        </div>
+      </Link>
+    </div>
+  );
+}
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -62,15 +126,7 @@ export function Sidebar() {
           })}
         </nav>
 
-        <div className="border-t p-4">
-          <div className="flex items-center gap-2 rounded-lg bg-emerald-50 p-3">
-            <Shield className="h-5 w-5 text-emerald-600" />
-            <div className="text-xs">
-              <p className="font-medium text-emerald-700">Free Trial</p>
-              <p className="text-emerald-600">14 days remaining</p>
-            </div>
-          </div>
-        </div>
+        <TrialBadge />
       </div>
     </aside>
   );
