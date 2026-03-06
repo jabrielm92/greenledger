@@ -36,10 +36,10 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-              <Avatar className="h-9 w-9">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full p-0">
+              <Avatar className="h-9 w-9 ring-2 ring-slate-200">
                 <AvatarImage src={user?.image || undefined} />
-                <AvatarFallback className="bg-emerald-100 text-emerald-700 text-sm font-medium">
+                <AvatarFallback className="bg-emerald-600 text-white text-sm font-semibold">
                   {user?.name ? getInitials(user.name) : "U"}
                 </AvatarFallback>
               </Avatar>

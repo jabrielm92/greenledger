@@ -32,7 +32,7 @@ const INDUSTRIES = [
 ];
 
 const EMPLOYEE_RANGES = [
-  { value: "10", label: "1–50" },
+  { value: "25", label: "1–50" },
   { value: "75", label: "51–100" },
   { value: "175", label: "101–250" },
   { value: "375", label: "251–500" },
@@ -70,7 +70,7 @@ export default function GeneralSettingsPage() {
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [website, setWebsite] = useState("");
-  const [fiscalMonth, setFiscalMonth] = useState("0");
+  const [fiscalMonth, setFiscalMonth] = useState("1");
 
   // Delete confirmation
   const [showDelete, setShowDelete] = useState(false);
@@ -90,7 +90,7 @@ export default function GeneralSettingsPage() {
           setCountry(data.country || "");
           setCity(data.city || "");
           setWebsite(data.website || "");
-          setFiscalMonth(String(data.fiscalYearStartMonth ?? 0));
+          setFiscalMonth(String(data.fiscalYearStartMonth ?? 1));
         }
       } catch (err) {
         console.error("Failed to fetch org:", err);
@@ -243,7 +243,7 @@ export default function GeneralSettingsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {MONTHS.map((m, i) => (
-                    <SelectItem key={i} value={String(i)}>
+                    <SelectItem key={i} value={String(i + 1)}>
                       {m}
                     </SelectItem>
                   ))}

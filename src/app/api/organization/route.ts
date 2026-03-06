@@ -49,7 +49,7 @@ const updateOrgSchema = z.object({
   country: z.string().optional(),
   city: z.string().optional(),
   website: z.string().optional(),
-  fiscalYearStartMonth: z.number().int().min(0).max(11).optional(),
+  fiscalYearStartMonth: z.number().int().min(1).max(12).optional(),
 });
 
 export async function PATCH(req: NextRequest) {

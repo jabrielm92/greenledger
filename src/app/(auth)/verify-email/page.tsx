@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,8 +18,16 @@ function VerifyEmailPageContent() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "true";
   const email = searchParams.get("email");
+  const { update: updateSession } = useSession();
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
+
+  // Refresh the JWT so middleware sees emailVerified=true
+  useEffect(() => {
+    if (verified) {
+      updateSession();
+    }
+  }, [verified, updateSession]);
 
   async function handleResend() {
     if (!email) return;

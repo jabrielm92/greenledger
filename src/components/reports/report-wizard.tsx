@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ const STEPS = [
 export function ReportWizard({ reportingPeriods }: ReportWizardProps) {
   const router = useRouter();
   const store = useReportWizardStore();
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const template =
     store.frameworkType === "GRI" ? GRI_TEMPLATE : CSRD_TEMPLATE;

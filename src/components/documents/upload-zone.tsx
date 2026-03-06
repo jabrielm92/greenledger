@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, X, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,12 @@ const ACCEPTED_TYPES = {
 const MAX_SIZE = 25 * 1024 * 1024;
 
 export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [files, setFiles] = useState<UploadFile[]>([]);
+
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
 
   const uploadSingleFile = useCallback(
     async (file: File) => {
@@ -117,7 +122,7 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
   };
 
   return (
-    <div className={className}>
+    <div ref={containerRef} className={className}>
       <div
         {...getRootProps()}
         className={cn(
@@ -158,7 +163,9 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
                   {formatFileSize(f.file.size)}
                 </p>
                 {f.status === "uploading" && (
-                  <Progress value={50} className="mt-1 h-1" />
+                  <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-full w-1/3 animate-pulse rounded-full bg-emerald-500" />
+                  </div>
                 )}
                 {f.status === "error" && (
                   <p className="mt-0.5 text-xs text-red-500">{f.error}</p>
