@@ -1,0 +1,535 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "refresh": "Actualiser",
+    "retry": "Réessayer",
+    "yes": "Oui",
+    "no": "Non",
+    "or": "ou",
+    "and": "et",
+    "all": "Tous",
+    "none": "Aucun",
+    "viewAll": "Tout voir",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se déconnecter",
+    "page": "Page {{current}} sur {{total}}",
+    "noResults": "Aucun résultat trouvé",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement"
+  },
+
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "frameworks": "Cadres",
+    "emissions": "Émissions",
+    "documents": "Documents",
+    "reports": "Rapports",
+    "suppliers": "Fournisseurs",
+    "auditLog": "Journal d'audit",
+    "settings": "Paramètres",
+    "upgrade": "Mettre à niveau"
+  },
+
+  "trial": {
+    "freeTrial": "Essai Gratuit",
+    "trialExpired": "Essai Expiré",
+    "daysRemaining": "{{days}} jour restant",
+    "daysRemainingPlural": "{{days}} jours restants",
+    "upgradeToContinue": "Passez à la version supérieure pour continuer"
+  },
+
+  "landing": {
+    "hero": {
+      "badge": "Conformité ESG, automatisée",
+      "title": "Des rapports carbone qui",
+      "titleHighlight": "fonctionnent vraiment",
+      "description": "GreenLedger automatise la collecte de données ESG, le calcul des émissions et les rapports de conformité. Téléchargez des documents et notre IA s'occupe du reste — de l'extraction aux rapports prêts pour l'audit.",
+      "cta": "Commencer l'Essai Gratuit",
+      "ctaSecondary": "Voir la Démo",
+      "socialProof": "Plus de 200 entreprises nous font confiance pour la conformité ESG"
+    },
+    "painPoints": {
+      "title": "La conformité ESG ne devrait pas être aussi difficile",
+      "description": "La plupart des équipes perdent des centaines d'heures en collecte manuelle de données",
+      "manual": "Saisie manuelle de données à partir de centaines de factures",
+      "spreadsheets": "Des tableurs qui cassent quand les formules se complexifient",
+      "frameworks": "Des exigences de cadres confuses qui changent chaque année",
+      "deadlines": "Des échéances manquées et des rapports incomplets"
+    },
+    "howItWorks": {
+      "title": "Trois étapes vers la conformité",
+      "description": "Des documents bruts aux rapports prêts pour l'audit en minutes, pas en mois",
+      "step1": {
+        "title": "Téléchargez des Documents",
+        "description": "Glissez-déposez des factures de services, factures commerciales, reçus de carburant et plus. Nous acceptons les PDF, images, tableurs et documents Word."
+      },
+      "step2": {
+        "title": "L'IA Extrait et Calcule",
+        "description": "Notre IA lit les documents dans n'importe quelle langue, extrait les données d'émissions avec plus de 98% de précision et calcule votre empreinte carbone automatiquement."
+      },
+      "step3": {
+        "title": "Générez des Rapports",
+        "description": "Rapports en un clic pour CSRD, GRI, SASB et ISSB. Entièrement audités et prêts à être soumis."
+      }
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin pour la conformité ESG",
+      "description": "Une plateforme complète qui remplace les tableurs, les consultants et les processus manuels",
+      "aiExtraction": {
+        "title": "Extraction de Documents par IA",
+        "description": "Téléchargez n'importe quel document dans n'importe quelle langue. Notre IA extrait les données d'émissions avec plus de 98% de précision."
+      },
+      "multiFramework": {
+        "title": "Rapports Multi-Cadres",
+        "description": "Générez des rapports pour CSRD, GRI, SASB et ISSB à partir d'une source unique. Pas de double saisie."
+      },
+      "scopeTracking": {
+        "title": "Suivi Scope 1, 2 et 3",
+        "description": "Suivi complet du Protocole GHG pour tous les scopes d'émissions avec recherche automatique de facteurs."
+      },
+      "auditTrail": {
+        "title": "Piste d'Audit Complète",
+        "description": "Chaque point de données est tracé jusqu'à son document source. Historique complet des modifications."
+      },
+      "supplierManagement": {
+        "title": "Gestion des Fournisseurs",
+        "description": "Suivez le risque ESG des fournisseurs, collectez les données Scope 3 et gérez la durabilité de votre chaîne d'approvisionnement."
+      },
+      "integrations": {
+        "title": "Intégration QuickBooks",
+        "description": "Importez automatiquement les données financières de QuickBooks. Les transactions sont automatiquement mappées aux catégories d'émissions."
+      }
+    },
+    "testimonials": {
+      "title": "La confiance des leaders en développement durable",
+      "description": "Découvrez comment des entreprises comme la vôtre ont simplifié leur conformité ESG"
+    },
+    "pricing": {
+      "title": "Des tarifs simples et transparents",
+      "description": "Commencez gratuitement. Passez à la version supérieure quand vous êtes prêt. Sans frais cachés.",
+      "monthly": "Mensuel",
+      "annually": "Annuel"
+    },
+    "faq": {
+      "title": "Questions fréquemment posées",
+      "description": "Tout ce que vous devez savoir sur GreenLedger"
+    },
+    "cta": {
+      "title": "Prêt à simplifier votre conformité ESG ?",
+      "description": "Rejoignez plus de 200 entreprises qui utilisent GreenLedger pour automatiser les rapports carbone.",
+      "button": "Commencez Votre Essai Gratuit",
+      "note": "Sans carte de crédit · Essai gratuit de 14 jours · Annulez à tout moment"
+    },
+    "footer": {
+      "description": "Conformité ESG automatisée et rapports carbone pour les entreprises modernes.",
+      "product": "Produit",
+      "company": "Entreprise",
+      "legal": "Juridique",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "integrations": "Intégrations",
+      "about": "À propos",
+      "contact": "Contact",
+      "careers": "Carrières",
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation",
+      "copyright": "© {{year}} GreenLedger. Tous droits réservés."
+    }
+  },
+
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "description": "Connectez-vous à votre compte GreenLedger",
+      "email": "E-mail",
+      "emailPlaceholder": "vous@entreprise.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "orContinueWith": "Ou continuer avec",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signUp": "S'inscrire",
+      "invalidCredentials": "E-mail ou mot de passe invalide. Veuillez réessayer.",
+      "signInFailed": "Échec de la connexion. Veuillez réessayer.",
+      "genericError": "Une erreur est survenue. Veuillez réessayer.",
+      "accountCreated": "Compte créé avec succès ! Veuillez vous connecter."
+    },
+    "register": {
+      "title": "Créer un compte",
+      "description": "Commencez avec GreenLedger en moins de 10 minutes",
+      "name": "Nom complet",
+      "namePlaceholder": "Marie Dupont",
+      "email": "E-mail professionnel",
+      "emailPlaceholder": "marie@entreprise.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Min 8 caractères, 1 majuscule, 1 chiffre",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "submit": "Créer un compte",
+      "termsAgreement": "En vous inscrivant, vous acceptez nos",
+      "termsOfService": "Conditions d'Utilisation",
+      "and": "et",
+      "privacyPolicy": "Politique de Confidentialité",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "registrationFailed": "Échec de l'inscription. Veuillez réessayer.",
+      "genericError": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Entrez votre e-mail et nous vous enverrons un lien de réinitialisation",
+      "email": "E-mail",
+      "submit": "Envoyer le lien",
+      "backToLogin": "Retour à la connexion",
+      "sent": "Si un compte avec cet e-mail existe, nous avons envoyé un lien de réinitialisation."
+    },
+    "resetPassword": {
+      "title": "Définir un nouveau mot de passe",
+      "description": "Entrez votre nouveau mot de passe ci-dessous",
+      "password": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "submit": "Réinitialiser le mot de passe"
+    },
+    "verifyEmail": {
+      "title": "Vérifiez votre e-mail",
+      "description": "Nous avons envoyé un lien de vérification à {{email}}",
+      "resend": "Renvoyer l'e-mail de vérification",
+      "checkInbox": "Vérifiez votre boîte de réception et cliquez sur le lien de vérification pour continuer."
+    }
+  },
+
+  "dashboard": {
+    "title": "Tableau de bord",
+    "description": "Votre aperçu de conformité ESG en un coup d'œil",
+    "stats": {
+      "totalEmissions": "Émissions Totales",
+      "documentsProcessed": "Documents Traités",
+      "complianceScore": "Score de Conformité",
+      "daysUntilDeadline": "Jours Avant l'Échéance",
+      "nDeadline": "Aucune échéance définie",
+      "tCO2e": "tCO2e"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "uploadDocument": "Télécharger un Document",
+      "addEmission": "Ajouter une Entrée d'Émission",
+      "generateReport": "Générer un Rapport",
+      "manageSuppliers": "Gérer les Fournisseurs"
+    },
+    "recentActivity": {
+      "title": "Activité Récente",
+      "noActivity": "Aucune activité récente"
+    },
+    "frameworkProgress": {
+      "title": "Progrès des Cadres"
+    },
+    "emissionsChart": {
+      "title": "Émissions dans le Temps",
+      "scope1": "Scope 1",
+      "scope2": "Scope 2",
+      "scope3": "Scope 3"
+    },
+    "complianceScore": {
+      "title": "Score de Conformité"
+    }
+  },
+
+  "emissions": {
+    "title": "Émissions",
+    "description": "Suivez et gérez vos émissions de gaz à effet de serre Scope 1, 2 et 3",
+    "uploadDocument": "Télécharger un Document",
+    "addEntry": "Ajouter une Entrée",
+    "scope1": "Émissions Scope 1",
+    "scope2": "Émissions Scope 2",
+    "scope3": "Émissions Scope 3",
+    "dataEntries": "Entrées de Données",
+    "allScopes": "Tous les scopes",
+    "scopeBreakdown": "Répartition par Scope",
+    "byCategory": "Par Catégorie",
+    "byMonth": "Tendance Mensuelle",
+    "form": {
+      "title": "Nouvelle Entrée d'Émission",
+      "scope": "Scope",
+      "category": "Catégorie",
+      "subcategory": "Sous-catégorie",
+      "source": "Source",
+      "description": "Description",
+      "activityValue": "Valeur d'Activité",
+      "activityUnit": "Unité d'Activité",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "location": "Lieu",
+      "notes": "Notes",
+      "submit": "Créer l'Entrée"
+    }
+  },
+
+  "documents": {
+    "title": "Documents",
+    "description": "Téléchargez et gérez vos documents source ESG",
+    "upload": "Télécharger un Document",
+    "uploadZone": {
+      "dragDrop": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "dropHere": "Déposez les fichiers ici...",
+      "acceptedFormats": "PDF, Images, CSV, XLSX, XLS, DOCX, DOC, TXT, XML, JSON, ODS, ODT — jusqu'à 25 Mo",
+      "done": "Terminé"
+    },
+    "detail": {
+      "title": "Détails du Document",
+      "status": "Statut",
+      "type": "Type",
+      "size": "Taille",
+      "uploaded": "Téléchargé",
+      "uploadedBy": "Téléchargé par",
+      "aiConfidence": "Confiance IA",
+      "error": "Erreur",
+      "notFound": "Document non trouvé",
+      "backToDocuments": "Retour aux documents"
+    },
+    "extraction": {
+      "title": "Revue des Données Extraites",
+      "confidence": "{{value}}% de confiance",
+      "noData": "Aucune donnée extraite disponible",
+      "extractionNotes": "Notes d'Extraction",
+      "lowConfidence": "Extraction à faible confiance",
+      "lowConfidenceDesc": "La confiance de l'IA n'est que de {{value}}%. Veuillez vérifier tous les champs attentivement avant de confirmer.",
+      "confirm": "Confirmer et Créer l'Entrée d'Émission",
+      "reExtract": "Ré-extraire",
+      "reject": "Rejeter"
+    },
+    "toast": {
+      "emissionCreated": "Entrée d'émission créée",
+      "emissionCreatedDesc": "L'entrée d'émission a été créée avec succès à partir des données extraites.",
+      "dataConfirmed": "Données confirmées",
+      "reExtractionStarted": "Ré-extraction lancée",
+      "reExtractionStartedDesc": "Le document est en cours de retraitement par l'IA.",
+      "reExtractionFailed": "Échec de la ré-extraction",
+      "reExtractionFailedDesc": "Impossible de lancer la ré-extraction. Veuillez réessayer.",
+      "rejected": "Document rejeté",
+      "rejectedDesc": "Le document a été marqué comme rejeté.",
+      "error": "Erreur",
+      "errorDesc": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "filters": {
+      "allTypes": "Tous les types",
+      "allStatuses": "Tous les statuts"
+    },
+    "table": {
+      "fileName": "Nom du Fichier",
+      "type": "Type",
+      "status": "Statut",
+      "confidence": "Confiance",
+      "uploaded": "Téléchargé",
+      "actions": "Actions"
+    }
+  },
+
+  "reports": {
+    "title": "Rapports",
+    "description": "Générez et gérez les rapports de conformité",
+    "newReport": "Nouveau Rapport",
+    "form": {
+      "title": "Générer un Rapport",
+      "framework": "Cadre",
+      "reportingPeriod": "Période de Rapport",
+      "reportTitle": "Titre du Rapport",
+      "submit": "Générer"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "generating": "En cours",
+      "review": "Révision",
+      "approved": "Approuvé",
+      "published": "Publié"
+    },
+    "table": {
+      "title": "Titre",
+      "framework": "Cadre",
+      "status": "Statut",
+      "version": "Version",
+      "created": "Créé",
+      "actions": "Actions"
+    }
+  },
+
+  "suppliers": {
+    "title": "Fournisseurs",
+    "description": "Gérez le risque ESG de votre chaîne d'approvisionnement et les données Scope 3",
+    "addSupplier": "Ajouter un Fournisseur",
+    "form": {
+      "name": "Nom du Fournisseur",
+      "contactEmail": "E-mail de Contact",
+      "contactName": "Nom du Contact",
+      "industry": "Industrie",
+      "country": "Pays",
+      "website": "Site Web",
+      "esgRiskLevel": "Niveau de Risque ESG",
+      "notes": "Notes",
+      "submit": "Enregistrer le Fournisseur"
+    },
+    "riskLevels": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique",
+      "unknown": "Inconnu"
+    },
+    "table": {
+      "name": "Nom",
+      "industry": "Industrie",
+      "country": "Pays",
+      "riskLevel": "Niveau de Risque",
+      "lastAssessment": "Dernière Évaluation",
+      "actions": "Actions"
+    }
+  },
+
+  "frameworks": {
+    "title": "Cadres de Conformité",
+    "description": "Suivez votre progression dans les cadres de reporting ESG",
+    "addFramework": "Ajouter un Cadre",
+    "status": {
+      "notStarted": "Non Commencé",
+      "inProgress": "En Cours",
+      "review": "Révision",
+      "submitted": "Soumis",
+      "completed": "Terminé"
+    },
+    "completion": "{{value}}% complété"
+  },
+
+  "auditLog": {
+    "title": "Journal d'Audit",
+    "description": "Enregistrement complet de toutes les actions et modifications",
+    "table": {
+      "timestamp": "Horodatage",
+      "user": "Utilisateur",
+      "action": "Action",
+      "entity": "Entité",
+      "details": "Détails"
+    },
+    "filters": {
+      "allActions": "Toutes les actions",
+      "allUsers": "Tous les utilisateurs"
+    }
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "description": "Gérez les paramètres de votre compte et de votre organisation",
+    "tabs": {
+      "profile": "Profil",
+      "billing": "Facturation",
+      "team": "Équipe",
+      "integrations": "Intégrations",
+      "notifications": "Notifications",
+      "security": "Sécurité",
+      "dataExport": "Export de Données"
+    },
+    "profile": {
+      "title": "Paramètres du Profil",
+      "name": "Nom",
+      "email": "E-mail",
+      "language": "Langue",
+      "timezone": "Fuseau Horaire",
+      "save": "Enregistrer les Modifications"
+    },
+    "billing": {
+      "title": "Facturation et Plan",
+      "currentPlan": "Plan Actuel",
+      "upgrade": "Mettre à Niveau",
+      "manageBilling": "Gérer la Facturation",
+      "invoiceHistory": "Historique des Factures"
+    },
+    "team": {
+      "title": "Membres de l'Équipe",
+      "invite": "Inviter un Membre",
+      "role": "Rôle",
+      "roles": {
+        "owner": "Propriétaire",
+        "admin": "Administrateur",
+        "member": "Membre",
+        "viewer": "Observateur"
+      }
+    },
+    "notifications": {
+      "title": "Préférences de Notifications",
+      "email": "Notifications par E-mail",
+      "documentProcessed": "Document traité",
+      "emissionCreated": "Entrée d'émission créée",
+      "reportReady": "Rapport prêt pour révision",
+      "complianceAlert": "Alertes d'échéances de conformité",
+      "weeklyDigest": "Résumé hebdomadaire"
+    },
+    "security": {
+      "title": "Paramètres de Sécurité",
+      "changePassword": "Changer le Mot de Passe",
+      "twoFactor": "Authentification à Deux Facteurs",
+      "sessions": "Sessions Actives"
+    },
+    "dataExport": {
+      "title": "Export de Données",
+      "description": "Exportez vos données d'émissions et rapports",
+      "exportCSV": "Exporter en CSV",
+      "exportJSON": "Exporter en JSON"
+    }
+  },
+
+  "onboarding": {
+    "welcome": "Bienvenue sur GreenLedger",
+    "letsGetStarted": "Configurons votre organisation",
+    "orgName": "Nom de l'Organisation",
+    "orgSlug": "URL Slug",
+    "industry": "Industrie",
+    "employeeCount": "Nombre d'Employés",
+    "country": "Pays",
+    "continue": "Continuer",
+    "skip": "Passer pour le moment",
+    "complete": {
+      "title": "Vous êtes prêt !",
+      "description": "Votre organisation est configurée. Commencez par télécharger votre premier document.",
+      "goToDashboard": "Aller au Tableau de Bord"
+    }
+  },
+
+  "marketing": {
+    "about": {
+      "title": "À propos de GreenLedger",
+      "mission": "Notre mission est de rendre la conformité ESG accessible à toutes les entreprises."
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "description": "Des questions ? Nous serions ravis de vous entendre.",
+      "name": "Nom",
+      "email": "E-mail",
+      "message": "Message",
+      "submit": "Envoyer le Message"
+    },
+    "pricing": {
+      "title": "Tarifs",
+      "description": "Des tarifs simples et transparents pour les équipes de toutes tailles"
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "送信",
+    "confirm": "確認",
+    "close": "閉じる",
+    "search": "検索",
+    "filter": "フィルター",
+    "export": "エクスポート",
+    "import": "インポート",
+    "download": "ダウンロード",
+    "upload": "アップロード",
+    "refresh": "更新",
+    "retry": "再試行",
+    "yes": "はい",
+    "no": "いいえ",
+    "or": "または",
+    "and": "と",
+    "all": "すべて",
+    "none": "なし",
+    "viewAll": "すべて表示",
+    "learnMore": "詳しく見る",
+    "getStarted": "始める",
+    "signIn": "ログイン",
+    "signUp": "新規登録",
+    "signOut": "ログアウト",
+    "page": "{{total}} ページ中 {{current}} ページ目",
+    "noResults": "結果が見つかりません",
+    "error": "エラー",
+    "success": "成功",
+    "warning": "警告"
+  },
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "frameworks": "フレームワーク",
+    "emissions": "排出量",
+    "documents": "ドキュメント",
+    "reports": "レポート",
+    "suppliers": "サプライヤー",
+    "auditLog": "監査ログ",
+    "settings": "設定",
+    "upgrade": "アップグレード"
+  },
+  "trial": {
+    "freeTrial": "無料トライアル",
+    "trialExpired": "トライアル終了",
+    "daysRemaining": "残り {{days}} 日",
+    "daysRemainingPlural": "残り {{days}} 日",
+    "upgradeToContinue": "続行するにはアップグレードしてください"
+  },
+  "auth": {
+    "login": {
+      "title": "おかえりなさい",
+      "description": "GreenLedgerアカウントにログイン",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "forgotPassword": "パスワードをお忘れですか？",
+      "submit": "ログイン",
+      "noAccount": "アカウントをお持ちでない方",
+      "signUp": "新規登録"
+    },
+    "register": {
+      "title": "アカウントを作成",
+      "description": "10分以内にGreenLedgerを始めましょう",
+      "name": "氏名",
+      "email": "ビジネスメール",
+      "password": "パスワード",
+      "confirmPassword": "パスワード確認",
+      "submit": "アカウント作成",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "signIn": "ログイン"
+    }
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "description": "ESGコンプライアンスの概要",
+    "stats": {
+      "totalEmissions": "総排出量",
+      "documentsProcessed": "処理済みドキュメント",
+      "complianceScore": "コンプライアンススコア",
+      "daysUntilDeadline": "締切までの日数",
+      "tCO2e": "tCO2e"
+    }
+  },
+  "emissions": { "title": "排出量", "description": "スコープ1、2、3の温室効果ガス排出量を追跡・管理", "scope1": "スコープ1排出量", "scope2": "スコープ2排出量", "scope3": "スコープ3排出量" },
+  "documents": { "title": "ドキュメント", "description": "ESGソースドキュメントのアップロードと管理", "upload": "ドキュメントをアップロード" },
+  "reports": { "title": "レポート", "description": "コンプライアンスレポートの生成と管理" },
+  "suppliers": { "title": "サプライヤー", "description": "サプライチェーンのESGリスクとスコープ3データの管理" },
+  "frameworks": { "title": "コンプライアンスフレームワーク", "description": "ESG報告フレームワークの進捗を追跡" },
+  "auditLog": { "title": "監査ログ", "description": "すべてのアクションと変更の完全な記録" },
+  "settings": {
+    "title": "設定",
+    "description": "アカウントと組織の設定を管理",
+    "tabs": { "profile": "プロフィール", "billing": "請求", "team": "チーム", "integrations": "連携", "notifications": "通知", "security": "セキュリティ", "dataExport": "データエクスポート" }
+  }
+}

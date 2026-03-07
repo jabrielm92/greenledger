@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -127,6 +128,10 @@ export function Sidebar() {
             );
           })}
         </nav>
+
+        <div className="border-t px-4 py-3">
+          <LanguageSwitcher className="w-full" />
+        </div>
 
         <TrialBadge />
       </div>

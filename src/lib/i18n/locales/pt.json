@@ -1,0 +1,117 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "Carregando...",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "download": "Baixar",
+    "upload": "Enviar",
+    "refresh": "Atualizar",
+    "retry": "Tentar novamente",
+    "yes": "Sim",
+    "no": "Não",
+    "or": "ou",
+    "and": "e",
+    "all": "Todos",
+    "none": "Nenhum",
+    "viewAll": "Ver tudo",
+    "learnMore": "Saiba mais",
+    "getStarted": "Começar",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "signOut": "Sair",
+    "page": "Página {{current}} de {{total}}",
+    "noResults": "Nenhum resultado encontrado",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "frameworks": "Frameworks",
+    "emissions": "Emissões",
+    "documents": "Documentos",
+    "reports": "Relatórios",
+    "suppliers": "Fornecedores",
+    "auditLog": "Registro de Auditoria",
+    "settings": "Configurações",
+    "upgrade": "Atualizar"
+  },
+  "trial": {
+    "freeTrial": "Teste Gratuito",
+    "trialExpired": "Teste Expirado",
+    "daysRemaining": "{{days}} dia restante",
+    "daysRemainingPlural": "{{days}} dias restantes",
+    "upgradeToContinue": "Atualize para continuar"
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de volta",
+      "description": "Entre na sua conta GreenLedger",
+      "email": "E-mail",
+      "emailPlaceholder": "voce@empresa.com",
+      "password": "Senha",
+      "passwordPlaceholder": "Digite sua senha",
+      "forgotPassword": "Esqueceu a senha?",
+      "submit": "Entrar",
+      "orContinueWith": "Ou continue com",
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastre-se"
+    },
+    "register": {
+      "title": "Crie uma conta",
+      "description": "Comece com o GreenLedger em menos de 10 minutos",
+      "name": "Nome completo",
+      "email": "E-mail de trabalho",
+      "password": "Senha",
+      "confirmPassword": "Confirmar senha",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem uma conta?",
+      "signIn": "Entrar"
+    }
+  },
+  "dashboard": {
+    "title": "Painel",
+    "description": "Sua visão geral de conformidade ESG",
+    "stats": {
+      "totalEmissions": "Emissões Totais",
+      "documentsProcessed": "Documentos Processados",
+      "complianceScore": "Pontuação de Conformidade",
+      "daysUntilDeadline": "Dias Até o Prazo",
+      "tCO2e": "tCO2e"
+    }
+  },
+  "emissions": {
+    "title": "Emissões",
+    "description": "Rastreie e gerencie suas emissões de gases de efeito estufa Escopo 1, 2 e 3",
+    "scope1": "Emissões Escopo 1",
+    "scope2": "Emissões Escopo 2",
+    "scope3": "Emissões Escopo 3"
+  },
+  "documents": {
+    "title": "Documentos",
+    "description": "Envie e gerencie seus documentos fonte ESG",
+    "upload": "Enviar Documento"
+  },
+  "reports": { "title": "Relatórios", "description": "Gere e gerencie relatórios de conformidade" },
+  "suppliers": { "title": "Fornecedores", "description": "Gerencie o risco ESG da sua cadeia de suprimentos" },
+  "frameworks": { "title": "Frameworks de Conformidade", "description": "Acompanhe seu progresso nos frameworks de relatórios ESG" },
+  "auditLog": { "title": "Registro de Auditoria", "description": "Registro completo de todas as ações e alterações" },
+  "settings": {
+    "title": "Configurações",
+    "description": "Gerencie as configurações da sua conta e organização",
+    "tabs": { "profile": "Perfil", "billing": "Faturamento", "team": "Equipe", "integrations": "Integrações", "notifications": "Notificações", "security": "Segurança", "dataExport": "Exportar Dados" }
+  }
+}

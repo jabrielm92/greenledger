@@ -1,0 +1,608 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "download": "Download",
+    "upload": "Upload",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "all": "All",
+    "none": "None",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "getStarted": "Get Started",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "page": "Page {{current}} of {{total}}",
+    "noResults": "No results found",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning"
+  },
+
+  "nav": {
+    "dashboard": "Dashboard",
+    "frameworks": "Frameworks",
+    "emissions": "Emissions",
+    "documents": "Documents",
+    "reports": "Reports",
+    "suppliers": "Suppliers",
+    "auditLog": "Audit Log",
+    "settings": "Settings",
+    "upgrade": "Upgrade"
+  },
+
+  "trial": {
+    "freeTrial": "Free Trial",
+    "trialExpired": "Trial Expired",
+    "daysRemaining": "{{days}} day remaining",
+    "daysRemainingPlural": "{{days}} days remaining",
+    "upgradeToContinue": "Upgrade to continue"
+  },
+
+  "landing": {
+    "hero": {
+      "badge": "ESG compliance, automated",
+      "title": "Carbon reporting that",
+      "titleHighlight": "actually works",
+      "description": "GreenLedger automates ESG data collection, emissions calculation, and compliance reporting. Upload documents, and our AI handles the rest — from extraction to audit-ready reports.",
+      "cta": "Start Free Trial",
+      "ctaSecondary": "Watch Demo",
+      "socialProof": "Trusted by 200+ companies for ESG compliance"
+    },
+    "painPoints": {
+      "title": "ESG compliance shouldn't feel like this",
+      "description": "Most teams waste hundreds of hours on manual data collection and spreadsheet gymnastics",
+      "manual": "Manual data entry from hundreds of invoices and utility bills",
+      "spreadsheets": "Spreadsheets that break when formulas get complex",
+      "frameworks": "Confusing framework requirements that change yearly",
+      "deadlines": "Missed deadlines and incomplete reports"
+    },
+    "howItWorks": {
+      "title": "Three steps to compliance",
+      "description": "From raw documents to audit-ready reports in minutes, not months",
+      "step1": {
+        "title": "Upload Documents",
+        "description": "Drag & drop utility bills, invoices, fuel receipts, and more. We accept PDFs, images, spreadsheets, and Word documents."
+      },
+      "step2": {
+        "title": "AI Extracts & Calculates",
+        "description": "Our AI reads documents in any language, extracts emissions data with 98%+ accuracy, and calculates your carbon footprint automatically."
+      },
+      "step3": {
+        "title": "Generate Reports",
+        "description": "One-click reports for CSRD, GRI, SASB, and ISSB. Fully audit-trailed and ready for submission."
+      }
+    },
+    "features": {
+      "title": "Everything you need for ESG compliance",
+      "description": "A complete platform that replaces spreadsheets, consultants, and manual processes",
+      "aiExtraction": {
+        "title": "AI Document Extraction",
+        "description": "Upload any document in any language. Our AI extracts emissions data with 98%+ accuracy and creates audit trails automatically."
+      },
+      "multiFramework": {
+        "title": "Multi-Framework Reporting",
+        "description": "Generate reports for CSRD, GRI, SASB, and ISSB from a single data source. No duplicate data entry required."
+      },
+      "scopeTracking": {
+        "title": "Scope 1, 2 & 3 Tracking",
+        "description": "Comprehensive GHG Protocol tracking across all emission scopes with automatic factor lookup and calculation."
+      },
+      "auditTrail": {
+        "title": "Full Audit Trail",
+        "description": "Every data point is traced back to its source document. Complete change history for auditor confidence."
+      },
+      "supplierManagement": {
+        "title": "Supplier Management",
+        "description": "Track supplier ESG risk, collect Scope 3 data, and manage your supply chain sustainability."
+      },
+      "integrations": {
+        "title": "QuickBooks Integration",
+        "description": "Auto-import financial data from QuickBooks. Transactions are automatically mapped to emission categories."
+      }
+    },
+    "testimonials": {
+      "title": "Trusted by sustainability leaders",
+      "description": "See how companies like yours simplified their ESG compliance"
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "description": "Start free. Upgrade when you're ready. No hidden fees.",
+      "monthly": "Monthly",
+      "annually": "Annually",
+      "starter": {
+        "name": "Starter",
+        "price": "$0",
+        "period": "14-day free trial",
+        "description": "Perfect for getting started with ESG reporting",
+        "cta": "Start Free Trial",
+        "features": [
+          "Up to 50 documents/month",
+          "Scope 1 & 2 tracking",
+          "1 compliance framework",
+          "Basic reports",
+          "Email support"
+        ]
+      },
+      "professional": {
+        "name": "Professional",
+        "price": "$149",
+        "period": "per month",
+        "description": "For growing teams that need full compliance coverage",
+        "cta": "Start Free Trial",
+        "popular": "Most Popular",
+        "features": [
+          "Unlimited documents",
+          "Scope 1, 2 & 3 tracking",
+          "All compliance frameworks",
+          "Advanced reports & exports",
+          "QuickBooks integration",
+          "Supplier management",
+          "Priority support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "Custom",
+        "period": "contact us",
+        "description": "For large organizations with complex reporting needs",
+        "cta": "Contact Sales",
+        "features": [
+          "Everything in Professional",
+          "Custom integrations",
+          "Dedicated account manager",
+          "SSO & advanced security",
+          "Custom emission factors",
+          "API access",
+          "SLA guarantee"
+        ]
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "description": "Everything you need to know about GreenLedger",
+      "items": [
+        {
+          "q": "How quickly can I get started?",
+          "a": "Most teams are up and running within 10 minutes. Upload your first document, and our AI extracts emissions data in seconds."
+        },
+        {
+          "q": "Which compliance frameworks do you support?",
+          "a": "GreenLedger supports CSRD (EU), GRI Standards, SASB, and ISSB. We regularly add new frameworks as regulations evolve."
+        },
+        {
+          "q": "Is my data secure?",
+          "a": "Absolutely. All data is encrypted at rest (AES-256) and in transit (TLS 1.2+). We maintain full audit logs, role-based access controls, and multi-tenant data isolation."
+        },
+        {
+          "q": "Can I connect my accounting software?",
+          "a": "Yes — our QuickBooks integration auto-imports financial data that feeds directly into emissions calculations. More integrations coming soon."
+        },
+        {
+          "q": "What if I need help with my first report?",
+          "a": "Our support team is here to help. Professional and Enterprise plans include priority support to guide you through your first compliance report."
+        },
+        {
+          "q": "Do you offer annual pricing?",
+          "a": "Annual pricing with a 20% discount is coming soon. Contact us to be notified when it becomes available."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to simplify your ESG compliance?",
+      "description": "Join 200+ companies using GreenLedger to automate carbon reporting and meet compliance deadlines with confidence.",
+      "button": "Start Your Free Trial",
+      "note": "No credit card required · 14-day free trial · Cancel anytime"
+    },
+    "footer": {
+      "description": "Automated ESG compliance and carbon reporting for modern businesses.",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "features": "Features",
+      "pricing": "Pricing",
+      "integrations": "Integrations",
+      "about": "About",
+      "contact": "Contact",
+      "careers": "Careers",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "copyright": "© {{year}} GreenLedger. All rights reserved."
+    }
+  },
+
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to your GreenLedger account",
+      "email": "Email",
+      "emailPlaceholder": "you@company.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "orContinueWith": "Or continue with",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "signInFailed": "Sign-in failed. Please try again.",
+      "genericError": "Something went wrong. Please try again.",
+      "accountCreated": "Account created successfully! Please sign in."
+    },
+    "register": {
+      "title": "Create an account",
+      "description": "Get started with GreenLedger in under 10 minutes",
+      "name": "Full name",
+      "namePlaceholder": "Jane Smith",
+      "email": "Work email",
+      "emailPlaceholder": "jane@company.com",
+      "password": "Password",
+      "passwordPlaceholder": "Min 8 chars, 1 uppercase, 1 number",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "submit": "Create account",
+      "termsAgreement": "By signing up, you agree to our",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "registrationFailed": "Registration failed. Please try again.",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "description": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "submit": "Send reset link",
+      "backToLogin": "Back to sign in",
+      "sent": "If an account with that email exists, we've sent a reset link."
+    },
+    "resetPassword": {
+      "title": "Set new password",
+      "description": "Enter your new password below",
+      "password": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Reset password"
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "description": "We've sent a verification link to {{email}}",
+      "resend": "Resend verification email",
+      "checkInbox": "Check your inbox and click the verification link to continue."
+    }
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Your ESG compliance overview at a glance",
+    "stats": {
+      "totalEmissions": "Total Emissions",
+      "documentsProcessed": "Documents Processed",
+      "complianceScore": "Compliance Score",
+      "daysUntilDeadline": "Days Until Deadline",
+      "nDeadline": "No deadline set",
+      "tCO2e": "tCO2e"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "uploadDocument": "Upload Document",
+      "addEmission": "Add Emission Entry",
+      "generateReport": "Generate Report",
+      "manageSuppliers": "Manage Suppliers"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity"
+    },
+    "frameworkProgress": {
+      "title": "Framework Progress"
+    },
+    "emissionsChart": {
+      "title": "Emissions Over Time",
+      "scope1": "Scope 1",
+      "scope2": "Scope 2",
+      "scope3": "Scope 3"
+    },
+    "complianceScore": {
+      "title": "Compliance Score"
+    }
+  },
+
+  "emissions": {
+    "title": "Emissions",
+    "description": "Track and manage your Scope 1, 2 & 3 greenhouse gas emissions",
+    "uploadDocument": "Upload Document",
+    "addEntry": "Add Entry",
+    "scope1": "Scope 1 Emissions",
+    "scope2": "Scope 2 Emissions",
+    "scope3": "Scope 3 Emissions",
+    "dataEntries": "Data Entries",
+    "allScopes": "All scopes",
+    "scopeBreakdown": "Scope Breakdown",
+    "byCategory": "By Category",
+    "byMonth": "Monthly Trend",
+    "form": {
+      "title": "New Emission Entry",
+      "scope": "Scope",
+      "category": "Category",
+      "subcategory": "Subcategory",
+      "source": "Source",
+      "description": "Description",
+      "activityValue": "Activity Value",
+      "activityUnit": "Activity Unit",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location",
+      "notes": "Notes",
+      "submit": "Create Entry"
+    }
+  },
+
+  "documents": {
+    "title": "Documents",
+    "description": "Upload and manage your ESG source documents",
+    "upload": "Upload Document",
+    "uploadZone": {
+      "dragDrop": "Drag & drop files here, or click to browse",
+      "dropHere": "Drop files here...",
+      "acceptedFormats": "PDF, Images, CSV, XLSX, XLS, DOCX, DOC, TXT, XML, JSON, ODS, ODT — up to 25MB",
+      "done": "Done"
+    },
+    "detail": {
+      "title": "Document Details",
+      "status": "Status",
+      "type": "Type",
+      "size": "Size",
+      "uploaded": "Uploaded",
+      "uploadedBy": "Uploaded by",
+      "aiConfidence": "AI Confidence",
+      "error": "Error",
+      "notFound": "Document not found",
+      "backToDocuments": "Back to documents"
+    },
+    "extraction": {
+      "title": "Extracted Data Review",
+      "confidence": "{{value}}% confidence",
+      "noData": "No extracted data available",
+      "extractionNotes": "Extraction Notes",
+      "lowConfidence": "Low confidence extraction",
+      "lowConfidenceDesc": "AI confidence is only {{value}}%. Please review all fields carefully before confirming.",
+      "confirm": "Confirm & Create Emission Entry",
+      "reExtract": "Re-extract",
+      "reject": "Reject"
+    },
+    "toast": {
+      "emissionCreated": "Emission entry created",
+      "emissionCreatedDesc": "The emission entry was successfully created from the extracted data.",
+      "dataConfirmed": "Data confirmed",
+      "reExtractionStarted": "Re-extraction started",
+      "reExtractionStartedDesc": "The document is being re-processed by AI.",
+      "reExtractionFailed": "Re-extraction failed",
+      "reExtractionFailedDesc": "Could not start re-extraction. Please try again.",
+      "rejected": "Document rejected",
+      "rejectedDesc": "The document has been marked as rejected.",
+      "error": "Error",
+      "errorDesc": "Something went wrong. Please try again."
+    },
+    "filters": {
+      "allTypes": "All types",
+      "allStatuses": "All statuses"
+    },
+    "table": {
+      "fileName": "File Name",
+      "type": "Type",
+      "status": "Status",
+      "confidence": "Confidence",
+      "uploaded": "Uploaded",
+      "actions": "Actions"
+    }
+  },
+
+  "reports": {
+    "title": "Reports",
+    "description": "Generate and manage compliance reports",
+    "newReport": "New Report",
+    "form": {
+      "title": "Generate Report",
+      "framework": "Framework",
+      "reportingPeriod": "Reporting Period",
+      "reportTitle": "Report Title",
+      "submit": "Generate"
+    },
+    "status": {
+      "draft": "Draft",
+      "generating": "Generating",
+      "review": "Review",
+      "approved": "Approved",
+      "published": "Published"
+    },
+    "table": {
+      "title": "Title",
+      "framework": "Framework",
+      "status": "Status",
+      "version": "Version",
+      "created": "Created",
+      "actions": "Actions"
+    }
+  },
+
+  "suppliers": {
+    "title": "Suppliers",
+    "description": "Manage your supply chain ESG risk and Scope 3 data",
+    "addSupplier": "Add Supplier",
+    "form": {
+      "name": "Supplier Name",
+      "contactEmail": "Contact Email",
+      "contactName": "Contact Name",
+      "industry": "Industry",
+      "country": "Country",
+      "website": "Website",
+      "esgRiskLevel": "ESG Risk Level",
+      "notes": "Notes",
+      "submit": "Save Supplier"
+    },
+    "riskLevels": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical",
+      "unknown": "Unknown"
+    },
+    "table": {
+      "name": "Name",
+      "industry": "Industry",
+      "country": "Country",
+      "riskLevel": "Risk Level",
+      "lastAssessment": "Last Assessment",
+      "actions": "Actions"
+    }
+  },
+
+  "frameworks": {
+    "title": "Compliance Frameworks",
+    "description": "Track your progress across ESG reporting frameworks",
+    "addFramework": "Add Framework",
+    "status": {
+      "notStarted": "Not Started",
+      "inProgress": "In Progress",
+      "review": "Review",
+      "submitted": "Submitted",
+      "completed": "Completed"
+    },
+    "completion": "{{value}}% complete"
+  },
+
+  "auditLog": {
+    "title": "Audit Log",
+    "description": "Complete record of all actions and changes",
+    "table": {
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "details": "Details"
+    },
+    "filters": {
+      "allActions": "All actions",
+      "allUsers": "All users"
+    }
+  },
+
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and organization settings",
+    "tabs": {
+      "profile": "Profile",
+      "billing": "Billing",
+      "team": "Team",
+      "integrations": "Integrations",
+      "notifications": "Notifications",
+      "security": "Security",
+      "dataExport": "Data Export"
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "name": "Name",
+      "email": "Email",
+      "language": "Language",
+      "timezone": "Timezone",
+      "save": "Save Changes"
+    },
+    "billing": {
+      "title": "Billing & Plan",
+      "currentPlan": "Current Plan",
+      "upgrade": "Upgrade Plan",
+      "manageBilling": "Manage Billing",
+      "invoiceHistory": "Invoice History"
+    },
+    "team": {
+      "title": "Team Members",
+      "invite": "Invite Member",
+      "role": "Role",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member",
+        "viewer": "Viewer"
+      }
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "email": "Email Notifications",
+      "documentProcessed": "Document processed",
+      "emissionCreated": "Emission entry created",
+      "reportReady": "Report ready for review",
+      "complianceAlert": "Compliance deadline alerts",
+      "weeklyDigest": "Weekly summary digest"
+    },
+    "security": {
+      "title": "Security Settings",
+      "changePassword": "Change Password",
+      "twoFactor": "Two-Factor Authentication",
+      "sessions": "Active Sessions"
+    },
+    "dataExport": {
+      "title": "Data Export",
+      "description": "Export your emissions data and reports",
+      "exportCSV": "Export as CSV",
+      "exportJSON": "Export as JSON"
+    }
+  },
+
+  "onboarding": {
+    "welcome": "Welcome to GreenLedger",
+    "letsGetStarted": "Let's get your organization set up",
+    "orgName": "Organization Name",
+    "orgSlug": "URL Slug",
+    "industry": "Industry",
+    "employeeCount": "Number of Employees",
+    "country": "Country",
+    "continue": "Continue",
+    "skip": "Skip for now",
+    "complete": {
+      "title": "You're all set!",
+      "description": "Your organization is ready. Start by uploading your first document.",
+      "goToDashboard": "Go to Dashboard"
+    }
+  },
+
+  "marketing": {
+    "about": {
+      "title": "About GreenLedger",
+      "mission": "Our mission is to make ESG compliance accessible to every business."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "Have questions? We'd love to hear from you.",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send Message"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "description": "Simple, transparent pricing for every team size"
+    }
+  }
+}

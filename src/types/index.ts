@@ -36,14 +36,17 @@ export interface SessionUser {
 /** Supported application locales */
 export const SUPPORTED_LOCALES = [
   { code: "en", label: "English", nativeLabel: "English" },
+  { code: "es", label: "Spanish", nativeLabel: "Español" },
+  { code: "fr", label: "French", nativeLabel: "Français" },
+  { code: "de", label: "German", nativeLabel: "Deutsch" },
+  { code: "pt", label: "Portuguese", nativeLabel: "Português" },
+  { code: "zh", label: "Chinese", nativeLabel: "中文" },
+  { code: "ja", label: "Japanese", nativeLabel: "日本語" },
+  { code: "ar", label: "Arabic", nativeLabel: "العربية" },
   { code: "cy", label: "Welsh", nativeLabel: "Cymraeg" },
   { code: "pl", label: "Polish", nativeLabel: "Polski" },
   { code: "ur", label: "Urdu", nativeLabel: "اردو" },
   { code: "bn", label: "Bengali", nativeLabel: "বাংলা" },
-  { code: "fr", label: "French", nativeLabel: "Français" },
-  { code: "de", label: "German", nativeLabel: "Deutsch" },
-  { code: "es", label: "Spanish", nativeLabel: "Español" },
-  { code: "pt", label: "Portuguese", nativeLabel: "Português" },
 ] as const;
 
 export type LocaleCode = (typeof SUPPORTED_LOCALES)[number]["code"];

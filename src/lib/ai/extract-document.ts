@@ -43,14 +43,18 @@ export async function extractDocument(
 
   const response = await openai.chat.completions.create({
     model: AI_MODEL,
-    max_tokens: 2048,
+    max_tokens: 4096,
+    temperature: 0.1,
     messages: [
       { role: "system", content: extractionPrompt },
       { role: "user", content },
     ],
   });
 
-  const text = response.choices[0]?.message?.content ?? "";
+  let text = response.choices[0]?.message?.content ?? "";
+
+  // Strip markdown fences if present (common AI response quirk)
+  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
   let extractedData: ExtractedData | Record<string, unknown>;
   let confidence: number;
@@ -60,8 +64,21 @@ export async function extractDocument(
     extractedData = parsed;
     confidence = parsed.confidence ?? classification.confidence;
   } catch {
-    extractedData = { raw: text, parseError: true };
-    confidence = 0.3;
+    // Attempt to find JSON within the response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        extractedData = parsed;
+        confidence = parsed.confidence ?? classification.confidence * 0.9;
+      } catch {
+        extractedData = { raw: text, parseError: true };
+        confidence = 0.3;
+      }
+    } else {
+      extractedData = { raw: text, parseError: true };
+      confidence = 0.3;
+    }
   }
 
   return {

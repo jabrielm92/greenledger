@@ -1,0 +1,104 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "export": "تصدير",
+    "import": "استيراد",
+    "download": "تنزيل",
+    "upload": "رفع",
+    "refresh": "تحديث",
+    "retry": "إعادة المحاولة",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "and": "و",
+    "all": "الكل",
+    "none": "لا شيء",
+    "viewAll": "عرض الكل",
+    "learnMore": "اعرف المزيد",
+    "getStarted": "ابدأ الآن",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "page": "الصفحة {{current}} من {{total}}",
+    "noResults": "لم يتم العثور على نتائج",
+    "error": "خطأ",
+    "success": "نجاح",
+    "warning": "تحذير"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "frameworks": "أطر العمل",
+    "emissions": "الانبعاثات",
+    "documents": "المستندات",
+    "reports": "التقارير",
+    "suppliers": "الموردون",
+    "auditLog": "سجل التدقيق",
+    "settings": "الإعدادات",
+    "upgrade": "ترقية"
+  },
+  "trial": {
+    "freeTrial": "تجربة مجانية",
+    "trialExpired": "انتهت التجربة",
+    "daysRemaining": "{{days}} يوم متبقي",
+    "daysRemainingPlural": "{{days}} أيام متبقية",
+    "upgradeToContinue": "قم بالترقية للمتابعة"
+  },
+  "auth": {
+    "login": {
+      "title": "مرحباً بعودتك",
+      "description": "سجل الدخول إلى حساب GreenLedger الخاص بك",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "submit": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "signUp": "إنشاء حساب"
+    },
+    "register": {
+      "title": "إنشاء حساب",
+      "description": "ابدأ مع GreenLedger في أقل من 10 دقائق",
+      "name": "الاسم الكامل",
+      "email": "البريد الإلكتروني للعمل",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "submit": "إنشاء حساب",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "description": "نظرة عامة على امتثال ESG الخاص بك",
+    "stats": {
+      "totalEmissions": "إجمالي الانبعاثات",
+      "documentsProcessed": "المستندات المعالجة",
+      "complianceScore": "درجة الامتثال",
+      "daysUntilDeadline": "الأيام حتى الموعد النهائي",
+      "tCO2e": "طن ثاني أكسيد الكربون المكافئ"
+    }
+  },
+  "emissions": { "title": "الانبعاثات", "description": "تتبع وإدارة انبعاثات الغازات الدفيئة النطاق 1 و 2 و 3", "scope1": "انبعاثات النطاق 1", "scope2": "انبعاثات النطاق 2", "scope3": "انبعاثات النطاق 3" },
+  "documents": { "title": "المستندات", "description": "رفع وإدارة مستندات ESG المصدر", "upload": "رفع مستند" },
+  "reports": { "title": "التقارير", "description": "إنشاء وإدارة تقارير الامتثال" },
+  "suppliers": { "title": "الموردون", "description": "إدارة مخاطر ESG لسلسلة التوريد وبيانات النطاق 3" },
+  "frameworks": { "title": "أطر الامتثال", "description": "تتبع تقدمك في أطر تقارير ESG" },
+  "auditLog": { "title": "سجل التدقيق", "description": "سجل كامل لجميع الإجراءات والتغييرات" },
+  "settings": {
+    "title": "الإعدادات",
+    "description": "إدارة إعدادات حسابك ومؤسستك",
+    "tabs": { "profile": "الملف الشخصي", "billing": "الفوترة", "team": "الفريق", "integrations": "التكاملات", "notifications": "الإشعارات", "security": "الأمان", "dataExport": "تصدير البيانات" }
+  }
+}

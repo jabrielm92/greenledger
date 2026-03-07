@@ -13,12 +13,14 @@ import { ArrowLeft } from "lucide-react";
 import { formatFileSize, formatEnumValue } from "@/lib/utils";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DocumentDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { document, isLoading, refetch } = useDocument(params.id as string);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   if (isLoading) {
     return <LoadingSpinner className="py-20" text="Loading document..." />;
@@ -48,18 +50,35 @@ export default function DocumentDetailPage() {
       );
 
       if (!res.ok) {
-        // Fall back to just saving the reviewed data if emission creation fails
-        // (e.g. unsupported document type, missing emission factor)
         const err = await res.json().catch(() => ({}));
         console.warn("[CREATE_EMISSION]", err.error || "Failed");
+        // Fall back to just saving the reviewed data
         await fetch(`/api/documents/${document.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: "REVIEWED", extractedData: data }),
         });
+        toast({
+          title: "Data confirmed",
+          description: err.error
+            ? `Saved as reviewed. ${err.error}`
+            : "Extracted data saved as reviewed.",
+        });
+      } else {
+        toast({
+          title: "Emission entry created",
+          description:
+            "The emission entry was successfully created from the extracted data.",
+        });
       }
 
       refetch();
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +92,17 @@ export default function DocumentDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ documentId: document.id }),
       });
+      toast({
+        title: "Re-extraction started",
+        description: "The document is being re-processed by AI.",
+      });
       refetch();
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Re-extraction failed",
+        description: "Could not start re-extraction. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +116,17 @@ export default function DocumentDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "FAILED" }),
       });
+      toast({
+        title: "Document rejected",
+        description: "The document has been marked as rejected.",
+      });
       router.push("/dashboard/documents");
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not reject document. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -163,8 +202,7 @@ export default function DocumentDetailPage() {
           </CardContent>
         </Card>
 
-        {(document.status === "EXTRACTED" ||
-          document.status === "REVIEWED") && (
+        {document.extractedData && (
           <ExtractionReview
             documentId={document.id}
             documentType={document.documentType}
