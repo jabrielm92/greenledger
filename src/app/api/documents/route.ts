@@ -8,12 +8,28 @@ import { runDocumentExtraction } from "@/lib/ai/run-extraction";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 const ALLOWED_TYPES = [
+  // Documents
   "application/pdf",
+  "text/csv",
+  "text/plain",
+  "text/xml",
+  "application/xml",
+  "application/json",
+  // Spreadsheets
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+  "application/vnd.oasis.opendocument.spreadsheet",
+  // Word documents
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/msword",
+  "application/vnd.oasis.opendocument.text",
+  // Images (scanned documents)
   "image/png",
   "image/jpeg",
   "image/webp",
-  "text/csv",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "image/tiff",
+  "image/bmp",
+  "image/heic",
 ];
 
 export async function POST(req: NextRequest) {

@@ -31,19 +31,27 @@ export async function classifyDocument(
 
   const response = await openai.chat.completions.create({
     model: AI_MODEL,
-    max_tokens: 256,
+    max_tokens: 512,
+    temperature: 0.1,
     messages: [
       { role: "system", content: CLASSIFY_DOCUMENT_SYSTEM },
       { role: "user", content },
     ],
   });
 
-  const text = response.choices[0]?.message?.content ?? "";
+  let text = response.choices[0]?.message?.content ?? "";
+  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
   try {
     const parsed = JSON.parse(text) as DocumentClassification;
     return parsed;
   } catch {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]) as DocumentClassification;
+      } catch { /* fall through */ }
+    }
     return {
       documentType: "OTHER",
       confidence: 0.5,

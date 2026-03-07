@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatEnumValue } from "@/lib/utils";
-import { Check, Edit2, RotateCcw, X } from "lucide-react";
+import { AlertTriangle, Check, Edit2, RotateCcw, X } from "lucide-react";
 
 interface ExtractionReviewProps {
   documentId: string;
@@ -201,6 +201,19 @@ export function ExtractionReview({
                 <p className="mt-1 text-sm text-slate-700">
                   {String(extractedData.extractionNotes)}
                 </p>
+              </div>
+            )}
+
+            {confidence != null && confidence < 0.5 && (
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div className="text-sm text-amber-800">
+                  <p className="font-medium">Low confidence extraction</p>
+                  <p className="mt-0.5 text-amber-700">
+                    AI confidence is only {Math.round(confidence * 100)}%.
+                    Please review all fields carefully before confirming.
+                  </p>
+                </div>
               </div>
             )}
 

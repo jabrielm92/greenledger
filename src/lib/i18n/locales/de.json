@@ -1,0 +1,195 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "Laden...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "submit": "Absenden",
+    "confirm": "Bestätigen",
+    "close": "Schließen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "export": "Exportieren",
+    "import": "Importieren",
+    "download": "Herunterladen",
+    "upload": "Hochladen",
+    "refresh": "Aktualisieren",
+    "retry": "Erneut versuchen",
+    "yes": "Ja",
+    "no": "Nein",
+    "or": "oder",
+    "and": "und",
+    "all": "Alle",
+    "none": "Keine",
+    "viewAll": "Alle anzeigen",
+    "learnMore": "Mehr erfahren",
+    "getStarted": "Loslegen",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "signOut": "Abmelden",
+    "page": "Seite {{current}} von {{total}}",
+    "noResults": "Keine Ergebnisse gefunden",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "warning": "Warnung"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "frameworks": "Rahmenwerke",
+    "emissions": "Emissionen",
+    "documents": "Dokumente",
+    "reports": "Berichte",
+    "suppliers": "Lieferanten",
+    "auditLog": "Prüfprotokoll",
+    "settings": "Einstellungen",
+    "upgrade": "Upgrade"
+  },
+  "trial": {
+    "freeTrial": "Kostenlose Testversion",
+    "trialExpired": "Testversion abgelaufen",
+    "daysRemaining": "{{days}} Tag verbleibend",
+    "daysRemainingPlural": "{{days}} Tage verbleibend",
+    "upgradeToContinue": "Upgrade zum Fortfahren"
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück",
+      "description": "Melden Sie sich bei Ihrem GreenLedger-Konto an",
+      "email": "E-Mail",
+      "emailPlaceholder": "sie@unternehmen.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Passwort eingeben",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "orContinueWith": "Oder fortfahren mit",
+      "noAccount": "Noch kein Konto?",
+      "signUp": "Registrieren",
+      "invalidCredentials": "Ungültige E-Mail oder Passwort. Bitte versuchen Sie es erneut.",
+      "signInFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "accountCreated": "Konto erfolgreich erstellt! Bitte melden Sie sich an."
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "description": "Starten Sie mit GreenLedger in unter 10 Minuten",
+      "name": "Vollständiger Name",
+      "namePlaceholder": "Max Mustermann",
+      "email": "Geschäftliche E-Mail",
+      "emailPlaceholder": "max@unternehmen.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Min 8 Zeichen, 1 Großbuchstabe, 1 Zahl",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Passwort bestätigen",
+      "submit": "Konto erstellen",
+      "termsAgreement": "Mit der Registrierung akzeptieren Sie unsere",
+      "termsOfService": "Nutzungsbedingungen",
+      "and": "und",
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "hasAccount": "Bereits ein Konto?",
+      "signIn": "Anmelden",
+      "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Ihr ESG-Compliance-Überblick auf einen Blick",
+    "stats": {
+      "totalEmissions": "Gesamtemissionen",
+      "documentsProcessed": "Verarbeitete Dokumente",
+      "complianceScore": "Compliance-Score",
+      "daysUntilDeadline": "Tage bis zur Frist",
+      "nDeadline": "Keine Frist festgelegt",
+      "tCO2e": "tCO2e"
+    },
+    "quickActions": {
+      "title": "Schnellaktionen",
+      "uploadDocument": "Dokument hochladen",
+      "addEmission": "Emissionseintrag hinzufügen",
+      "generateReport": "Bericht generieren",
+      "manageSuppliers": "Lieferanten verwalten"
+    },
+    "recentActivity": { "title": "Letzte Aktivitäten", "noActivity": "Keine aktuellen Aktivitäten" },
+    "frameworkProgress": { "title": "Rahmenwerk-Fortschritt" },
+    "emissionsChart": { "title": "Emissionen im Zeitverlauf", "scope1": "Scope 1", "scope2": "Scope 2", "scope3": "Scope 3" },
+    "complianceScore": { "title": "Compliance-Score" }
+  },
+  "emissions": {
+    "title": "Emissionen",
+    "description": "Verfolgen und verwalten Sie Ihre Scope 1, 2 & 3 Treibhausgasemissionen",
+    "uploadDocument": "Dokument hochladen",
+    "addEntry": "Eintrag hinzufügen",
+    "scope1": "Scope 1 Emissionen",
+    "scope2": "Scope 2 Emissionen",
+    "scope3": "Scope 3 Emissionen",
+    "dataEntries": "Dateneinträge",
+    "allScopes": "Alle Scopes"
+  },
+  "documents": {
+    "title": "Dokumente",
+    "description": "Laden Sie Ihre ESG-Quelldokumente hoch und verwalten Sie sie",
+    "upload": "Dokument hochladen",
+    "detail": {
+      "title": "Dokumentdetails",
+      "status": "Status",
+      "type": "Typ",
+      "size": "Größe",
+      "uploaded": "Hochgeladen",
+      "uploadedBy": "Hochgeladen von",
+      "aiConfidence": "KI-Konfidenz",
+      "error": "Fehler",
+      "notFound": "Dokument nicht gefunden",
+      "backToDocuments": "Zurück zu Dokumenten"
+    },
+    "extraction": {
+      "title": "Überprüfung der extrahierten Daten",
+      "confirm": "Bestätigen & Emissionseintrag erstellen",
+      "reExtract": "Erneut extrahieren",
+      "reject": "Ablehnen"
+    }
+  },
+  "reports": {
+    "title": "Berichte",
+    "description": "Erstellen und verwalten Sie Compliance-Berichte",
+    "newReport": "Neuer Bericht"
+  },
+  "suppliers": {
+    "title": "Lieferanten",
+    "description": "Verwalten Sie das ESG-Risiko Ihrer Lieferkette und Scope 3-Daten",
+    "addSupplier": "Lieferant hinzufügen"
+  },
+  "frameworks": {
+    "title": "Compliance-Rahmenwerke",
+    "description": "Verfolgen Sie Ihren Fortschritt bei den ESG-Berichtsrahmenwerken",
+    "addFramework": "Rahmenwerk hinzufügen"
+  },
+  "auditLog": {
+    "title": "Prüfprotokoll",
+    "description": "Vollständige Aufzeichnung aller Aktionen und Änderungen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "description": "Verwalten Sie Ihre Konto- und Organisationseinstellungen",
+    "tabs": {
+      "profile": "Profil",
+      "billing": "Abrechnung",
+      "team": "Team",
+      "integrations": "Integrationen",
+      "notifications": "Benachrichtigungen",
+      "security": "Sicherheit",
+      "dataExport": "Datenexport"
+    },
+    "profile": { "title": "Profileinstellungen", "name": "Name", "email": "E-Mail", "language": "Sprache", "save": "Änderungen speichern" }
+  },
+  "onboarding": {
+    "welcome": "Willkommen bei GreenLedger",
+    "letsGetStarted": "Lassen Sie uns Ihre Organisation einrichten",
+    "continue": "Weiter",
+    "skip": "Vorerst überspringen"
+  }
+}

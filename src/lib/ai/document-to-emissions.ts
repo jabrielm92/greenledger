@@ -37,6 +37,14 @@ export function mapExtractedDataToEmission(
       return mapTravelRecord(extractedData, region);
     case "WASTE_MANIFEST":
       return mapWasteManifest(extractedData, region);
+    case "INVOICE":
+      return mapInvoice(extractedData, region);
+    case "SUPPLIER_REPORT":
+      return mapSupplierReport(extractedData, region);
+    case "FLEET_LOG":
+      return mapFleetLog(extractedData, region);
+    case "REFRIGERANT_LOG":
+      return mapRefrigerantLog(extractedData, region);
     default:
       return null;
   }
@@ -190,6 +198,226 @@ function mapWasteManifest(
       activityUnit: weight.unit,
       category: "waste",
       subcategory: wasteType,
+      region,
+      year,
+    },
+  };
+}
+
+function mapInvoice(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  // Invoices may contain fuel, utility, or purchased-goods data
+  const total = data.total as { value: number; currency: string } | null | undefined;
+  const category = (data.category as string) || "purchased_goods";
+  const vendor = (data.vendor as string) || "Unknown vendor";
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  // Try line items for activity data first
+  const lineItems = data.lineItems as Array<{ description: string; quantity: number; unit: string; amount: number }> | undefined;
+  let activityValue = 0;
+  let activityUnit = "units";
+
+  if (lineItems && lineItems.length > 0) {
+    activityValue = lineItems.reduce((sum, li) => sum + (li.quantity || 0), 0);
+    activityUnit = lineItems[0].unit || "units";
+  } else if (total?.value) {
+    // Use spend-based estimation
+    activityValue = total.value;
+    activityUnit = total.currency || "USD";
+  }
+
+  if (!activityValue) return null;
+
+  // Map common invoice categories to scopes
+  const lcCategory = category.toLowerCase();
+  const isFuel = /fuel|gas|diesel|petrol|gasoline/.test(lcCategory);
+  const isUtility = /electric|utility|energy|power|heating/.test(lcCategory);
+  const scope = isFuel ? "SCOPE_1" as const : isUtility ? "SCOPE_2" as const : "SCOPE_3" as const;
+  const emissionCategory = isFuel ? "fuel_combustion" : isUtility ? "electricity" : "purchased_goods";
+
+  return {
+    scope,
+    category: emissionCategory,
+    subcategory: category,
+    source: vendor,
+    description: `Invoice from ${vendor} — ${category}`,
+    activityValue,
+    activityUnit,
+    startDate: date,
+    endDate: date,
+    calculationInput: {
+      activityValue,
+      activityUnit,
+      category: emissionCategory,
+      subcategory: category,
+      region,
+      year,
+    },
+  };
+}
+
+function mapSupplierReport(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  // Supplier ESG reports often include total emissions or energy data
+  const relevantData = data.relevantData as Array<{
+    field: string; value: string | number; unit: string | null; category: string;
+  }> | undefined;
+
+  if (!relevantData || relevantData.length === 0) {
+    // Try direct emissions fields
+    const totalEmissions = data.totalEmissions as number | undefined;
+    if (totalEmissions) {
+      const supplier = (data.vendor as string) || (data.supplierName as string) || "Unknown supplier";
+      const date = (data.date as string) || new Date().toISOString().split("T")[0];
+      return {
+        scope: "SCOPE_3",
+        category: "purchased_goods",
+        subcategory: "supplier_emissions",
+        source: supplier,
+        description: `Supplier emissions report from ${supplier}`,
+        activityValue: totalEmissions,
+        activityUnit: "tCO2e",
+        startDate: date,
+        endDate: date,
+        calculationInput: {
+          activityValue: totalEmissions,
+          activityUnit: "tCO2e",
+          category: "purchased_goods",
+          subcategory: "supplier_emissions",
+          region,
+          year: new Date(date).getFullYear() || new Date().getFullYear(),
+        },
+      };
+    }
+    return null;
+  }
+
+  // Find the most relevant emission data point
+  const emissionEntry = relevantData.find(
+    (d) => d.category === "emissions" || /co2|emission|ghg/i.test(d.field)
+  ) || relevantData.find((d) => d.category === "energy") || relevantData[0];
+
+  const value = typeof emissionEntry.value === "number"
+    ? emissionEntry.value
+    : parseFloat(String(emissionEntry.value));
+  if (isNaN(value) || value === 0) return null;
+
+  const supplier = (data.vendor as string) || (data.supplierName as string) || "Unknown supplier";
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  return {
+    scope: "SCOPE_3",
+    category: "purchased_goods",
+    subcategory: emissionEntry.category || "supplier_emissions",
+    source: supplier,
+    description: `${emissionEntry.field} from ${supplier} report`,
+    activityValue: value,
+    activityUnit: emissionEntry.unit || "tCO2e",
+    startDate: date,
+    endDate: date,
+    calculationInput: {
+      activityValue: value,
+      activityUnit: emissionEntry.unit || "tCO2e",
+      category: "purchased_goods",
+      subcategory: emissionEntry.category || "supplier_emissions",
+      region,
+      year,
+    },
+  };
+}
+
+function mapFleetLog(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  // Fleet logs contain distance driven or fuel consumed by vehicles
+  const distance = data.distance as { value: number; unit: string } | null | undefined;
+  const fuelConsumed = data.fuelConsumed as { value: number; unit: string } | null | undefined;
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+  const vehicleId = (data.vehicleId as string) || "Fleet vehicle";
+  const fuelType = (data.fuelType as string) || "diesel";
+
+  if (fuelConsumed?.value) {
+    return {
+      scope: "SCOPE_1",
+      category: fuelType,
+      subcategory: "fleet",
+      source: vehicleId,
+      description: `Fleet fuel consumption — ${vehicleId}`,
+      activityValue: fuelConsumed.value,
+      activityUnit: fuelConsumed.unit || "liters",
+      startDate: date,
+      endDate: date,
+      calculationInput: {
+        activityValue: fuelConsumed.value,
+        activityUnit: fuelConsumed.unit || "liters",
+        category: fuelType,
+        subcategory: "fleet",
+        region,
+        year,
+      },
+    };
+  }
+
+  if (distance?.value) {
+    return {
+      scope: "SCOPE_1",
+      category: fuelType,
+      subcategory: "fleet",
+      source: vehicleId,
+      description: `Fleet distance — ${vehicleId}`,
+      activityValue: distance.value,
+      activityUnit: distance.unit || "km",
+      startDate: date,
+      endDate: date,
+      calculationInput: {
+        activityValue: distance.value,
+        activityUnit: distance.unit || "km",
+        category: fuelType,
+        subcategory: "fleet",
+        region,
+        year,
+      },
+    };
+  }
+
+  return null;
+}
+
+function mapRefrigerantLog(
+  data: Record<string, unknown>,
+  region: string
+): EmissionDraft | null {
+  const quantity = data.quantity as { value: number; unit: string } | null | undefined;
+  if (!quantity?.value) return null;
+
+  const refrigerantType = (data.refrigerantType as string) || "R-410A";
+  const equipmentId = (data.equipmentId as string) || "HVAC system";
+  const date = (data.date as string) || new Date().toISOString().split("T")[0];
+  const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  return {
+    scope: "SCOPE_1",
+    category: "refrigerants",
+    subcategory: refrigerantType,
+    source: equipmentId,
+    description: `Refrigerant ${refrigerantType} recharge — ${equipmentId}`,
+    activityValue: quantity.value,
+    activityUnit: quantity.unit || "kg",
+    startDate: date,
+    endDate: date,
+    calculationInput: {
+      activityValue: quantity.value,
+      activityUnit: quantity.unit || "kg",
+      category: "refrigerants",
+      subcategory: refrigerantType,
       region,
       year,
     },

@@ -18,9 +18,11 @@ import {
 import { getInitials } from "@/lib/utils";
 import { SUPPORTED_LOCALES } from "@/types";
 import { Save, Globe } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ProfileSettingsPage() {
   const { user, updateSession } = useCurrentUser();
+  const { setLocale: setI18nLocale } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [locale, setLocale] = useState("en");
@@ -52,8 +54,9 @@ export default function ProfileSettingsPage() {
         const err = await res.json();
         throw new Error(err.error || "Failed to update profile");
       }
-      // Update the session so locale takes effect immediately
+      // Update the session and i18n provider so locale takes effect immediately
       await updateSession({ locale });
+      setI18nLocale(locale as "en" | "es" | "fr" | "de" | "pt" | "zh" | "ja" | "ar");
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {

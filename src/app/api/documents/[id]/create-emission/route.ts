@@ -57,7 +57,7 @@ export async function POST(
     if (!draft) {
       return NextResponse.json(
         {
-          error: `Cannot create emission entry from document type "${document.documentType}". Only utility bills and fuel receipts are supported.`,
+          error: `Cannot create emission entry from document type "${document.documentType}". Supported types: utility bills, fuel receipts, invoices, supplier reports, travel records, waste manifests, fleet logs, and refrigerant logs.`,
         },
         { status: 400 }
       );

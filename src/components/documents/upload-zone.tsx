@@ -25,10 +25,19 @@ const ACCEPTED_TYPES = {
   "image/png": [".png"],
   "image/jpeg": [".jpg", ".jpeg"],
   "image/webp": [".webp"],
+  "image/tiff": [".tiff", ".tif"],
+  "image/bmp": [".bmp"],
+  "image/heic": [".heic"],
   "text/csv": [".csv"],
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-    ".xlsx",
-  ],
+  "text/plain": [".txt"],
+  "text/xml": [".xml"],
+  "application/json": [".json"],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+  "application/vnd.ms-excel": [".xls"],
+  "application/vnd.oasis.opendocument.spreadsheet": [".ods"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+  "application/msword": [".doc"],
+  "application/vnd.oasis.opendocument.text": [".odt"],
 };
 const MAX_SIZE = 25 * 1024 * 1024;
 
@@ -144,7 +153,7 @@ export function UploadZone({ onUploadComplete, className }: UploadZoneProps) {
             : "Drag & drop files here, or click to browse"}
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          PDF, PNG, JPG, WEBP, CSV, XLSX — up to 25MB
+          PDF, Images, CSV, XLSX, XLS, DOCX, DOC, TXT, XML, JSON, ODS, ODT — up to 25MB
         </p>
       </div>
 

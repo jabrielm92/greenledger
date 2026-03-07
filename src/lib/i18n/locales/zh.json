@@ -1,0 +1,110 @@
+{
+  "common": {
+    "appName": "GreenLedger",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "confirm": "确认",
+    "close": "关闭",
+    "search": "搜索",
+    "filter": "筛选",
+    "export": "导出",
+    "import": "导入",
+    "download": "下载",
+    "upload": "上传",
+    "refresh": "刷新",
+    "retry": "重试",
+    "yes": "是",
+    "no": "否",
+    "or": "或",
+    "and": "和",
+    "all": "全部",
+    "none": "无",
+    "viewAll": "查看全部",
+    "learnMore": "了解更多",
+    "getStarted": "开始使用",
+    "signIn": "登录",
+    "signUp": "注册",
+    "signOut": "退出",
+    "page": "第 {{current}} 页，共 {{total}} 页",
+    "noResults": "未找到结果",
+    "error": "错误",
+    "success": "成功",
+    "warning": "警告"
+  },
+  "nav": {
+    "dashboard": "仪表板",
+    "frameworks": "合规框架",
+    "emissions": "排放",
+    "documents": "文件",
+    "reports": "报告",
+    "suppliers": "供应商",
+    "auditLog": "审计日志",
+    "settings": "设置",
+    "upgrade": "升级"
+  },
+  "trial": {
+    "freeTrial": "免费试用",
+    "trialExpired": "试用已过期",
+    "daysRemaining": "剩余 {{days}} 天",
+    "daysRemainingPlural": "剩余 {{days}} 天",
+    "upgradeToContinue": "升级以继续使用"
+  },
+  "auth": {
+    "login": {
+      "title": "欢迎回来",
+      "description": "登录您的 GreenLedger 账户",
+      "email": "电子邮件",
+      "password": "密码",
+      "forgotPassword": "忘记密码？",
+      "submit": "登录",
+      "noAccount": "没有账户？",
+      "signUp": "注册"
+    },
+    "register": {
+      "title": "创建账户",
+      "description": "10分钟内开始使用 GreenLedger",
+      "name": "姓名",
+      "email": "工作邮箱",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "submit": "创建账户",
+      "hasAccount": "已有账户？",
+      "signIn": "登录"
+    }
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "description": "ESG合规概览",
+    "stats": {
+      "totalEmissions": "总排放量",
+      "documentsProcessed": "已处理文件",
+      "complianceScore": "合规评分",
+      "daysUntilDeadline": "距截止日期天数",
+      "tCO2e": "吨二氧化碳当量"
+    }
+  },
+  "emissions": {
+    "title": "排放",
+    "description": "跟踪和管理您的范围1、2和3温室气体排放",
+    "scope1": "范围1排放",
+    "scope2": "范围2排放",
+    "scope3": "范围3排放"
+  },
+  "documents": { "title": "文件", "description": "上传和管理您的ESG源文件", "upload": "上传文件" },
+  "reports": { "title": "报告", "description": "生成和管理合规报告" },
+  "suppliers": { "title": "供应商", "description": "管理供应链ESG风险和范围3数据" },
+  "frameworks": { "title": "合规框架", "description": "跟踪ESG报告框架进度" },
+  "auditLog": { "title": "审计日志", "description": "所有操作和变更的完整记录" },
+  "settings": {
+    "title": "设置",
+    "description": "管理您的账户和组织设置",
+    "tabs": { "profile": "个人资料", "billing": "账单", "team": "团队", "integrations": "集成", "notifications": "通知", "security": "安全", "dataExport": "数据导出" }
+  }
+}
