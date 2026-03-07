@@ -27,11 +27,6 @@ export interface OrgContext {
   companyName: string | null;
 }
 
-const UK_MANDATORY_NOTE =
-  "The UK is adopting ISSB-aligned UK Sustainability Disclosure Standards (UK SDS). " +
-  "Large UK companies and listed entities will be required to report under these standards. " +
-  "Starting preparation now is strongly recommended to ensure readiness.";
-
 export const FRAMEWORK_GUIDES: FrameworkGuide[] = [
   {
     id: "CSRD",
