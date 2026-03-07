@@ -66,6 +66,7 @@ const result = NextAuth({
             image: user.image,
             organizationId: user.organizationId,
             role: user.role,
+            locale: user.locale,
             plan: user.organization?.plan ?? "FREE_TRIAL",
             emailVerified: !!user.emailVerified,
             trialEndsAt: user.organization?.trialEndsAt?.toISOString() ?? null,
@@ -99,6 +100,7 @@ const result = NextAuth({
         token.id = user.id!;
         token.organizationId = (user as Record<string, unknown>).organizationId as string | null;
         token.role = (user as Record<string, unknown>).role as string;
+        token.locale = ((user as Record<string, unknown>).locale as string) || "en";
         token.plan = (user as Record<string, unknown>).plan as string;
         token.emailVerified = !!(user as Record<string, unknown>).emailVerified;
         token.trialEndsAt = (user as Record<string, unknown>).trialEndsAt as string | null;
@@ -108,6 +110,7 @@ const result = NextAuth({
       if (trigger === "update" && session) {
         if (session.organizationId) token.organizationId = session.organizationId;
         if (session.role) token.role = session.role;
+        if (session.locale) token.locale = session.locale;
         if (session.plan) token.plan = session.plan;
         if (session.emailVerified !== undefined) token.emailVerified = session.emailVerified;
         if (session.trialEndsAt !== undefined) token.trialEndsAt = session.trialEndsAt;
@@ -127,6 +130,7 @@ const result = NextAuth({
               token.plan = dbUser.organization?.plan ?? "FREE_TRIAL";
               token.trialEndsAt = dbUser.organization?.trialEndsAt?.toISOString() ?? null;
             }
+            token.locale = dbUser.locale;
             token.emailVerified = !!dbUser.emailVerified;
           }
         } catch (error) {
@@ -141,6 +145,7 @@ const result = NextAuth({
         session.user.id = token.id as string;
         session.user.organizationId = token.organizationId as string | null;
         session.user.role = token.role as string;
+        session.user.locale = (token.locale as string) || "en";
         session.user.plan = token.plan as string;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).emailVerified = token.emailVerified;

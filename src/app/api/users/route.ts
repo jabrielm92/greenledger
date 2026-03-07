@@ -2,11 +2,21 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "@/lib/auth";
 import { sendEmail } from "@/lib/resend";
 import VerifyEmail from "@/emails/verify-email";
 import { registerSchema } from "@/lib/validations/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { SUPPORTED_LOCALES } from "@/types";
 import { z } from "zod";
+
+const updateProfileSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  locale: z.string().refine(
+    (val) => SUPPORTED_LOCALES.some((l) => l.code === val),
+    { message: "Unsupported locale" }
+  ).optional(),
+});
 
 export async function POST(req: Request) {
   try {
@@ -83,6 +93,47 @@ export async function POST(req: Request) {
       );
     }
     console.error("[USERS_POST]", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const data = updateProfileSchema.parse(body);
+
+    const updated = await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        ...(data.name !== undefined ? { name: data.name } : {}),
+        ...(data.locale !== undefined ? { locale: data.locale } : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        locale: true,
+        role: true,
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.errors },
+        { status: 400 }
+      );
+    }
+    console.error("[USERS_PATCH]", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

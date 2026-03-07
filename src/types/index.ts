@@ -28,9 +28,25 @@ export interface SessionUser {
   image?: string | null;
   organizationId?: string | null;
   role: "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
+  locale: string;
   plan: "FREE_TRIAL" | "BASE" | "PROFESSIONAL" | "ENTERPRISE";
   trialEndsAt?: string | null;
 }
+
+/** Supported application locales */
+export const SUPPORTED_LOCALES = [
+  { code: "en", label: "English", nativeLabel: "English" },
+  { code: "cy", label: "Welsh", nativeLabel: "Cymraeg" },
+  { code: "pl", label: "Polish", nativeLabel: "Polski" },
+  { code: "ur", label: "Urdu", nativeLabel: "اردو" },
+  { code: "bn", label: "Bengali", nativeLabel: "বাংলা" },
+  { code: "fr", label: "French", nativeLabel: "Français" },
+  { code: "de", label: "German", nativeLabel: "Deutsch" },
+  { code: "es", label: "Spanish", nativeLabel: "Español" },
+  { code: "pt", label: "Portuguese", nativeLabel: "Português" },
+] as const;
+
+export type LocaleCode = (typeof SUPPORTED_LOCALES)[number]["code"];
 
 // Dashboard stats type
 export interface DashboardStats {

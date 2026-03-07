@@ -10,6 +10,7 @@ declare module "@auth/core/types" {
       image?: string | null;
       organizationId: string | null;
       role: string;
+      locale: string;
       plan: string;
       emailVerified: boolean;
       trialEndsAt?: string | null;
@@ -19,6 +20,7 @@ declare module "@auth/core/types" {
   interface User extends DefaultUser {
     organizationId?: string | null;
     role?: string;
+    locale?: string;
     plan?: string;
     emailVerified?: boolean;
     trialEndsAt?: string | null;
@@ -34,6 +36,7 @@ declare module "next-auth" {
       image?: string | null;
       organizationId: string | null;
       role: string;
+      locale: string;
       plan: string;
       emailVerified: boolean;
       trialEndsAt?: string | null;
@@ -43,6 +46,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     organizationId?: string | null;
     role?: string;
+    locale?: string;
     plan?: string;
     emailVerified?: boolean;
     trialEndsAt?: string | null;
@@ -54,6 +58,7 @@ declare module "next-auth/jwt" {
     id: string;
     organizationId: string | null;
     role: string;
+    locale: string;
     plan: string;
     emailVerified: boolean;
     trialEndsAt?: string | null;

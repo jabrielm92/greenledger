@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
 import { uploadFile } from "@/lib/storage";
 import { enforceTrialWriteAccess } from "@/lib/trial";
+import { runDocumentExtraction } from "@/lib/ai/run-extraction";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 const ALLOWED_TYPES = [
@@ -79,15 +80,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Trigger extraction asynchronously
-    const baseUrl = req.nextUrl.origin;
-    fetch(`${baseUrl}/api/documents/extract`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        cookie: req.headers.get("cookie") || "",
-      },
-      body: JSON.stringify({ documentId: document.id }),
+    // Trigger extraction asynchronously (direct call, no HTTP self-fetch)
+    runDocumentExtraction({
+      documentId: document.id,
+      organizationId: session.user.organizationId,
+      userId: session.user.id,
     }).catch((err) =>
       console.error("[EXTRACTION_TRIGGER_ERROR]", err)
     );
