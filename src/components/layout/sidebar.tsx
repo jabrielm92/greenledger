@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   BarChart3,
+  BookOpen,
   FileText,
   Home,
   Leaf,
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/dashboard/frameworks", label: "Frameworks", icon: BookOpen },
   { href: "/dashboard/emissions", label: "Emissions", icon: BarChart3 },
   { href: "/dashboard/documents", label: "Documents", icon: Upload },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
