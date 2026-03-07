@@ -1,13 +1,18 @@
 export const CLASSIFY_DOCUMENT_SYSTEM = `You are a document classification system for ESG/sustainability reporting. Classify the uploaded document into exactly one of these categories: UTILITY_BILL, FUEL_RECEIPT, INVOICE, SUPPLIER_REPORT, TRAVEL_RECORD, WASTE_MANIFEST, FLEET_LOG, REFRIGERANT_LOG, OTHER.
 
+IMPORTANT: Documents may be in ANY language (e.g. Welsh, Polish, Urdu, Bengali, French, German, etc.). Classify based on document content and structure regardless of language. Detect the document language and include it in your response.
+
 Respond with ONLY a JSON object:
 {
   "documentType": "UTILITY_BILL",
   "confidence": 0.95,
-  "reasoning": "Document shows electricity consumption from a utility provider with kWh readings and billing period."
+  "reasoning": "Document shows electricity consumption from a utility provider with kWh readings and billing period.",
+  "detectedLanguage": "en"
 }`;
 
 export const EXTRACT_UTILITY_BILL_SYSTEM = `You are an ESG data extraction system. Extract structured data from this utility bill for carbon emissions calculation. Be precise with numbers and units.
+
+IMPORTANT: The document may be in any language. Extract all data accurately regardless of language. Always return field values in English (translate provider names, addresses, and notes). Preserve original numeric values and units exactly as stated in the document.
 
 Extract the following fields and respond with ONLY a JSON object:
 {
@@ -38,6 +43,8 @@ If a field cannot be determined from the document, set it to null. Never guess �
 
 export const EXTRACT_FUEL_RECEIPT_SYSTEM = `You are an ESG data extraction system. Extract structured data from this fuel receipt for carbon emissions calculation. Be precise with numbers and units.
 
+IMPORTANT: The document may be in any language. Extract all data accurately regardless of language. Always return field values in English (translate vendor names, locations, and notes). Preserve original numeric values and units exactly as stated in the document.
+
 Extract the following fields and respond with ONLY a JSON object:
 {
   "fuelType": "diesel | gasoline | lpg | cng",
@@ -60,6 +67,8 @@ Extract the following fields and respond with ONLY a JSON object:
 If a field cannot be determined from the document, set it to null. Never guess — mark confidence lower if uncertain.`;
 
 export const EXTRACT_INVOICE_SYSTEM = `You are an ESG data extraction system. Extract structured data from this invoice for carbon emissions tracking and supply chain analysis. Be precise with numbers and units.
+
+IMPORTANT: The document may be in any language. Extract all data accurately regardless of language. Always return field values in English (translate vendor names, descriptions, categories, and notes). Preserve original numeric values and units exactly as stated in the document.
 
 Extract the following fields and respond with ONLY a JSON object:
 {
@@ -86,6 +95,8 @@ Extract the following fields and respond with ONLY a JSON object:
 If a field cannot be determined from the document, set it to null. Never guess — mark confidence lower if uncertain.`;
 
 export const EXTRACT_GENERIC_SYSTEM = `You are an ESG data extraction system. Extract any relevant environmental, sustainability, or emissions-related data from this document. Be precise with numbers and units.
+
+IMPORTANT: The document may be in any language. Extract all data accurately regardless of language. Always return field values in English (translate descriptions, categories, and notes). Preserve original numeric values and units exactly as stated in the document.
 
 Respond with ONLY a JSON object containing whatever relevant fields you can extract:
 {

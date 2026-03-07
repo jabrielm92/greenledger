@@ -13,12 +13,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, LogOut, Settings, User } from "lucide-react";
+import { Bell, Globe, LogOut, Settings, User } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import Link from "next/link";
+import { SUPPORTED_LOCALES } from "@/types";
 
 export function Topbar() {
-  const { user } = useCurrentUser();
+  const { user, updateSession } = useCurrentUser();
+
+  const handleLocaleChange = async (newLocale: string) => {
+    try {
+      const res = await fetch("/api/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale: newLocale }),
+      });
+      if (res.ok) {
+        await updateSession({ locale: newLocale });
+      }
+    } catch (err) {
+      console.error("Failed to update locale:", err);
+    }
+  };
+
+  const currentLocale = SUPPORTED_LOCALES.find((l) => l.code === user?.locale) || SUPPORTED_LOCALES[0];
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-4 lg:px-6">
@@ -30,6 +48,28 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Language quick-switch */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative" title="Language">
+              <Globe className="h-5 w-5 text-slate-500" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>Language</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {SUPPORTED_LOCALES.map((loc) => (
+              <DropdownMenuItem
+                key={loc.code}
+                onClick={() => handleLocaleChange(loc.code)}
+                className={loc.code === currentLocale.code ? "bg-emerald-50 text-emerald-700" : ""}
+              >
+                {loc.nativeLabel} ({loc.label})
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5 text-slate-500" />
         </Button>
