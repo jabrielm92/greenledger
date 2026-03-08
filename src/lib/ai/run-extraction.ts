@@ -10,6 +10,7 @@
 import { prisma } from "@/lib/prisma";
 import { getFile } from "@/lib/storage";
 import { extractDocument } from "./extract-document";
+import { parseDocumentContent } from "./parse-document-content";
 import { logAudit } from "@/lib/audit/logger";
 import { emit } from "@/lib/events";
 
@@ -38,15 +39,15 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
   });
 
   try {
-    // Read file content
+    // Read and parse file content based on document type
     const fileBuffer = await getFile(document.filePath);
-    const isImage = document.fileType.startsWith("image/");
-    const fileContent = isImage
-      ? fileBuffer.toString("base64")
-      : fileBuffer.toString("utf-8");
+    const parsed = await parseDocumentContent(fileBuffer, document.fileType);
 
-    // Run AI extraction
-    const result = await extractDocument(fileContent, document.fileType);
+    // Run AI extraction with the parsed content
+    const result = await extractDocument(
+      parsed.content,
+      parsed.isImage ? document.fileType : "text/plain"
+    );
 
     // Update document with extraction results
     await prisma.document.update({
