@@ -37,7 +37,7 @@ export default function DocumentDetailPage() {
     );
   }
 
-  const handleConfirm = async (data: Record<string, unknown>) => {
+  const handleConfirm = async (data: Record<string, unknown>, overrideType?: string) => {
     setIsSubmitting(true);
     try {
       const res = await fetch(
@@ -45,7 +45,10 @@ export default function DocumentDetailPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ extractedData: data }),
+          body: JSON.stringify({
+            extractedData: data,
+            ...(overrideType ? { documentType: overrideType } : {}),
+          }),
         }
       );
 

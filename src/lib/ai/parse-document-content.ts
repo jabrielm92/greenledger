@@ -77,16 +77,37 @@ export async function parseDocumentContent(
   return { content: buffer.toString("utf-8"), isImage: false };
 }
 
+/**
+ * Heuristic: detect whether extracted PDF text is meaningful document content
+ * or just sparse metadata (e.g., producer tags like "ReportLab").
+ * Returns true if the text looks like real content worth classifying.
+ */
+function isPdfTextMeaningful(text: string): boolean {
+  // Too short to be a real document
+  if (text.length < 50) return false;
+
+  // Count meaningful words (3+ chars, not common PDF metadata tokens)
+  const metadataPatterns =
+    /\b(reportlab|pdf|library|producer|creator|generated|opensource|version|moddate|creationdate|obj|endobj|stream|endstream)\b/gi;
+  const cleaned = text.replace(metadataPatterns, "").trim();
+
+  // After removing metadata tokens, check if substantial content remains
+  const words = cleaned.split(/\s+/).filter((w) => w.length >= 3);
+  if (words.length < 10) return false;
+
+  return true;
+}
+
 async function parsePdf(buffer: Buffer): Promise<ParsedContent> {
   try {
     const data = await pdfParse(buffer);
     const text = data.text?.trim();
-    if (text && text.length > 20) {
+    if (text && isPdfTextMeaningful(text)) {
       return { content: text, isImage: false };
     }
-    // Scanned PDF with no extractable text → send as base64 image for vision
+    // Scanned PDF or metadata-only text → send as base64 image for vision
     console.warn(
-      "[PARSE_PDF] No extractable text found — falling back to base64 for vision model"
+      "[PARSE_PDF] No meaningful text found — falling back to base64 for vision model"
     );
     return { content: buffer.toString("base64"), isImage: true };
   } catch (err) {
