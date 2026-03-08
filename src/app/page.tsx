@@ -206,8 +206,8 @@ export default function Home() {
                         {[32, 48, 38, 56, 42, 62, 52, 68, 48, 72, 58, 78].map((h, i) => (
                           <div key={i} className="flex-1 flex flex-col items-center gap-1">
                             <div
-                              className="w-full rounded-t-md bg-gradient-to-t from-brand-primary to-emerald-400 min-w-[12px]"
-                              style={{ height: `${h * 1.4}px` }}
+                              className="w-full rounded-t-md bg-gradient-to-t from-brand-primary to-emerald-400 min-w-[8px]"
+                              style={{ height: `${h}%` }}
                             />
                             <span className="text-[9px] text-muted-foreground">{["J","F","M","A","M","J","J","A","S","O","N","D"][i]}</span>
                           </div>

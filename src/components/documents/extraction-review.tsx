@@ -217,32 +217,35 @@ export function ExtractionReview({
               </div>
             )}
 
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Button
                 onClick={() => onConfirm(editedData)}
                 disabled={isSubmitting}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto"
               >
                 <Check className="mr-2 h-4 w-4" />
-                Confirm & Create Emission Entry
+                Confirm & Create Emission
               </Button>
-              <Button
-                variant="outline"
-                onClick={onReExtract}
-                disabled={isSubmitting}
-              >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Re-extract
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={onReject}
-                disabled={isSubmitting}
-                className="text-red-600 hover:text-red-700"
-              >
-                <X className="mr-2 h-4 w-4" />
-                Reject
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={onReExtract}
+                  disabled={isSubmitting}
+                  className="flex-1 sm:flex-none"
+                >
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Re-extract
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={onReject}
+                  disabled={isSubmitting}
+                  className="flex-1 text-red-600 hover:text-red-700 sm:flex-none"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Reject
+                </Button>
+              </div>
             </div>
           </>
         )}

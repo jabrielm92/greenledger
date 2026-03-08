@@ -55,38 +55,40 @@ export function DocumentCard({ document }: DocumentCardProps) {
   return (
     <Link href={`/dashboard/documents/${document.id}`}>
       <Card className="transition-shadow hover:shadow-md">
-        <CardContent className="flex items-center gap-4 p-4">
-          <FileIcon fileType={document.fileType} className="h-8 w-8" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{document.fileName}</p>
-            <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-              <span>{formatFileSize(document.fileSize)}</span>
-              <span>&middot;</span>
-              <span>
-                {formatDistanceToNow(new Date(document.createdAt), {
-                  addSuffix: true,
-                })}
-              </span>
-              {document.uploadedBy && (
-                <>
-                  <span>&middot;</span>
-                  <span>{document.uploadedBy.name || document.uploadedBy.email}</span>
-                </>
-              )}
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+            <FileIcon fileType={document.fileType} className="h-8 w-8 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">{document.fileName}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500">
+                <span>{formatFileSize(document.fileSize)}</span>
+                <span>&middot;</span>
+                <span>
+                  {formatDistanceToNow(new Date(document.createdAt), {
+                    addSuffix: true,
+                  })}
+                </span>
+                {document.uploadedBy && (
+                  <>
+                    <span className="hidden sm:inline">&middot;</span>
+                    <span className="hidden sm:inline">{document.uploadedBy.name || document.uploadedBy.email}</span>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {document.documentType && (
-              <Badge variant="outline" className="text-xs">
-                {formatEnumValue(document.documentType)}
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+              {document.documentType && (
+                <Badge variant="outline" className="text-xs">
+                  {formatEnumValue(document.documentType)}
+                </Badge>
+              )}
+              <Badge
+                variant={statusVariant(document.status) as never}
+                className={statusColor(document.status)}
+              >
+                {formatEnumValue(document.status)}
               </Badge>
-            )}
-            <Badge
-              variant={statusVariant(document.status) as never}
-              className={statusColor(document.status)}
-            >
-              {formatEnumValue(document.status)}
-            </Badge>
+            </div>
           </div>
         </CardContent>
       </Card>
