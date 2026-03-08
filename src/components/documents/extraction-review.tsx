@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn, formatEnumValue } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { DOCUMENT_TYPES } from "@/lib/constants";
 import { AlertTriangle, Check, Edit2, RotateCcw, X } from "lucide-react";
 
