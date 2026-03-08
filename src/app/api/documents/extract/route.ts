@@ -4,6 +4,7 @@ import { z, ZodError } from "zod";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
+import { parseDocumentContent } from "@/lib/ai/parse-document-content";
 import { logAudit } from "@/lib/audit/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { emit } from "@/lib/events";
@@ -48,15 +49,15 @@ export async function POST(req: NextRequest) {
     });
 
     try {
-      // Read file content
+      // Read and parse file content based on document type
       const fileBuffer = await readFile(document.filePath);
-      const isImage = document.fileType.startsWith("image/");
-      const fileContent = isImage
-        ? fileBuffer.toString("base64")
-        : fileBuffer.toString("utf-8");
+      const parsed = await parseDocumentContent(fileBuffer, document.fileType);
 
-      // Run AI extraction
-      const result = await extractDocument(fileContent, document.fileType);
+      // Run AI extraction with the parsed content
+      const result = await extractDocument(
+        parsed.content,
+        parsed.isImage ? document.fileType : "text/plain"
+      );
 
       // Update document with extraction results
       const updatedDocument = await prisma.document.update({
