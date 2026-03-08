@@ -16,6 +16,9 @@ interface FactorQuery {
 export async function lookupEmissionFactor(
   query: FactorQuery
 ): Promise<EmissionFactorLookup | null> {
+  // Build year filter: find the most recent factor up to the requested year
+  const yearFilter = query.year ? { year: { lte: query.year } } : {};
+
   // Try exact match first
   let factor = await prisma.emissionFactor.findFirst({
     where: {
@@ -24,7 +27,7 @@ export async function lookupEmissionFactor(
       region: query.region,
       unit: query.unit,
       isActive: true,
-      ...(query.year ? { year: query.year } : {}),
+      ...yearFilter,
     },
     orderBy: { year: "desc" },
   });
@@ -38,7 +41,7 @@ export async function lookupEmissionFactor(
         region: "GLOBAL",
         unit: query.unit,
         isActive: true,
-        ...(query.year ? { year: query.year } : {}),
+        ...yearFilter,
       },
       orderBy: { year: "desc" },
     });
@@ -52,6 +55,7 @@ export async function lookupEmissionFactor(
         region: { in: [query.region, "GLOBAL"] },
         unit: query.unit,
         isActive: true,
+        ...yearFilter,
       },
       orderBy: { year: "desc" },
     });

@@ -26,6 +26,7 @@ async function seedEmissionFactors() {
     { category: "electricity", subcategory: "grid", region: "AU", unit: "kgCO2e/kWh", co2ePerUnit: 0.680, co2PerUnit: 0.636, ch4PerUnit: 0.020, n2oPerUnit: 0.024, source: "DEE", year: 2024 },
     { category: "electricity", subcategory: "grid", region: "JP", unit: "kgCO2e/kWh", co2ePerUnit: 0.457, co2PerUnit: 0.428, ch4PerUnit: 0.013, n2oPerUnit: 0.016, source: "MOE", year: 2024 },
     { category: "electricity", subcategory: "grid", region: "IN", unit: "kgCO2e/kWh", co2ePerUnit: 0.708, co2PerUnit: 0.663, ch4PerUnit: 0.021, n2oPerUnit: 0.024, source: "CEA", year: 2024 },
+    { category: "electricity", subcategory: "grid", region: "GLOBAL", unit: "kgCO2e/kWh", co2ePerUnit: 0.494, co2PerUnit: 0.462, ch4PerUnit: 0.015, n2oPerUnit: 0.017, source: "IEA", year: 2024 },
 
     // ============================================
     // NATURAL GAS (Scope 1 - Stationary Combustion)
