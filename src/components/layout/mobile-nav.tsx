@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  BookOpen,
   FileText,
   Home,
   Leaf,
@@ -17,9 +18,11 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/dashboard/frameworks", label: "Frameworks", icon: BookOpen },
   { href: "/dashboard/emissions", label: "Emissions", icon: BarChart3 },
   { href: "/dashboard/documents", label: "Documents", icon: Upload },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
@@ -59,7 +62,7 @@ export function MobileNav() {
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-emerald-50 text-emerald-700"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -71,6 +74,9 @@ export function MobileNav() {
             );
           })}
         </nav>
+        <div className="border-t px-4 py-3">
+          <LanguageSwitcher className="w-full" />
+        </div>
       </SheetContent>
     </Sheet>
   );
