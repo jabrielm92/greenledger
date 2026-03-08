@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn, formatEnumValue } from "@/lib/utils";
+import { DOCUMENT_TYPES } from "@/lib/constants";
 import { AlertTriangle, Check, Edit2, RotateCcw, X } from "lucide-react";
 
 interface ExtractionReviewProps {
@@ -14,7 +22,7 @@ interface ExtractionReviewProps {
   documentType: string | null;
   extractedData: Record<string, unknown> | null;
   confidence: number | null;
-  onConfirm: (data: Record<string, unknown>) => void;
+  onConfirm: (data: Record<string, unknown>, overrideType?: string) => void;
   onReExtract: () => void;
   onReject: () => void;
   isSubmitting?: boolean;
@@ -80,6 +88,9 @@ export function ExtractionReview({
     extractedData || {}
   );
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>(
+    documentType || "OTHER"
+  );
 
   const fields = flattenData(editedData);
 
@@ -109,11 +120,19 @@ export function ExtractionReview({
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">Extracted Data Review</CardTitle>
           <div className="flex items-center gap-2">
-            {documentType && (
-              <Badge variant="outline">
-                {formatEnumValue(documentType)}
-              </Badge>
-            )}
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="h-8 w-[160px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DOCUMENT_TYPES.filter((t) => t.value !== "OTHER").map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+                <SelectItem value="OTHER">Other</SelectItem>
+              </SelectContent>
+            </Select>
             {confidence != null && (
               <Badge
                 variant="secondary"
@@ -204,6 +223,19 @@ export function ExtractionReview({
               </div>
             )}
 
+            {selectedType === "OTHER" && (
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div className="text-sm text-amber-800">
+                  <p className="font-medium">Document type not supported</p>
+                  <p className="mt-0.5 text-amber-700">
+                    Documents classified as &quot;Other&quot; cannot generate emission entries.
+                    Select the correct document type above to enable emission creation.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {confidence != null && confidence < 0.5 && (
               <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
@@ -219,8 +251,8 @@ export function ExtractionReview({
 
             <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Button
-                onClick={() => onConfirm(editedData)}
-                disabled={isSubmitting}
+                onClick={() => onConfirm(editedData, selectedType !== documentType ? selectedType : undefined)}
+                disabled={isSubmitting || selectedType === "OTHER"}
                 className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto"
               >
                 <Check className="mr-2 h-4 w-4" />

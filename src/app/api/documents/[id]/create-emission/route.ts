@@ -9,6 +9,7 @@ import { mapExtractedDataToEmission } from "@/lib/ai/document-to-emissions";
 const createEmissionFromDocSchema = z.object({
   extractedData: z.record(z.unknown()),
   region: z.string().default("GLOBAL"),
+  documentType: z.string().optional(),
 });
 
 export async function POST(
@@ -23,7 +24,7 @@ export async function POST(
 
     const { id: documentId } = await params;
     const body = await req.json();
-    const { extractedData, region } = createEmissionFromDocSchema.parse(body);
+    const { extractedData, region, documentType: overrideType } = createEmissionFromDocSchema.parse(body);
 
     // Verify document ownership
     const document = await prisma.document.findFirst({
@@ -40,16 +41,27 @@ export async function POST(
       );
     }
 
-    if (!document.documentType) {
+    // Use overridden type if provided, otherwise use the stored document type
+    const effectiveType = overrideType || document.documentType;
+
+    if (!effectiveType) {
       return NextResponse.json(
         { error: "Document has not been classified yet" },
         { status: 400 }
       );
     }
 
+    // If the user overrode the document type, update it on the document record
+    if (overrideType && overrideType !== document.documentType) {
+      await prisma.document.update({
+        where: { id: documentId },
+        data: { documentType: overrideType as never },
+      });
+    }
+
     // Map extracted data to emission draft
     const draft = mapExtractedDataToEmission(
-      document.documentType,
+      effectiveType,
       extractedData,
       region
     );

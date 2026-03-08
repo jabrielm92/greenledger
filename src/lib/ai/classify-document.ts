@@ -5,9 +5,14 @@ import type { DocumentClassification } from "@/types";
 
 export async function classifyDocument(
   fileContent: string,
-  mimeType: string
+  mimeType: string,
+  fileName?: string
 ): Promise<DocumentClassification> {
   const isImage = mimeType.startsWith("image/");
+
+  const fileNameHint = fileName
+    ? `\nOriginal filename: "${fileName}" — use this as secondary evidence if the document content is ambiguous.`
+    : "";
 
   const content: ChatCompletionContentPart[] = isImage
     ? [
@@ -19,13 +24,13 @@ export async function classifyDocument(
         },
         {
           type: "text",
-          text: "Classify this document.",
+          text: `Classify this document.${fileNameHint}`,
         },
       ]
     : [
         {
           type: "text",
-          text: `Classify this document based on its content:\n\n${fileContent}`,
+          text: `Classify this document based on its content:${fileNameHint}\n\n${fileContent}`,
         },
       ];
 

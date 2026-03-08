@@ -46,7 +46,8 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
     // Run AI extraction with the parsed content
     const result = await extractDocument(
       parsed.content,
-      parsed.isImage ? document.fileType : "text/plain"
+      parsed.isImage ? document.fileType : "text/plain",
+      document.fileName
     );
 
     // Update document with extraction results

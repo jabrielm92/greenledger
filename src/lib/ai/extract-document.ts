@@ -12,10 +12,11 @@ interface ExtractionResult {
 
 export async function extractDocument(
   fileContent: string,
-  mimeType: string
+  mimeType: string,
+  fileName?: string
 ): Promise<ExtractionResult> {
   // Step 1: Classify
-  const classification = await classifyDocument(fileContent, mimeType);
+  const classification = await classifyDocument(fileContent, mimeType, fileName);
 
   // Step 2: Extract based on classification
   const extractionPrompt = getExtractionPrompt(classification.documentType);
