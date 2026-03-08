@@ -6,8 +6,6 @@
  * Plain text formats (CSV, TXT, XML, JSON) are read as UTF-8.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require("pdf-parse") as (buffer: Buffer) => Promise<{ text: string }>;
 import mammoth from "mammoth";
 
 interface ParsedContent {
@@ -100,20 +98,60 @@ function isPdfTextMeaningful(text: string): boolean {
 
 async function parsePdf(buffer: Buffer): Promise<ParsedContent> {
   try {
-    const data = await pdfParse(buffer);
-    const text = data.text?.trim();
+    // Use pdfjs-dist directly (more robust than pdf-parse wrapper for
+    // corrupted XRef tables, encrypted PDFs, etc.)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+
+    const data = new Uint8Array(buffer);
+    const doc = await pdfjsLib.getDocument({
+      data,
+      // Suppress verbose pdfjs warnings in logs
+      verbosity: 0,
+    }).promise;
+
+    const pageTexts: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const strings = content.items.map((item: any) => item.str || "");
+      pageTexts.push(strings.join(" "));
+    }
+
+    const text = pageTexts.join("\n").trim();
     if (text && isPdfTextMeaningful(text)) {
       return { content: text, isImage: false };
     }
-    // Scanned PDF or metadata-only text → send as base64 image for vision
+
+    // Scanned PDF or metadata-only text — tell AI to classify based on filename
     console.warn(
-      "[PARSE_PDF] No meaningful text found — falling back to base64 for vision model"
+      "[PARSE_PDF] No meaningful text found — returning placeholder for AI"
     );
-    return { content: buffer.toString("base64"), isImage: true };
+    return {
+      content: "[Scanned PDF — no extractable text. The document could not be read as text. Please classify based on filename.]",
+      isImage: false,
+    };
   } catch (err) {
-    console.error("[PARSE_PDF] Error:", err);
-    // Fallback to base64 image so the vision model can try
-    return { content: buffer.toString("base64"), isImage: true };
+    console.error("[PARSE_PDF] pdfjs-dist error:", err);
+    // Last resort: try the old pdf-parse library in case pdfjs-dist failed
+    // on something it can handle
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
+      const data = await pdfParse(buffer);
+      const text = data.text?.trim();
+      if (text && isPdfTextMeaningful(text)) {
+        return { content: text, isImage: false };
+      }
+    } catch (fallbackErr) {
+      console.error("[PARSE_PDF] pdf-parse fallback also failed:", fallbackErr);
+    }
+
+    return {
+      content: "[Failed to parse PDF — the file may be corrupted or encrypted. Please classify based on filename.]",
+      isImage: false,
+    };
   }
 }
 
