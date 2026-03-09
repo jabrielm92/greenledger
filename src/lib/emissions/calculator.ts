@@ -1,6 +1,7 @@
 import type { CalculationInput, CalculationResult } from "@/types";
 import { convertToStandardUnit, mapToFactorUnit } from "./unit-conversions";
 import { lookupEmissionFactor, lookupCustomFactor } from "./emission-factors";
+import { ensureEmissionFactorsSeeded } from "./ensure-seed";
 
 /**
  * Core emissions calculation engine.
@@ -10,6 +11,9 @@ export async function calculateEmissions(
   input: CalculationInput,
   organizationId?: string
 ): Promise<CalculationResult> {
+  // Step 0: Ensure emission factors are seeded
+  await ensureEmissionFactorsSeeded();
+
   // Step 1: Convert units to standard
   const converted = convertToStandardUnit(
     input.activityValue,
