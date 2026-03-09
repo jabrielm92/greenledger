@@ -149,6 +149,16 @@ export function convertToStandardUnit(
     }
   }
 
+  // Purchased goods (mass-based for physical goods, pass-through for spend-based)
+  if (category === "purchased_goods") {
+    const factor = TO_KG[normalizedUnit];
+    if (factor) {
+      return { value: value * factor, unit: "kg", conversionFactor: factor };
+    }
+    // Spend-based units (EUR, USD, GBP, etc.) pass through as-is
+    return { value, unit: normalizedUnit, conversionFactor: 1 };
+  }
+
   // Mass categories (refrigerants, waste, coal)
   if (["refrigerant", "waste", "coal"].includes(category)) {
     const factor = TO_KG[normalizedUnit];
@@ -194,6 +204,7 @@ export function mapToFactorUnit(
     upstream_transport: { tonne_km: "kgCO2e/tonne_km", tonne_miles: "kgCO2e/tonne_miles" },
     district_heating: { kWh: "kgCO2e/kWh" },
     district_cooling: { kWh: "kgCO2e/kWh" },
+    purchased_goods: { kg: "kgCO2e/kg" },
   };
 
   return unitMap[category]?.[standardUnit] || `kgCO2e/${standardUnit}`;
