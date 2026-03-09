@@ -8,7 +8,7 @@
 export { emit, on } from "./dispatcher";
 export type { PipelineEvent } from "./dispatcher";
 
-import { on } from "./dispatcher";
+import { on, markInitialized } from "./dispatcher";
 import { handleAutoCreateEmission } from "./handlers/auto-create-emission";
 import { handleAutoDetectSupplier } from "./handlers/auto-detect-supplier";
 import { handleUpdateCompliance } from "./handlers/update-compliance";
@@ -35,3 +35,6 @@ on("emission.auto_created", "notify-emission-created", notifyEmissionAutoCreated
 
 // ── supplier.auto_created ─────────────────────────────────────────
 on("supplier.auto_created", "notify-supplier-created", notifySupplierAutoCreated);
+
+// Mark the dispatcher as initialized so ensureInitialized() is a no-op
+markInitialized();

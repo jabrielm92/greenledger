@@ -49,10 +49,29 @@ export async function handleAutoCreateEmission(
   try {
     calcResult = await calculateEmissions(draft.calculationInput, organizationId);
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.error(
       `[AUTO_EMISSION] Calculation failed for document ${documentId}:`,
-      error instanceof Error ? error.message : error
+      errorMsg
     );
+
+    // Notify the user that auto-emission failed so they can fix it manually
+    const doc = await prisma.document.findUnique({
+      where: { id: documentId },
+      select: { fileName: true },
+    });
+    await prisma.notification.create({
+      data: {
+        organizationId,
+        userId,
+        type: "EXTRACTION_FAILED",
+        title: "Emission calculation failed",
+        message: `Could not auto-create emission from "${doc?.fileName || "document"}": ${errorMsg}`,
+        link: `/documents/${documentId}`,
+        entityType: "Document",
+        entityId: documentId,
+      },
+    });
     return;
   }
 
