@@ -24,8 +24,9 @@ export async function calculateEmissions(
     factor = await lookupCustomFactor(input.customFactorId, organizationId);
   }
 
+  const factorUnit = mapToFactorUnit(converted.unit, input.category);
+
   if (!factor) {
-    const factorUnit = mapToFactorUnit(converted.unit, input.category);
     factor = await lookupEmissionFactor({
       category: input.category,
       subcategory: input.subcategory,
@@ -39,7 +40,7 @@ export async function calculateEmissions(
     throw new Error(
       `No emission factor found for category="${input.category}", ` +
         `subcategory="${input.subcategory || "none"}", region="${input.region}", ` +
-        `unit="${converted.unit}". Please add a custom emission factor or try a different region.`
+        `unit="${factorUnit}". Please add a custom emission factor or try a different region.`
     );
   }
 

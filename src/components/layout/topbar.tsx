@@ -13,8 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Globe, LogOut, Settings, User } from "lucide-react";
+import { Globe, LogOut, Settings, User } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
+import { NotificationBell } from "./notification-bell";
 import Link from "next/link";
 import { SUPPORTED_LOCALES } from "@/types";
 
@@ -70,9 +71,7 @@ export function Topbar() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-slate-500" />
-        </Button>
+        <NotificationBell />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
