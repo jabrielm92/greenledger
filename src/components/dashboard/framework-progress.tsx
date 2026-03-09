@@ -73,7 +73,7 @@ export function FrameworkProgress({
         {frameworks.length === 0 ? (
           <p className="text-center text-sm text-slate-500 py-8">
             No frameworks selected yet.{" "}
-            <Link href="/dashboard/settings" className="text-emerald-600 hover:underline">
+            <Link href="/dashboard/settings/frameworks" className="text-emerald-600 hover:underline">
               Add frameworks
             </Link>
           </p>

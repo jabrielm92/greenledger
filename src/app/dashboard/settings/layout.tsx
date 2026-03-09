@@ -11,11 +11,13 @@ import {
   Shield,
   Download,
   User,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const settingsNav = [
   { href: "/dashboard/settings", label: "General", icon: Building2, exact: true },
+  { href: "/dashboard/settings/frameworks", label: "Frameworks", icon: Scale, exact: false },
   { href: "/dashboard/settings/profile", label: "Profile", icon: User, exact: false },
   { href: "/dashboard/settings/team", label: "Team", icon: Users, exact: false },
   { href: "/dashboard/settings/billing", label: "Billing", icon: CreditCard, exact: false },

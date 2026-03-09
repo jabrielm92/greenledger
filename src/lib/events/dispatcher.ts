@@ -65,20 +65,29 @@ export function on<E extends EventName>(
 }
 
 let _initialized = false;
+let _initPromise: Promise<void> | null = null;
 
 /**
  * Ensure all event handlers are registered.
  * Called lazily on first emit() to guarantee handlers are wired
  * even if bundler tree-shaking skips the index.ts side effects.
  */
-function ensureInitialized(): void {
-  if (_initialized) return;
-  _initialized = true;
+function ensureInitialized(): Promise<void> {
+  if (_initialized) return Promise.resolve();
 
-  // Dynamic import to trigger handler registration without circular deps
-  import("./index").catch(() => {
-    // index.ts registers handlers as side effects on import
-  });
+  if (!_initPromise) {
+    // Dynamic import to trigger handler registration without circular deps.
+    // index.ts calls markInitialized() after all on() calls complete.
+    _initPromise = import("./index")
+      .then(() => {
+        _initialized = true;
+      })
+      .catch(() => {
+        _initPromise = null; // allow retry on failure
+      });
+  }
+
+  return _initPromise;
 }
 
 /** Mark as initialized (called by index.ts after registering handlers). */
@@ -95,7 +104,7 @@ export async function emit<E extends EventName>(
   event: E,
   payload: PipelineEvent[E]
 ): Promise<void> {
-  ensureInitialized();
+  await ensureInitialized();
 
   const handlers = registry.get(event) ?? [];
 

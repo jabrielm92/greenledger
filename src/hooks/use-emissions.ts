@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import type { CategoryBreakdown, MonthlyEmission } from "@/types";
 
+const POLL_INTERVAL_MS = 30_000; // 30 seconds
+
 interface EmissionEntry {
   id: string;
   scope: string;
@@ -59,6 +61,21 @@ export function useEmissions(options: UseEmissionsOptions = {}) {
     fetchEntries();
   }, [fetchEntries]);
 
+  // Refetch when tab regains focus (e.g. user returns from documents page)
+  useEffect(() => {
+    const onFocus = () => fetchEntries();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchEntries]);
+
+  // Poll for new data while the page is visible
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!document.hidden) fetchEntries();
+    }, POLL_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [fetchEntries]);
+
   return { entries, total, totalPages, isLoading, refetch: fetchEntries };
 }
 
@@ -92,6 +109,21 @@ export function useEmissionsSummary(year?: number) {
 
   useEffect(() => {
     fetchSummary();
+  }, [fetchSummary]);
+
+  // Refetch when tab regains focus
+  useEffect(() => {
+    const onFocus = () => fetchSummary();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchSummary]);
+
+  // Poll for new data while the page is visible
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!document.hidden) fetchSummary();
+    }, POLL_INTERVAL_MS);
+    return () => clearInterval(id);
   }, [fetchSummary]);
 
   return { summary, isLoading, refetch: fetchSummary };

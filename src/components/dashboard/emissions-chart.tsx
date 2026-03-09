@@ -36,20 +36,26 @@ const SCOPE_LABELS: Record<string, string> = {
   scope3: "Scope 3",
 };
 
-const defaultData: EmissionsDataPoint[] = [
-  { month: "Jan", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Feb", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Mar", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Apr", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "May", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Jun", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Jul", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Aug", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Sep", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Oct", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Nov", scope1: 0, scope2: 0, scope3: 0 },
-  { month: "Dec", scope1: 0, scope2: 0, scope3: 0 },
+const MONTH_NAMES = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
+
+/** Format "YYYY-MM" → "Mon 'YY" (e.g. "Sep '25"). Falls through for short names. */
+function formatMonth(month: string): string {
+  if (month.includes("-")) {
+    const [y, m] = month.split("-");
+    return `${MONTH_NAMES[parseInt(m, 10) - 1]} '${y.slice(2)}`;
+  }
+  return month;
+}
+
+const defaultData: EmissionsDataPoint[] = MONTH_NAMES.map((m) => ({
+  month: m,
+  scope1: 0,
+  scope2: 0,
+  scope3: 0,
+}));
 
 export function EmissionsChart({ data, className }: EmissionsChartProps) {
   const chartData = data.length > 0 ? data : defaultData;
@@ -71,6 +77,7 @@ export function EmissionsChart({ data, className }: EmissionsChartProps) {
                 dataKey="month"
                 tick={{ fontSize: 12, fill: "#64748b" }}
                 axisLine={{ stroke: "#e2e8f0" }}
+                tickFormatter={formatMonth}
               />
               <YAxis
                 tick={{ fontSize: 12, fill: "#64748b" }}

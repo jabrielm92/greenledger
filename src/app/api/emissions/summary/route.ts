@@ -11,18 +11,26 @@ export async function GET(req: NextRequest) {
 
     const orgId = session.user.organizationId;
     const { searchParams } = new URL(req.url);
-    const year = parseInt(
-      searchParams.get("year") || String(new Date().getFullYear())
-    );
+    const yearParam = searchParams.get("year");
 
-    const periodStart = new Date(`${year}-01-01`);
-    const periodEnd = new Date(`${year}-12-31`);
+    // Build date filter only when an explicit year is requested;
+    // otherwise return all-time data so dashboard/emissions page
+    // are never blank when data exists in a different year.
+    const dateFilter: Record<string, unknown> = {};
+    let periodStart: Date | null = null;
+    let periodEnd: Date | null = null;
+    if (yearParam) {
+      const year = parseInt(yearParam);
+      periodStart = new Date(`${year}-01-01`);
+      periodEnd = new Date(`${year}-12-31`);
+      dateFilter.startDate = { gte: periodStart };
+      dateFilter.endDate = { lte: periodEnd };
+    }
 
     const entries = await prisma.emissionEntry.findMany({
       where: {
         organizationId: orgId,
-        startDate: { gte: periodStart },
-        endDate: { lte: periodEnd },
+        ...dateFilter,
       },
       select: {
         scope: true,
@@ -103,8 +111,8 @@ export async function GET(req: NextRequest) {
       totalEmissions,
       byCategory,
       byMonth,
-      periodStart,
-      periodEnd,
+      periodStart: periodStart ?? undefined,
+      periodEnd: periodEnd ?? undefined,
       entryCount: entries.length,
     });
   } catch (error) {
