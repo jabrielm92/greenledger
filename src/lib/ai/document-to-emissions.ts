@@ -72,13 +72,14 @@ function mapUtilityBill(
   const endDate = billingPeriod?.end || now;
 
   // Map utility type to emissions category and scope
-  const { scope, category } = mapUtilityTypeToCategory(utilityType);
+  const { scope, category, subcategory } = mapUtilityTypeToCategory(utilityType);
 
   const year = new Date(endDate).getFullYear() || new Date().getFullYear();
 
   return {
     scope,
     category,
+    subcategory,
     source: provider,
     description: `${formatUtilityType(utilityType)} consumption from ${provider}`,
     activityValue: consumption.value,
@@ -90,6 +91,7 @@ function mapUtilityBill(
       activityValue: consumption.value,
       activityUnit: consumption.unit,
       category,
+      subcategory,
       region,
       year,
     },
@@ -405,7 +407,7 @@ function mapRefrigerantLog(
 
   return {
     scope: "SCOPE_1",
-    category: "refrigerants",
+    category: "refrigerant",
     subcategory: refrigerantType,
     source: equipmentId,
     description: `Refrigerant ${refrigerantType} recharge — ${equipmentId}`,
@@ -416,7 +418,7 @@ function mapRefrigerantLog(
     calculationInput: {
       activityValue: quantity.value,
       activityUnit: quantity.unit || "kg",
-      category: "refrigerants",
+      category: "refrigerant",
       subcategory: refrigerantType,
       region,
       year,
@@ -427,18 +429,19 @@ function mapRefrigerantLog(
 function mapUtilityTypeToCategory(utilityType: string): {
   scope: "SCOPE_1" | "SCOPE_2" | "SCOPE_3";
   category: string;
+  subcategory: string;
 } {
   switch (utilityType) {
     case "natural_gas":
-      return { scope: "SCOPE_1", category: "natural_gas" };
+      return { scope: "SCOPE_1", category: "natural_gas", subcategory: "combustion" };
     case "electricity":
-      return { scope: "SCOPE_2", category: "electricity" };
+      return { scope: "SCOPE_2", category: "electricity", subcategory: "grid" };
     case "district_heating":
-      return { scope: "SCOPE_2", category: "district_heating" };
+      return { scope: "SCOPE_2", category: "district_heating", subcategory: "heat" };
     case "water":
-      return { scope: "SCOPE_3", category: "water" };
+      return { scope: "SCOPE_3", category: "water", subcategory: "supply" };
     default:
-      return { scope: "SCOPE_2", category: "electricity" };
+      return { scope: "SCOPE_2", category: "electricity", subcategory: "grid" };
   }
 }
 

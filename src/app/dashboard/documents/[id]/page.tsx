@@ -68,10 +68,14 @@ export default function DocumentDetailPage() {
             : "Extracted data saved as reviewed.",
         });
       } else {
+        const entry = await res.json();
+        const co2eFormatted =
+          entry.co2e >= 1000
+            ? `${(entry.co2e / 1000).toFixed(2)} tCO2e`
+            : `${Number(entry.co2e).toFixed(2)} kgCO2e`;
         toast({
           title: "Emission entry created",
-          description:
-            "The emission entry was successfully created from the extracted data.",
+          description: `${entry.scope?.replace("_", " ")} — ${entry.category}: ${co2eFormatted}. View it on the Emissions page.`,
         });
       }
 
