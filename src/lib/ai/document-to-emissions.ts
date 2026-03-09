@@ -1,4 +1,5 @@
 import type { CalculationInput } from "@/types";
+import { inferRegion } from "@/lib/emissions/infer-region";
 
 /**
  * Maps AI-extracted document data into a CalculationInput + metadata
@@ -62,6 +63,7 @@ function mapUtilityBill(
 
   const utilityType = (data.utilityType as string) || "electricity";
   const provider = (data.provider as string) || "Unknown provider";
+  const cost = data.cost as { value: number; currency: string } | null | undefined;
 
   const billingPeriod = data.billingPeriod as
     | { start: string; end: string }
@@ -75,6 +77,13 @@ function mapUtilityBill(
   const { scope, category, subcategory } = mapUtilityTypeToCategory(utilityType);
 
   const year = new Date(endDate).getFullYear() || new Date().getFullYear();
+
+  // Infer region from document context instead of using the generic default
+  const resolvedRegion = inferRegion({
+    provider,
+    currency: cost?.currency,
+    address: data.facilityAddress as string | null,
+  }) || region;
 
   return {
     scope,
@@ -92,7 +101,7 @@ function mapUtilityBill(
       activityUnit: consumption.unit,
       category,
       subcategory,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -110,9 +119,16 @@ function mapFuelReceipt(
 
   const fuelType = (data.fuelType as string) || "diesel";
   const vendor = (data.vendor as string) || "Unknown vendor";
+  const cost = data.cost as { value: number; currency: string } | null | undefined;
   const date = (data.date as string) || new Date().toISOString().split("T")[0];
 
   const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  const resolvedRegion = inferRegion({
+    vendor,
+    currency: cost?.currency,
+    location: data.location as string | null,
+  }) || region;
 
   return {
     scope: "SCOPE_1",
@@ -128,7 +144,7 @@ function mapFuelReceipt(
       activityValue: quantity.value,
       activityUnit: quantity.unit,
       category: fuelType,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -146,8 +162,15 @@ function mapTravelRecord(
 
   const travelType = (data.travelType as string) || "domestic";
   const description = (data.description as string) || "Business travel";
+  const cost = data.cost as { value: number; currency: string } | null | undefined;
   const date = (data.date as string) || new Date().toISOString().split("T")[0];
   const year = new Date(date).getFullYear() || new Date().getFullYear();
+
+  const resolvedRegion = inferRegion({
+    vendor: data.carrier as string | null,
+    currency: cost?.currency,
+    location: data.origin as string | null,
+  }) || region;
 
   return {
     scope: "SCOPE_3",
@@ -164,7 +187,7 @@ function mapTravelRecord(
       activityUnit: distance.unit,
       category: "air_travel",
       subcategory: travelType,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -185,6 +208,11 @@ function mapWasteManifest(
   const date = (data.date as string) || new Date().toISOString().split("T")[0];
   const year = new Date(date).getFullYear() || new Date().getFullYear();
 
+  const resolvedRegion = inferRegion({
+    vendor: handler,
+    address: data.facilityAddress as string | null,
+  }) || region;
+
   return {
     scope: "SCOPE_3",
     category: "waste",
@@ -200,7 +228,7 @@ function mapWasteManifest(
       activityUnit: weight.unit,
       category: "waste",
       subcategory: wasteType,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -240,6 +268,12 @@ function mapInvoice(
   const scope = isFuel ? "SCOPE_1" as const : isUtility ? "SCOPE_2" as const : "SCOPE_3" as const;
   const emissionCategory = isFuel ? "fuel_combustion" : isUtility ? "electricity" : "purchased_goods";
 
+  const resolvedRegion = inferRegion({
+    vendor,
+    currency: total?.currency,
+    address: data.vendorAddress as string | null,
+  }) || region;
+
   return {
     scope,
     category: emissionCategory,
@@ -255,7 +289,7 @@ function mapInvoice(
       activityUnit,
       category: emissionCategory,
       subcategory: category,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -270,18 +304,20 @@ function mapSupplierReport(
     field: string; value: string | number; unit: string | null; category: string;
   }> | undefined;
 
+  const supplierName = (data.vendor as string) || (data.supplierName as string) || "Unknown supplier";
+  const resolvedRegion = inferRegion({ vendor: supplierName }) || region;
+
   if (!relevantData || relevantData.length === 0) {
     // Try direct emissions fields
     const totalEmissions = data.totalEmissions as number | undefined;
     if (totalEmissions) {
-      const supplier = (data.vendor as string) || (data.supplierName as string) || "Unknown supplier";
       const date = (data.date as string) || new Date().toISOString().split("T")[0];
       return {
         scope: "SCOPE_3",
         category: "purchased_goods",
         subcategory: "supplier_emissions",
-        source: supplier,
-        description: `Supplier emissions report from ${supplier}`,
+        source: supplierName,
+        description: `Supplier emissions report from ${supplierName}`,
         activityValue: totalEmissions,
         activityUnit: "tCO2e",
         startDate: date,
@@ -291,7 +327,7 @@ function mapSupplierReport(
           activityUnit: "tCO2e",
           category: "purchased_goods",
           subcategory: "supplier_emissions",
-          region,
+          region: resolvedRegion,
           year: new Date(date).getFullYear() || new Date().getFullYear(),
         },
       };
@@ -309,7 +345,6 @@ function mapSupplierReport(
     : parseFloat(String(emissionEntry.value));
   if (isNaN(value) || value === 0) return null;
 
-  const supplier = (data.vendor as string) || (data.supplierName as string) || "Unknown supplier";
   const date = (data.date as string) || new Date().toISOString().split("T")[0];
   const year = new Date(date).getFullYear() || new Date().getFullYear();
 
@@ -317,8 +352,8 @@ function mapSupplierReport(
     scope: "SCOPE_3",
     category: "purchased_goods",
     subcategory: emissionEntry.category || "supplier_emissions",
-    source: supplier,
-    description: `${emissionEntry.field} from ${supplier} report`,
+    source: supplierName,
+    description: `${emissionEntry.field} from ${supplierName} report`,
     activityValue: value,
     activityUnit: emissionEntry.unit || "tCO2e",
     startDate: date,
@@ -328,7 +363,7 @@ function mapSupplierReport(
       activityUnit: emissionEntry.unit || "tCO2e",
       category: "purchased_goods",
       subcategory: emissionEntry.category || "supplier_emissions",
-      region,
+      region: resolvedRegion,
       year,
     },
   };
@@ -346,6 +381,10 @@ function mapFleetLog(
   const vehicleId = (data.vehicleId as string) || "Fleet vehicle";
   const fuelType = (data.fuelType as string) || "diesel";
 
+  const resolvedRegion = inferRegion({
+    location: data.route as string | null,
+  }) || region;
+
   if (fuelConsumed?.value) {
     return {
       scope: "SCOPE_1",
@@ -362,7 +401,7 @@ function mapFleetLog(
         activityUnit: fuelConsumed.unit || "liters",
         category: fuelType,
         subcategory: "fleet",
-        region,
+        region: resolvedRegion,
         year,
       },
     };
@@ -384,7 +423,7 @@ function mapFleetLog(
         activityUnit: distance.unit || "km",
         category: fuelType,
         subcategory: "fleet",
-        region,
+        region: resolvedRegion,
         year,
       },
     };
@@ -405,6 +444,11 @@ function mapRefrigerantLog(
   const date = (data.date as string) || new Date().toISOString().split("T")[0];
   const year = new Date(date).getFullYear() || new Date().getFullYear();
 
+  const resolvedRegion = inferRegion({
+    vendor: data.serviceCompany as string | null,
+    location: data.location as string | null,
+  }) || region;
+
   return {
     scope: "SCOPE_1",
     category: "refrigerant",
@@ -420,7 +464,7 @@ function mapRefrigerantLog(
       activityUnit: quantity.unit || "kg",
       category: "refrigerant",
       subcategory: refrigerantType,
-      region,
+      region: resolvedRegion,
       year,
     },
   };
