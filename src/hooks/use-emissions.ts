@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { CategoryBreakdown, MonthlyEmission } from "@/types";
 
 const POLL_INTERVAL_MS = 30_000; // 30 seconds

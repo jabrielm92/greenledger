@@ -17,6 +17,19 @@ import {
 import { formatEmissions } from "@/lib/utils";
 import type { CategoryBreakdown, MonthlyEmission } from "@/types";
 
+const MONTH_NAMES = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+function formatMonth(v: string): string {
+  if (v.includes("-")) {
+    const m = parseInt(v.split("-")[1], 10);
+    return MONTH_NAMES[m - 1] || v;
+  }
+  return v;
+}
+
 const COLORS = [
   "#059669",
   "#2563eb",
@@ -59,7 +72,7 @@ export function ScopeBreakdown({
                   <XAxis
                     dataKey="month"
                     tick={{ fontSize: 11, fill: "#64748b" }}
-                    tickFormatter={(v) => v.slice(5)}
+                    tickFormatter={formatMonth}
                   />
                   <YAxis
                     tick={{ fontSize: 11, fill: "#64748b" }}
