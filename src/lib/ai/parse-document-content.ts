@@ -97,17 +97,39 @@ function isPdfTextMeaningful(text: string): boolean {
 }
 
 async function parsePdf(buffer: Buffer): Promise<ParsedContent> {
+  // Try pdf-parse first — it's a simpler wrapper and handles worker setup
+  // internally. We import the inner module to avoid the test-file side-effect.
   try {
-    // Use pdfjs-dist directly (more robust than pdf-parse wrapper for
-    // corrupted XRef tables, encrypted PDFs, etc.)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (
+      buf: Buffer,
+      options?: Record<string, unknown>
+    ) => Promise<{ text: string }>;
+    const data = await pdfParse(Buffer.from(buffer));
+    const text = data.text?.trim();
+    if (text && isPdfTextMeaningful(text)) {
+      return { content: text, isImage: false };
+    }
+  } catch (err) {
+    console.warn("[PARSE_PDF] pdf-parse failed, trying pdfjs-dist:", err);
+  }
+
+  // Fallback: use pdfjs-dist directly with worker disabled
+  try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+
+    // Disable worker — we're in Node.js, not a browser
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
 
     const data = new Uint8Array(buffer);
     const doc = await pdfjsLib.getDocument({
       data,
-      // Suppress verbose pdfjs warnings in logs
       verbosity: 0,
+      // Disable worker to avoid worker file resolution errors
+      useWorkerFetch: false,
+      isEvalSupported: false,
+      disableFontFace: true,
     }).promise;
 
     const pageTexts: string[] = [];
@@ -123,36 +145,16 @@ async function parsePdf(buffer: Buffer): Promise<ParsedContent> {
     if (text && isPdfTextMeaningful(text)) {
       return { content: text, isImage: false };
     }
-
-    // Scanned PDF or metadata-only text — tell AI to classify based on filename
-    console.warn(
-      "[PARSE_PDF] No meaningful text found — returning placeholder for AI"
-    );
-    return {
-      content: "[Scanned PDF — no extractable text. The document could not be read as text. Please classify based on filename.]",
-      isImage: false,
-    };
   } catch (err) {
-    console.error("[PARSE_PDF] pdfjs-dist error:", err);
-    // Last resort: try the old pdf-parse library in case pdfjs-dist failed
-    // on something it can handle
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
-      const data = await pdfParse(buffer);
-      const text = data.text?.trim();
-      if (text && isPdfTextMeaningful(text)) {
-        return { content: text, isImage: false };
-      }
-    } catch (fallbackErr) {
-      console.error("[PARSE_PDF] pdf-parse fallback also failed:", fallbackErr);
-    }
-
-    return {
-      content: "[Failed to parse PDF — the file may be corrupted or encrypted. Please classify based on filename.]",
-      isImage: false,
-    };
+    console.error("[PARSE_PDF] pdfjs-dist fallback also failed:", err);
   }
+
+  // If we got here, either the PDF is scanned/image-only or both parsers failed.
+  // Return the PDF as base64 so the vision model can try to read it.
+  console.warn(
+    "[PARSE_PDF] No text extracted — sending as base64 image for vision model"
+  );
+  return { content: buffer.toString("base64"), isImage: true };
 }
 
 async function parseDocx(buffer: Buffer): Promise<ParsedContent> {

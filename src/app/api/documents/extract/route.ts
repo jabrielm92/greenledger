@@ -54,9 +54,14 @@ export async function POST(req: NextRequest) {
       const parsed = await parseDocumentContent(fileBuffer, document.fileType);
 
       // Run AI extraction with the parsed content
+      // When the parser falls back to base64 (e.g. scanned PDF), use an image
+      // MIME type so the AI receives it as a vision image, not a text blob.
+      const effectiveMimeType = parsed.isImage
+        ? (document.fileType.startsWith("image/") ? document.fileType : "image/png")
+        : "text/plain";
       const result = await extractDocument(
         parsed.content,
-        parsed.isImage ? document.fileType : "text/plain",
+        effectiveMimeType,
         document.fileName
       );
 
