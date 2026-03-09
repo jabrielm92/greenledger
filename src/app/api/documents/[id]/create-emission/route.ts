@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
 import { calculateEmissions } from "@/lib/emissions/calculator";
 import { mapExtractedDataToEmission } from "@/lib/ai/document-to-emissions";
+import { emit } from "@/lib/events";
 
 const createEmissionFromDocSchema = z.object({
   extractedData: z.record(z.unknown()),
@@ -153,6 +154,17 @@ export async function POST(
         co2e: entry.co2e,
         source: "ai_extraction",
       },
+    });
+
+    // Emit event so compliance updates, notifications, and stale-report checks run
+    await emit("emission.auto_created", {
+      emissionEntryId: entry.id,
+      documentId,
+      organizationId: session.user.organizationId,
+      userId: session.user.id,
+      scope: entry.scope,
+      category: entry.category,
+      co2e: entry.co2e,
     });
 
     return NextResponse.json(entry, { status: 201 });

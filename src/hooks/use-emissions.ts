@@ -74,24 +74,25 @@ export function useEmissionsSummary(year?: number) {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetch_() {
-      setIsLoading(true);
-      try {
-        const params = year ? `?year=${year}` : "";
-        const res = await fetch(`/api/emissions/summary${params}`);
-        if (res.ok) {
-          const data = await res.json();
-          setSummary(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch emissions summary:", err);
-      } finally {
-        setIsLoading(false);
+  const fetchSummary = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const params = year ? `?year=${year}` : "";
+      const res = await fetch(`/api/emissions/summary${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSummary(data);
       }
+    } catch (err) {
+      console.error("Failed to fetch emissions summary:", err);
+    } finally {
+      setIsLoading(false);
     }
-    fetch_();
   }, [year]);
 
-  return { summary, isLoading };
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
+
+  return { summary, isLoading, refetch: fetchSummary };
 }

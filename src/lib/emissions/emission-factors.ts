@@ -47,8 +47,8 @@ export async function lookupEmissionFactor(
     });
   }
 
-  // Fallback without subcategory
-  if (!factor && query.subcategory) {
+  // Fallback: ignore subcategory and try any matching factor for this category
+  if (!factor) {
     factor = await prisma.emissionFactor.findFirst({
       where: {
         category: query.category,
