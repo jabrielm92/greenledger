@@ -133,6 +133,37 @@ async function seedEmissionFactors() {
     { category: "employee_commute", subcategory: "average_car", region: "GLOBAL", unit: "kgCO2e/mile", co2ePerUnit: 0.275, co2PerUnit: 0.273, ch4PerUnit: 0.001, n2oPerUnit: 0.001, source: "EPA", year: 2024 },
 
     // ============================================
+    // PURCHASED GOODS & SERVICES (Scope 3 - Category 1)
+    // ============================================
+    // Activity-based factors (per kg of material)
+    { category: "purchased_goods", subcategory: "materials", region: "DE", unit: "kgCO2e/kg", co2ePerUnit: 0.47, co2PerUnit: 0.44, ch4PerUnit: 0.014, n2oPerUnit: 0.016, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "materials", region: "EU", unit: "kgCO2e/kg", co2ePerUnit: 0.47, co2PerUnit: 0.44, ch4PerUnit: 0.014, n2oPerUnit: 0.016, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "materials", region: "US", unit: "kgCO2e/kg", co2ePerUnit: 0.52, co2PerUnit: 0.49, ch4PerUnit: 0.015, n2oPerUnit: 0.015, source: "EPA", year: 2024 },
+    { category: "purchased_goods", subcategory: "materials", region: "GB", unit: "kgCO2e/kg", co2ePerUnit: 0.45, co2PerUnit: 0.42, ch4PerUnit: 0.014, n2oPerUnit: 0.016, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "materials", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 0.50, co2PerUnit: 0.47, ch4PerUnit: 0.015, n2oPerUnit: 0.015, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "chemicals", region: "DE", unit: "kgCO2e/kg", co2ePerUnit: 1.58, co2PerUnit: 1.50, ch4PerUnit: 0.04, n2oPerUnit: 0.04, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "chemicals", region: "EU", unit: "kgCO2e/kg", co2ePerUnit: 1.58, co2PerUnit: 1.50, ch4PerUnit: 0.04, n2oPerUnit: 0.04, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "chemicals", region: "US", unit: "kgCO2e/kg", co2ePerUnit: 1.72, co2PerUnit: 1.63, ch4PerUnit: 0.05, n2oPerUnit: 0.04, source: "EPA", year: 2024 },
+    { category: "purchased_goods", subcategory: "chemicals", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 1.65, co2PerUnit: 1.57, ch4PerUnit: 0.04, n2oPerUnit: 0.04, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "metals", region: "DE", unit: "kgCO2e/kg", co2ePerUnit: 2.41, co2PerUnit: 2.30, ch4PerUnit: 0.05, n2oPerUnit: 0.06, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "metals", region: "EU", unit: "kgCO2e/kg", co2ePerUnit: 2.41, co2PerUnit: 2.30, ch4PerUnit: 0.05, n2oPerUnit: 0.06, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "metals", region: "US", unit: "kgCO2e/kg", co2ePerUnit: 2.55, co2PerUnit: 2.43, ch4PerUnit: 0.06, n2oPerUnit: 0.06, source: "EPA", year: 2024 },
+    { category: "purchased_goods", subcategory: "metals", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 2.48, co2PerUnit: 2.36, ch4PerUnit: 0.06, n2oPerUnit: 0.06, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "plastics", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 3.12, co2PerUnit: 2.97, ch4PerUnit: 0.07, n2oPerUnit: 0.08, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "paper", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 0.92, co2PerUnit: 0.87, ch4PerUnit: 0.03, n2oPerUnit: 0.02, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "textiles", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 15.0, co2PerUnit: 14.3, ch4PerUnit: 0.35, n2oPerUnit: 0.35, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "electronics", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 20.0, co2PerUnit: 19.0, ch4PerUnit: 0.50, n2oPerUnit: 0.50, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "food_and_beverages", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 3.20, co2PerUnit: 2.80, ch4PerUnit: 0.30, n2oPerUnit: 0.10, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "construction_materials", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 0.24, co2PerUnit: 0.23, ch4PerUnit: 0.005, n2oPerUnit: 0.005, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "furniture", region: "GLOBAL", unit: "kgCO2e/kg", co2ePerUnit: 1.20, co2PerUnit: 1.14, ch4PerUnit: 0.03, n2oPerUnit: 0.03, source: "DEFRA", year: 2025 },
+    // Spend-based factors (per currency unit) for when only monetary data is available
+    { category: "purchased_goods", subcategory: "materials", region: "DE", unit: "kgCO2e/EUR", co2ePerUnit: 0.39, co2PerUnit: 0.37, ch4PerUnit: 0.01, n2oPerUnit: 0.01, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "materials", region: "EU", unit: "kgCO2e/EUR", co2ePerUnit: 0.39, co2PerUnit: 0.37, ch4PerUnit: 0.01, n2oPerUnit: 0.01, source: "DEFRA", year: 2025 },
+    { category: "purchased_goods", subcategory: "materials", region: "GLOBAL", unit: "kgCO2e/USD", co2ePerUnit: 0.42, co2PerUnit: 0.40, ch4PerUnit: 0.01, n2oPerUnit: 0.01, source: "EPA", year: 2024 },
+    { category: "purchased_goods", subcategory: "services", region: "GLOBAL", unit: "kgCO2e/USD", co2ePerUnit: 0.13, co2PerUnit: 0.12, ch4PerUnit: 0.005, n2oPerUnit: 0.005, source: "EPA", year: 2024 },
+    { category: "purchased_goods", subcategory: "services", region: "EU", unit: "kgCO2e/EUR", co2ePerUnit: 0.12, co2PerUnit: 0.11, ch4PerUnit: 0.005, n2oPerUnit: 0.005, source: "DEFRA", year: 2025 },
+
+    // ============================================
     // UPSTREAM TRANSPORTATION (Scope 3)
     // ============================================
     { category: "upstream_transport", subcategory: "road_freight", region: "GLOBAL", unit: "kgCO2e/tonne_km", co2ePerUnit: 0.107, co2PerUnit: 0.106, ch4PerUnit: 0.0004, n2oPerUnit: 0.0006, source: "DEFRA", year: 2025 },
