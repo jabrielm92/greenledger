@@ -89,7 +89,7 @@ export async function POST(req: Request) {
       await tx.reportingPeriod.create({
         data: {
           organizationId: org.id,
-          name: `FY${fyEndDate.getFullYear()}`,
+          name: `FY${fyStartDate.getFullYear()}`,
           startDate: fyStartDate,
           endDate: fyEndDate,
           isCurrent: true,
