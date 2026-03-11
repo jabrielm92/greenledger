@@ -24,6 +24,7 @@ interface DocumentListProps {
   totalPages?: number;
   currentPage?: number;
   onPageChange?: (page: number) => void;
+  onDelete?: (id: string) => void;
 }
 
 export function DocumentList({
@@ -32,6 +33,7 @@ export function DocumentList({
   totalPages = 1,
   currentPage = 1,
   onPageChange,
+  onDelete,
 }: DocumentListProps) {
   if (isLoading) {
     return (
@@ -53,7 +55,7 @@ export function DocumentList({
     <div>
       <div className="space-y-3">
         {documents.map((doc) => (
-          <DocumentCard key={doc.id} document={doc} />
+          <DocumentCard key={doc.id} document={doc} onDelete={onDelete} />
         ))}
       </div>
 

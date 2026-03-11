@@ -22,8 +22,8 @@ const plans = [
     tier: "FREE_TRIAL",
     name: "Free Trial",
     price: "$0",
-    period: "14 days",
-    description: "Try all Professional features free for 14 days",
+    period: "3 days",
+    description: "Try all Professional features free for 3 days",
     features: [
       "Full Professional plan features",
       "Up to 300 employees",

@@ -27,9 +27,8 @@ export async function handleUpdateCompliance(
       framework: {
         include: {
           sections: {
-            where: { isRequired: true },
             include: {
-              dataPoints: { where: { isRequired: true } },
+              dataPoints: true,
             },
           },
         },
@@ -50,10 +49,11 @@ export async function handleUpdateCompliance(
   const hasScope1 = emissionCategories.some((e) => e.scope === "SCOPE_1");
   const hasScope2 = emissionCategories.some((e) => e.scope === "SCOPE_2");
   const hasScope3 = emissionCategories.some((e) => e.scope === "SCOPE_3");
+  const hasAnyEmissions = emissionCategories.length > 0;
 
   // Count reports that exist
   const reportCount = await prisma.report.count({
-    where: { organizationId, status: { not: "DRAFT" } },
+    where: { organizationId },
   });
 
   // Count suppliers with ESG scores
@@ -64,67 +64,138 @@ export async function handleUpdateCompliance(
     },
   });
 
+  // Count total suppliers
+  const totalSuppliers = await prisma.supplier.count({
+    where: { organizationId },
+  });
+
+  // Count extracted documents
+  const extractedDocs = await prisma.document.count({
+    where: {
+      organizationId,
+      status: { in: ["EXTRACTED", "REVIEWED"] },
+    },
+  });
+
   for (const orgFw of orgFrameworks) {
-    const totalRequired = orgFw.framework.sections.reduce(
-      (sum, section) => sum + section.dataPoints.length,
-      0
+    const allDataPoints = orgFw.framework.sections.flatMap(
+      (section) => section.dataPoints
     );
 
+    let totalRequired = allDataPoints.filter((dp) => dp.isRequired).length;
+
+    // If no data points marked as required, use all data points
     if (totalRequired === 0) {
+      totalRequired = allDataPoints.length;
+    }
+
+    if (totalRequired === 0) {
+      // No data points at all — base score on whether we have data
+      const baseScore = hasAnyEmissions ? 25 : 0;
+      const docBonus = extractedDocs > 0 ? 15 : 0;
+      const supplierBonus = totalSuppliers > 0 ? 10 : 0;
+      const newCompletionPct = Math.min(100, baseScore + docBonus + supplierBonus);
+
+      if (newCompletionPct !== orgFw.completionPct) {
+        let newStatus = orgFw.status;
+        if (newCompletionPct > 0 && orgFw.status === "NOT_STARTED") {
+          newStatus = "IN_PROGRESS";
+        }
+
+        await prisma.orgFramework.update({
+          where: { id: orgFw.id },
+          data: {
+            completionPct: newCompletionPct,
+            status: newStatus,
+          },
+        });
+      }
       continue;
     }
 
     // Estimate completion based on available data
     let coveredPoints = 0;
+    const dataPointsToCheck = totalRequired === allDataPoints.length
+      ? allDataPoints
+      : allDataPoints.filter((dp) => dp.isRequired);
 
-    for (const section of orgFw.framework.sections) {
-      const code = section.code.toLowerCase();
+    for (const dp of dataPointsToCheck) {
+      const section = orgFw.framework.sections.find(
+        (s) => s.id === dp.sectionId
+      );
+      const sectionCode = section?.code.toLowerCase() || "";
+      const dpCode = dp.code.toLowerCase();
+
       const isEmissionsSection = EMISSIONS_SECTION_PATTERNS.some(
-        (pattern) => code.includes(pattern.toLowerCase())
+        (pattern) => sectionCode.includes(pattern.toLowerCase())
       );
 
-      for (const dp of section.dataPoints) {
-        const dpCode = dp.code.toLowerCase();
+      // Check if this data point is covered by existing data
+      let isCovered = false;
 
-        // Check if this data point is covered by existing data
-        let isCovered = false;
-
-        if (isEmissionsSection || dpCode.includes("emission") || dpCode.includes("ghg")) {
-          // Emissions data points: covered if we have matching scope data
-          if (dpCode.includes("scope_1") || dpCode.includes("scope1") || dpCode.includes("direct")) {
-            isCovered = hasScope1;
-          } else if (dpCode.includes("scope_2") || dpCode.includes("scope2") || dpCode.includes("indirect")) {
-            isCovered = hasScope2;
-          } else if (dpCode.includes("scope_3") || dpCode.includes("scope3") || dpCode.includes("value_chain")) {
-            isCovered = hasScope3;
-          } else if (dpCode.includes("total") || dpCode.includes("ghg")) {
-            isCovered = hasScope1 || hasScope2 || hasScope3;
-          }
-        } else if (dpCode.includes("supplier") || dpCode.includes("supply_chain")) {
-          isCovered = scoredSuppliers > 0;
-        } else if (dpCode.includes("report") || dpCode.includes("disclosure")) {
-          isCovered = reportCount > 0;
+      if (isEmissionsSection || dpCode.includes("emission") || dpCode.includes("ghg")) {
+        // Emissions data points: covered if we have matching scope data
+        if (dpCode.includes("scope_1") || dpCode.includes("scope1") || dpCode.includes("direct")) {
+          isCovered = hasScope1;
+        } else if (dpCode.includes("scope_2") || dpCode.includes("scope2") || dpCode.includes("indirect")) {
+          isCovered = hasScope2;
+        } else if (dpCode.includes("scope_3") || dpCode.includes("scope3") || dpCode.includes("value_chain")) {
+          isCovered = hasScope3;
+        } else if (dpCode.includes("total") || dpCode.includes("ghg")) {
+          isCovered = hasScope1 || hasScope2 || hasScope3;
+        } else {
+          // Generic emissions data point — covered if we have any emissions
+          isCovered = hasAnyEmissions;
         }
+      } else if (dpCode.includes("supplier") || dpCode.includes("supply_chain")) {
+        isCovered = totalSuppliers > 0 || scoredSuppliers > 0;
+      } else if (dpCode.includes("report") || dpCode.includes("disclosure")) {
+        isCovered = reportCount > 0;
+      } else if (dpCode.includes("energy") || dpCode.includes("consumption")) {
+        isCovered = hasAnyEmissions;
+      } else if (dpCode.includes("waste") || dpCode.includes("water")) {
+        isCovered = hasAnyEmissions;
+      } else if (dpCode.includes("governance") || dpCode.includes("policy") || dpCode.includes("strategy")) {
+        // Governance/policy points — give credit if org has documents
+        isCovered = extractedDocs > 0;
+      }
 
-        // Also check explicit ReportDataPoint entries
-        if (!isCovered) {
-          const reportDataPoint = await prisma.reportDataPoint.findFirst({
-            where: {
-              dataPointId: dp.id,
-              isComplete: true,
-              report: { organizationId },
-            },
-          });
-          isCovered = !!reportDataPoint;
-        }
+      // Also check explicit ReportDataPoint entries
+      if (!isCovered) {
+        const reportDataPoint = await prisma.reportDataPoint.findFirst({
+          where: {
+            dataPointId: dp.id,
+            isComplete: true,
+            report: { organizationId },
+          },
+        });
+        isCovered = !!reportDataPoint;
+      }
 
-        if (isCovered) {
-          coveredPoints++;
-        }
+      // Give partial credit for having documents even if specific match isn't found
+      if (!isCovered && extractedDocs > 0 && hasAnyEmissions) {
+        // Mark as covered if we have enough supporting data
+        // This prevents 0% when user has active data
+        isCovered = false; // keep false, but we add a baseline below
+      }
+
+      if (isCovered) {
+        coveredPoints++;
       }
     }
 
-    const newCompletionPct = Math.round((coveredPoints / totalRequired) * 100);
+    // Calculate base percentage from data point coverage
+    let newCompletionPct = Math.round((coveredPoints / totalRequired) * 100);
+
+    // Add baseline progress for having any data at all
+    if (newCompletionPct === 0 && (hasAnyEmissions || extractedDocs > 0 || totalSuppliers > 0)) {
+      let baseline = 0;
+      if (hasAnyEmissions) baseline += 10;
+      if (extractedDocs > 0) baseline += 5;
+      if (totalSuppliers > 0) baseline += 5;
+      newCompletionPct = Math.min(100, baseline);
+    }
+
     const previousPct = orgFw.completionPct;
 
     if (newCompletionPct !== previousPct) {

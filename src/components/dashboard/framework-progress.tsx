@@ -63,9 +63,9 @@ export function FrameworkProgress({
 }: FrameworkProgressProps) {
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-base">Framework Progress</CardTitle>
-        <CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-semibold">Framework Progress</CardTitle>
+        <CardDescription className="text-xs">
           Compliance completion across active frameworks
         </CardDescription>
       </CardHeader>
@@ -78,24 +78,24 @@ export function FrameworkProgress({
             </Link>
           </p>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {frameworks.map((fw) => (
-              <div key={fw.id} className="space-y-2">
+              <div key={fw.id} className="rounded-lg border border-slate-100 bg-slate-50/50 p-3 space-y-2.5 transition-colors hover:bg-slate-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{fw.name}</span>
+                    <span className="text-sm font-semibold text-slate-800">{fw.name}</span>
                     <Badge
                       variant="secondary"
-                      className={cn("text-xs", statusColor(fw.status))}
+                      className={cn("text-[10px] px-1.5 py-0", statusColor(fw.status))}
                     >
                       {statusLabel(fw.status)}
                     </Badge>
                   </div>
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm font-bold tabular-nums text-slate-700">
                     {Math.round(fw.completionPct)}%
                   </span>
                 </div>
-                <Progress value={fw.completionPct} className="h-2" />
+                <Progress value={fw.completionPct} className="h-2.5" />
               </div>
             ))}
           </div>

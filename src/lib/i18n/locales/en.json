@@ -133,7 +133,7 @@
       "starter": {
         "name": "Starter",
         "price": "$0",
-        "period": "14-day free trial",
+        "period": "3-day free trial",
         "description": "Perfect for getting started with ESG reporting",
         "cta": "Start Free Trial",
         "features": [
@@ -212,7 +212,7 @@
       "title": "Ready to simplify your ESG compliance?",
       "description": "Join 200+ companies using GreenLedger to automate carbon reporting and meet compliance deadlines with confidence.",
       "button": "Start Your Free Trial",
-      "note": "No credit card required · 14-day free trial · Cancel anytime"
+      "note": "No credit card required · 3-day free trial · Cancel anytime"
     },
     "footer": {
       "description": "Automated ESG compliance and carbon reporting for modern businesses.",
