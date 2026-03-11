@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { handleUpdateCompliance } from "@/lib/events/handlers/update-compliance";
 
 export async function GET() {
   try {
@@ -67,15 +68,26 @@ export async function GET() {
       if (entry.scope === "SCOPE_3") totalScope3 = entry._sum.co2e ?? 0;
     }
 
-    // Calculate compliance score (simplified: based on framework completion)
+    // Recalculate compliance in case events were missed
+    await handleUpdateCompliance({ organizationId: orgId });
+
+    // Re-fetch frameworks after compliance recalculation
+    const updatedFrameworks = await prisma.orgFramework.findMany({
+      where: { organizationId: orgId },
+      include: {
+        framework: { select: { displayName: true } },
+      },
+    });
+
+    // Calculate compliance score based on updated framework completion
     const complianceScore =
-      frameworks.length > 0
-        ? frameworks.reduce((sum, fw) => sum + fw.completionPct, 0) /
-          frameworks.length
+      updatedFrameworks.length > 0
+        ? updatedFrameworks.reduce((sum, fw) => sum + fw.completionPct, 0) /
+          updatedFrameworks.length
         : 0;
 
     // Find nearest deadline
-    const nextDeadline = frameworks
+    const nextDeadline = updatedFrameworks
       .filter((fw) => fw.dueDate)
       .sort(
         (a, b) =>
@@ -102,7 +114,7 @@ export async function GET() {
         pendingReviews,
       },
       daysUntilDeadline,
-      frameworks: frameworks.map((fw) => ({
+      frameworks: updatedFrameworks.map((fw) => ({
         id: fw.id,
         name: fw.framework.displayName,
         completionPct: fw.completionPct,

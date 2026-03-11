@@ -18,7 +18,7 @@ const EMISSIONS_SECTION_PATTERNS = [
 ];
 
 export async function handleUpdateCompliance(
-  payload: PipelineEvent["emission.auto_created"]
+  payload: { organizationId: string }
 ): Promise<void> {
   const { organizationId } = payload;
 

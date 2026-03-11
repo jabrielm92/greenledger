@@ -24,6 +24,7 @@ import {
 on("document.extracted", "auto-create-emission", handleAutoCreateEmission);
 on("document.extracted", "auto-detect-supplier", handleAutoDetectSupplier);
 on("document.extracted", "notify-extraction-complete", notifyExtractionComplete);
+on("document.extracted", "update-compliance", handleUpdateCompliance);
 
 // ── document.extraction_failed ────────────────────────────────────
 on("document.extraction_failed", "notify-extraction-failed", notifyExtractionFailed);
@@ -35,6 +36,7 @@ on("emission.auto_created", "notify-emission-created", notifyEmissionAutoCreated
 
 // ── supplier.auto_created ─────────────────────────────────────────
 on("supplier.auto_created", "notify-supplier-created", notifySupplierAutoCreated);
+on("supplier.auto_created", "update-compliance", handleUpdateCompliance);
 
 // Mark the dispatcher as initialized so ensureInitialized() is a no-op
 markInitialized();
