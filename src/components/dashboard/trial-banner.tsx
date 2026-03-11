@@ -13,7 +13,7 @@ export function TrialBanner() {
 
   const trialEndsAt = user.trialEndsAt ? new Date(user.trialEndsAt) : null;
 
-  let daysRemaining = 14;
+  let daysRemaining = 3;
   if (trialEndsAt) {
     daysRemaining = Math.max(
       0,
@@ -22,10 +22,8 @@ export function TrialBanner() {
   }
 
   const expired = daysRemaining <= 0;
-  const urgent = daysRemaining <= 3 && !expired;
 
-  // Don't show banner if more than 3 days remaining
-  if (!expired && !urgent) return null;
+  // Always show banner during the 3-day trial
 
   return (
     <div

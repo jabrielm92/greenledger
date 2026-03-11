@@ -70,6 +70,7 @@ export default function DocumentsPage() {
         totalPages={totalPages}
         currentPage={page}
         onPageChange={setPage}
+        onDelete={() => refetch()}
       />
     </div>
   );

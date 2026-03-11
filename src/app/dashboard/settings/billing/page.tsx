@@ -165,7 +165,7 @@ function BillingPageContent() {
         <CardContent>
           <p className="text-sm text-slate-500">
             {currentPlan === "FREE_TRIAL"
-              ? "You are on the 14-day free trial with Professional features. Upgrade to continue after the trial."
+              ? "You are on the 3-day free trial with Professional features. Upgrade to continue after the trial."
               : `You are subscribed to the ${currentPlan.charAt(0) + currentPlan.slice(1).toLowerCase()} plan.`}
           </p>
         </CardContent>

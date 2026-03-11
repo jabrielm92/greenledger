@@ -31,9 +31,9 @@ interface EmissionsChartProps {
 }
 
 const SCOPE_LABELS: Record<string, string> = {
-  scope1: "Scope 1",
-  scope2: "Scope 2",
-  scope3: "Scope 3",
+  scope1: "Scope 1 — Direct",
+  scope2: "Scope 2 — Energy",
+  scope3: "Scope 3 — Value Chain",
 };
 
 const MONTH_NAMES = [
@@ -57,70 +57,127 @@ const defaultData: EmissionsDataPoint[] = MONTH_NAMES.map((m) => ({
   scope3: 0,
 }));
 
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string; color: string }>; label?: string }) {
+  if (!active || !payload?.length) return null;
+  const total = payload.reduce((sum, p) => sum + (p.value || 0), 0);
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white/95 px-4 py-3 shadow-xl backdrop-blur-sm">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {label ? formatMonth(label) : ""}
+      </p>
+      {payload.map((entry) => (
+        <div key={entry.dataKey} className="flex items-center justify-between gap-6 py-0.5">
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-xs text-slate-600">
+              {SCOPE_LABELS[entry.dataKey] || entry.dataKey}
+            </span>
+          </div>
+          <span className="text-xs font-semibold tabular-nums text-slate-900">
+            {entry.value.toFixed(1)} tCO2e
+          </span>
+        </div>
+      ))}
+      <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2">
+        <span className="text-xs font-medium text-slate-500">Total</span>
+        <span className="text-xs font-bold tabular-nums text-slate-900">
+          {total.toFixed(1)} tCO2e
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function EmissionsChart({ data, className }: EmissionsChartProps) {
   const chartData = data.length > 0 ? data : defaultData;
 
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-base">Emissions Over Time</CardTitle>
-        <CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-semibold">Emissions Over Time</CardTitle>
+        <CardDescription className="text-xs">
           Monthly Scope 1, 2 & 3 emissions (tCO2e)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[250px] sm:h-[300px]">
+        <div className="h-[280px] sm:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradScope1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                </linearGradient>
+                <linearGradient id="gradScope2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.02} />
+                </linearGradient>
+                <linearGradient id="gradScope3" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="4 4" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="month"
-                tick={{ fontSize: 12, fill: "#64748b" }}
-                axisLine={{ stroke: "#e2e8f0" }}
+                tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
                 tickFormatter={formatMonth}
+                dy={8}
               />
               <YAxis
-                tick={{ fontSize: 12, fill: "#64748b" }}
-                axisLine={{ stroke: "#e2e8f0" }}
-                tickFormatter={(value) => `${value}`}
+                tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(value) =>
+                  value >= 1000 ? `${(value / 1000).toFixed(0)}k` : `${value}`
+                }
+                dx={-4}
               />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                  fontSize: "12px",
-                }}
-                formatter={(value: number, name: string) => [
-                  `${value.toFixed(1)} tCO2e`,
-                  SCOPE_LABELS[name] || name,
-                ]}
-              />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#cbd5e1", strokeDasharray: "4 4" }} />
               <Legend
-                formatter={(value) => SCOPE_LABELS[value] || value}
+                iconType="circle"
+                iconSize={8}
+                formatter={(value) => (
+                  <span className="text-xs font-medium text-slate-600">
+                    {SCOPE_LABELS[value] || value}
+                  </span>
+                )}
+                wrapperStyle={{ paddingTop: 12 }}
               />
               <Area
                 type="monotone"
                 dataKey="scope1"
                 stackId="1"
-                stroke="#059669"
-                fill="#059669"
-                fillOpacity={0.3}
+                stroke="#10b981"
+                strokeWidth={2.5}
+                fill="url(#gradScope1)"
+                dot={false}
+                activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff", fill: "#10b981" }}
               />
               <Area
                 type="monotone"
                 dataKey="scope2"
                 stackId="1"
-                stroke="#2563eb"
-                fill="#2563eb"
-                fillOpacity={0.3}
+                stroke="#3b82f6"
+                strokeWidth={2.5}
+                fill="url(#gradScope2)"
+                dot={false}
+                activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff", fill: "#3b82f6" }}
               />
               <Area
                 type="monotone"
                 dataKey="scope3"
                 stackId="1"
-                stroke="#d97706"
-                fill="#d97706"
-                fillOpacity={0.3}
+                stroke="#f59e0b"
+                strokeWidth={2.5}
+                fill="url(#gradScope3)"
+                dot={false}
+                activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff", fill: "#f59e0b" }}
               />
             </AreaChart>
           </ResponsiveContainer>

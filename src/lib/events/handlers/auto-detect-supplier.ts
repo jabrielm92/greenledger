@@ -1,7 +1,7 @@
 /**
  * Handler: document.extracted → auto-detect and create Supplier
  *
- * When an INVOICE or SUPPLIER_REPORT is extracted, look for vendor
+ * When any document is extracted, look for vendor/supplier/provider
  * information and create a Supplier record if one doesn't already exist.
  */
 
@@ -9,24 +9,48 @@ import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
 import { emit, type PipelineEvent } from "../dispatcher";
 
-const SUPPLIER_DOC_TYPES = ["INVOICE", "SUPPLIER_REPORT"];
+/**
+ * Recursively search extracted data for a vendor/supplier name.
+ * Looks through nested objects for common vendor field names.
+ */
+function findVendorName(data: Record<string, unknown>): string | null {
+  // Direct field lookup — check common vendor/supplier field names
+  const directKeys = [
+    "vendor", "vendorName", "supplierName", "supplier", "companyName",
+    "provider", "handler", "carrier", "serviceCompany", "technician",
+    "generator", "seller", "merchant", "payee",
+  ];
+
+  for (const key of directKeys) {
+    const val = data[key];
+    if (typeof val === "string" && val.trim().length > 0) {
+      return val.trim();
+    }
+  }
+
+  // Search nested objects (one level deep)
+  for (const [, value] of Object.entries(data)) {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const nested = value as Record<string, unknown>;
+      for (const key of directKeys) {
+        const val = nested[key];
+        if (typeof val === "string" && val.trim().length > 0) {
+          return val.trim();
+        }
+      }
+    }
+  }
+
+  return null;
+}
 
 export async function handleAutoDetectSupplier(
   payload: PipelineEvent["document.extracted"]
 ): Promise<void> {
   const { documentId, organizationId, userId, documentType, extractedData } = payload;
 
-  if (!SUPPLIER_DOC_TYPES.includes(documentType)) {
-    return;
-  }
-
-  // Extract vendor/supplier name from extracted data
-  const vendorName =
-    (extractedData.vendor as string) ||
-    (extractedData.vendorName as string) ||
-    (extractedData.supplierName as string) ||
-    (extractedData.supplier as string) ||
-    (extractedData.companyName as string);
+  // Try to find a vendor/supplier name from any document type
+  const vendorName = findVendorName(extractedData as Record<string, unknown>);
 
   if (!vendorName || vendorName.trim().length === 0) {
     return;

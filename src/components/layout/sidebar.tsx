@@ -37,7 +37,7 @@ function TrialBadge() {
 
   const trialEndsAt = user.trialEndsAt ? new Date(user.trialEndsAt) : null;
 
-  let daysRemaining = 14;
+  let daysRemaining = 3;
   if (trialEndsAt) {
     daysRemaining = Math.max(
       0,
@@ -46,7 +46,7 @@ function TrialBadge() {
   }
 
   const expired = daysRemaining <= 0;
-  const urgent = daysRemaining <= 3 && !expired;
+  const urgent = daysRemaining <= 1 && !expired;
 
   const bgColor = expired
     ? "bg-red-50"
