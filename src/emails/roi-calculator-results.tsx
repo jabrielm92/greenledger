@@ -19,6 +19,9 @@ interface ROICalculatorResultsEmailProps {
   percentageSaved: number;
   hoursSaved: number;
   companySize: string;
+  currentMethod: string;
+  reportsPerYear: number;
+  frameworks: number;
   appUrl?: string;
 }
 
@@ -29,8 +32,21 @@ export default function ROICalculatorResultsEmail({
   percentageSaved,
   hoursSaved,
   companySize,
+  currentMethod,
+  reportsPerYear,
+  frameworks,
   appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.greenledger.com",
 }: ROICalculatorResultsEmailProps) {
+  const methodLabels: Record<string, string> = {
+    manual: "Manual (Spreadsheets + Staff Time)",
+    consultant: "External Consultant",
+    enterprise: "Enterprise Platform",
+  };
+
+  const currentMethodLabel = methodLabels[currentMethod] || currentMethod;
+  const costPerReport = Math.round(currentCost / reportsPerYear);
+  const glCostPerReport = Math.round(greenLedgerCost / reportsPerYear);
+  const savingsPerReport = costPerReport - glCostPerReport;
   return (
     <Html>
       <Head />
@@ -72,6 +88,78 @@ export default function ROICalculatorResultsEmail({
               <span style={resultValue}>
                 ~{hoursSaved} hours annually
               </span>
+            </Text>
+          </Section>
+
+          <Section style={detailBox}>
+            <Heading as="h3" style={detailHeading}>
+              Detailed Cost Breakdown
+            </Heading>
+
+            <Text style={detailSubheading}>Your Current Setup</Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Reporting method:</span>{" "}
+              <span style={resultValue}>{currentMethodLabel}</span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Reports per year:</span>{" "}
+              <span style={resultValue}>{reportsPerYear}</span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Frameworks tracked:</span>{" "}
+              <span style={resultValue}>{frameworks}</span>
+            </Text>
+
+            <Hr style={hrLight} />
+
+            <Text style={detailSubheading}>Per-Report Cost Comparison</Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>
+                Cost per report ({currentMethodLabel}):
+              </span>{" "}
+              <span style={resultValue}>
+                ${costPerReport.toLocaleString()}
+              </span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Cost per report (GreenLedger):</span>{" "}
+              <span style={resultValueGreen}>
+                ${glCostPerReport.toLocaleString()}
+              </span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Savings per report:</span>{" "}
+              <span style={savingsValue}>
+                ${savingsPerReport.toLocaleString()}
+              </span>
+            </Text>
+
+            <Hr style={hrLight} />
+
+            <Text style={detailSubheading}>Annual Cost Comparison</Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>
+                Annual cost ({currentMethodLabel}):
+              </span>{" "}
+              <span style={resultValue}>
+                ${currentCost.toLocaleString()}
+              </span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Annual cost (GreenLedger):</span>{" "}
+              <span style={resultValueGreen}>
+                ${greenLedgerCost.toLocaleString()}
+              </span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Total annual savings:</span>{" "}
+              <span style={savingsValue}>
+                ${savings.toLocaleString()} ({percentageSaved}% reduction)
+              </span>
+            </Text>
+            <Text style={detailRow}>
+              <span style={detailLabel}>Staff hours saved:</span>{" "}
+              <span style={resultValue}>~{hoursSaved} hours/year</span>
             </Text>
           </Section>
 
@@ -189,6 +277,43 @@ const hrLight = {
   borderColor: "#bbf7d0",
   marginTop: "8px",
   marginBottom: "8px",
+};
+
+const detailBox = {
+  backgroundColor: "#ffffff",
+  borderRadius: "8px",
+  padding: "20px",
+  marginBottom: "20px",
+  border: "1px solid #e5e7eb",
+};
+
+const detailHeading = {
+  color: "#059669",
+  fontSize: "18px",
+  fontWeight: "bold" as const,
+  marginBottom: "16px",
+  marginTop: "0",
+};
+
+const detailSubheading = {
+  color: "#374151",
+  fontSize: "13px",
+  fontWeight: "700" as const,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.5px",
+  marginBottom: "8px",
+  marginTop: "12px",
+};
+
+const detailRow = {
+  color: "#374151",
+  fontSize: "14px",
+  lineHeight: "24px",
+  margin: "0",
+};
+
+const detailLabel = {
+  color: "#6b7280",
 };
 
 const bulletPoint = {

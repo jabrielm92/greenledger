@@ -1,14 +1,17 @@
 import { auth } from "@/lib/auth-options";
 import { NextResponse } from "next/server";
 
-const publicRoutes = ["/", "/pricing", "/about", "/contact", "/privacy", "/terms"];
+const publicRoutes = ["/", "/pricing", "/about", "/contact", "/privacy", "/terms", "/roi-calculator", "/blog"];
 const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
   // Public/marketing routes — always accessible
-  if (publicRoutes.includes(pathname)) {
+  if (
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/blog/")
+  ) {
     return NextResponse.next();
   }
 

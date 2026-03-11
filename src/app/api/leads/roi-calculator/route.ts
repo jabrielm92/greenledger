@@ -71,6 +71,9 @@ export async function POST(req: NextRequest) {
         percentageSaved: data.results.percentageSaved,
         hoursSaved: data.results.hoursSaved,
         companySize: data.formData.companySize,
+        currentMethod: data.formData.currentMethod,
+        reportsPerYear: data.formData.reportsPerYear,
+        frameworks: data.formData.frameworks,
       }),
     }).catch((err) => {
       console.error("[ROI_CALCULATOR_EMAIL_ERROR]", err);
