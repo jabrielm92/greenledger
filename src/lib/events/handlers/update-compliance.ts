@@ -8,8 +8,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
-import type { PipelineEvent } from "../dispatcher";
-
 // Scope-related section codes that map to emissions data
 const EMISSIONS_SECTION_PATTERNS = [
   "E1", "E2", "E3", "E4", "E5",        // CSRD environmental

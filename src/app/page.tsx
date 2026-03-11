@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { MarketingNavbar } from "@/components/layout/marketing-navbar";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
+import { CSRDUrgencyBanner } from "@/components/marketing/csrd-urgency-banner";
 
 const faqs = [
   {
@@ -97,6 +98,7 @@ const testimonials = [
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
+      <CSRDUrgencyBanner />
       <MarketingNavbar />
 
       <main className="flex-1">
@@ -133,10 +135,10 @@ export default function Home() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link
-                href="/pricing"
+                href="/roi-calculator"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-8 py-3.5 text-base font-semibold text-brand-secondary hover:bg-slate-50 hover:border-slate-300 transition-all"
               >
-                View Pricing
+                See How Much You Could Save
               </Link>
             </div>
 

@@ -545,3 +545,18 @@ model AuditLog {
   @@index([entityType, entityId])
   @@index([action])
 }
+
+// ============================================
+// MARKETING LEADS
+// ============================================
+
+model Lead {
+  id          String   @id @default(cuid())
+  email       String
+  source      String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+  @@index([source])
+}

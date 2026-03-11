@@ -18,7 +18,7 @@ export async function GET() {
       pendingReviews,
       reportsCount,
       suppliersCount,
-      frameworks,
+      _frameworks,
       recentActivity,
     ] = await Promise.all([
       // Emissions summary
