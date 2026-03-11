@@ -45,6 +45,18 @@ export function MarketingNavbar() {
             Pricing
           </Link>
           <Link
+            href="/roi-calculator"
+            className="text-sm font-medium text-brand-primary hover:text-brand-primary/80 transition-colors"
+          >
+            Calculate Savings
+          </Link>
+          <Link
+            href="/blog"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Resources
+          </Link>
+          <Link
             href="/about"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -101,6 +113,20 @@ export function MarketingNavbar() {
             onClick={() => setMobileOpen(false)}
           >
             Pricing
+          </Link>
+          <Link
+            href="/roi-calculator"
+            className="block text-sm font-medium text-brand-primary hover:text-brand-primary/80"
+            onClick={() => setMobileOpen(false)}
+          >
+            Calculate Savings
+          </Link>
+          <Link
+            href="/blog"
+            className="block text-sm text-muted-foreground hover:text-foreground"
+            onClick={() => setMobileOpen(false)}
+          >
+            Resources
           </Link>
           <Link
             href="/about"
