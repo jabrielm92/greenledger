@@ -3,6 +3,7 @@ import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
 import { enforceTrialWriteAccess } from "@/lib/trial";
+import { checkPlanLimit } from "@/lib/plan-limits";
 import { z } from "zod";
 
 const createSupplierSchema = z.object({
@@ -43,6 +44,15 @@ export async function POST(req: NextRequest) {
     const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
     if (trialBlock) {
       return NextResponse.json(trialBlock, { status: 403 });
+    }
+
+    // Check plan limits
+    const planCheck = await checkPlanLimit(session.user.organizationId, "suppliers");
+    if (!planCheck.allowed) {
+      return NextResponse.json(
+        { error: `Supplier limit reached (${planCheck.current}/${planCheck.limit}). Please upgrade your plan.` },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/resend";
 import InviteTeamEmail from "@/emails/invite-team";
 import { logAudit } from "@/lib/audit/logger";
+import { checkPlanLimit } from "@/lib/plan-limits";
 import { z } from "zod";
 
 const inviteSchema = z.object({
@@ -26,6 +27,15 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { email, role } = inviteSchema.parse(body);
+
+    // Check plan limits for team members
+    const planCheck = await checkPlanLimit(session.user.organizationId, "teamMembers");
+    if (!planCheck.allowed) {
+      return NextResponse.json(
+        { error: `Team member limit reached (${planCheck.current}/${planCheck.limit}). Please upgrade your plan.` },
+        { status: 403 }
+      );
+    }
 
     // Check if user already in org
     const existing = await prisma.user.findFirst({

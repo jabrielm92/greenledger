@@ -3,6 +3,8 @@ import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateReport } from "@/lib/ai/generate-report";
 import { logAudit } from "@/lib/audit/logger";
+import { sendEmail } from "@/lib/resend";
+import ReportReadyEmail from "@/emails/report-ready";
 import { z } from "zod";
 
 const generateSchema = z.object({
@@ -92,6 +94,30 @@ export async function POST(req: NextRequest) {
         sectionsGenerated: validated.sections.length,
       },
     });
+
+    // Send "report ready" email notification (fire and forget)
+    if (session.user.email) {
+      const generatedSections = generatedContent as Record<string, { dataPointsUsed?: unknown[] }>;
+      const totalDataPoints = Object.values(generatedSections).reduce(
+        (sum, section) => sum + (section.dataPointsUsed?.length ?? 0),
+        0
+      );
+
+      sendEmail({
+        to: session.user.email,
+        subject: `Your ${report.frameworkType} report is ready for review`,
+        react: ReportReadyEmail({
+          userName: session.user.name ?? session.user.email,
+          reportTitle: report.title ?? `${report.frameworkType} Report`,
+          frameworkType: report.frameworkType ?? validated.frameworkType,
+          reportId: report.id,
+          sectionsCompleted: validated.sections.length,
+          dataPointsCovered: totalDataPoints,
+        }),
+      }).catch((err) => {
+        console.error("[REPORTS_GENERATE_EMAIL]", err);
+      });
+    }
 
     return NextResponse.json(updated);
   } catch (error) {
