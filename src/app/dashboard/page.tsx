@@ -8,6 +8,7 @@ import { EmissionsChart } from "@/components/dashboard/emissions-chart";
 import { FrameworkProgress } from "@/components/dashboard/framework-progress";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { ComplianceAlerts } from "@/components/dashboard/compliance-alerts";
 import { useEmissionsSummary } from "@/hooks/use-emissions";
 import type { DashboardStats, AuditLogEntry } from "@/types";
 
@@ -71,6 +72,8 @@ export default function DashboardPage() {
         <FrameworkProgress frameworks={data?.frameworks ?? []} />
         <QuickActions />
       </div>
+
+      <ComplianceAlerts />
 
       <RecentActivity activities={data?.recentActivity ?? []} />
     </div>

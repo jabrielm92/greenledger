@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
@@ -18,7 +18,7 @@ function toCsv(data: Record<string, unknown>[]): string {
   return [headers.join(","), ...rows].join("\n");
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
@@ -30,45 +30,67 @@ export async function GET() {
       return NextResponse.json({ error: "No organization" }, { status: 403 });
     }
 
-    const users = await prisma.user.findMany({
+    const format = req.nextUrl.searchParams.get("format") || "csv";
+
+    const logs = await prisma.auditLog.findMany({
       where: { organizationId: orgId },
       select: {
         id: true,
-        name: true,
-        email: true,
-        role: true,
+        action: true,
+        entityType: true,
+        entityId: true,
+        userId: true,
         createdAt: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
     });
 
-    const rows = users.map((u) => ({
-      id: u.id,
-      name: u.name ?? "",
-      email: u.email,
-      role: u.role,
-      createdAt: u.createdAt.toISOString(),
+    const rows = logs.map((l) => ({
+      id: l.id,
+      action: l.action,
+      entityType: l.entityType,
+      entityId: l.entityId,
+      userId: l.userId ?? "",
+      userName: l.user?.name ?? "",
+      userEmail: l.user?.email ?? "",
+      createdAt: l.createdAt.toISOString(),
     }));
 
     await logAudit({
       organizationId: orgId,
       userId: session.user.id,
       action: "data_exported",
-      entityType: "User",
+      entityType: "AuditLog",
       entityId: orgId,
-      metadata: { format: "csv", count: rows.length },
+      metadata: { format, count: rows.length },
     });
+
+    if (format === "json") {
+      return new NextResponse(JSON.stringify(rows, null, 2), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": `attachment; filename="greenledger-audit-log-${new Date().toISOString().slice(0, 10)}.json"`,
+        },
+      });
+    }
 
     const csv = toCsv(rows);
     return new NextResponse(csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="greenledger-users-${new Date().toISOString().slice(0, 10)}.csv"`,
+        "Content-Disposition": `attachment; filename="greenledger-audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,
       },
     });
   } catch (error) {
-    console.error("[USERS_EXPORT]", error);
+    console.error("[AUDIT_LOG_EXPORT]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

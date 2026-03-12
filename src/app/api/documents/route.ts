@@ -5,6 +5,7 @@ import { logAudit } from "@/lib/audit/logger";
 import { uploadFile } from "@/lib/storage";
 import { enforceTrialWriteAccess } from "@/lib/trial";
 import { runDocumentExtraction } from "@/lib/ai/run-extraction";
+import { checkPlanLimit } from "@/lib/plan-limits";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 const ALLOWED_TYPES = [
@@ -42,6 +43,15 @@ export async function POST(req: NextRequest) {
     const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
     if (trialBlock) {
       return NextResponse.json(trialBlock, { status: 403 });
+    }
+
+    // Check plan limits
+    const planCheck = await checkPlanLimit(session.user.organizationId, "documents");
+    if (!planCheck.allowed) {
+      return NextResponse.json(
+        { error: `Document limit reached (${planCheck.current}/${planCheck.limit}). Please upgrade your plan.` },
+        { status: 403 }
+      );
     }
 
     const formData = await req.formData();
