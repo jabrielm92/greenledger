@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handleUpdateCompliance } from "@/lib/events/handlers/update-compliance";
+import { calculateComplianceScore } from "@/lib/compliance-score";
 
 export async function GET() {
   try {
@@ -79,12 +80,8 @@ export async function GET() {
       },
     });
 
-    // Calculate compliance score based on updated framework completion
-    const complianceScore =
-      updatedFrameworks.length > 0
-        ? updatedFrameworks.reduce((sum, fw) => sum + fw.completionPct, 0) /
-          updatedFrameworks.length
-        : 0;
+    // Calculate compliance score using the same factor-based scoring as the breakdown page
+    const { overallPercentage: complianceScore } = await calculateComplianceScore(orgId);
 
     // Find nearest deadline
     const nextDeadline = updatedFrameworks
