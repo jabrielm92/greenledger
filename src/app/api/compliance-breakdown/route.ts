@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { DocumentType } from "@prisma/client";
 
 const EMISSIONS_SECTION_PATTERNS = [
   "E1", "E2", "E3", "E4", "E5",
@@ -150,8 +151,8 @@ export async function GET() {
 
     // Document factors
     const docTypes = new Set(documentsByType.map((d) => d.documentType));
-    const requiredDocTypes = ["UTILITY_BILL", "FUEL_RECEIPT", "INVOICE"];
-    const coveredDocTypes = requiredDocTypes.filter((t) => docTypes.has(t));
+    const requiredDocTypes = ["UTILITY_BILL", "FUEL_RECEIPT", "INVOICE"] as const;
+    const coveredDocTypes = requiredDocTypes.filter((t) => docTypes.has(t as DocumentType));
 
     factors.push({
       id: "documents",
@@ -164,7 +165,7 @@ export async function GET() {
         ? `${extractedDocs} document${extractedDocs === 1 ? "" : "s"} processed (${coveredDocTypes.length}/3 key types covered)`
         : "No documents uploaded and extracted yet",
       action: coveredDocTypes.length < 3
-        ? `Upload ${requiredDocTypes.filter((t) => !docTypes.has(t)).map((t) => t.replace(/_/g, " ").toLowerCase()).join(", ")} to improve your score`
+        ? `Upload ${requiredDocTypes.filter((t) => !docTypes.has(t as DocumentType)).map((t) => t.replace(/_/g, " ").toLowerCase()).join(", ")} to improve your score`
         : undefined,
     });
 
