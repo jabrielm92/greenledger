@@ -48,6 +48,22 @@ const updateFrameworksSchema = z.object({
   frameworks: z.array(z.string()).min(1, "Select at least one framework"),
 });
 
+// Default reporting deadlines (month index 0-11, day) for each framework per target year
+// These represent typical regulatory or reporting cycle deadlines
+function getDefaultDueDate(frameworkName: string, targetYear: number): Date {
+  switch (frameworkName) {
+    case "CSRD":
+      // CSRD reports due by end of fiscal year following the reporting year
+      return new Date(targetYear, 5, 30); // June 30
+    case "SB253":
+      // California SB-253 annual reporting deadline
+      return new Date(targetYear, 2, 31); // March 31
+    default:
+      // Most frameworks: year-end deadline for annual reporting
+      return new Date(targetYear, 11, 31); // December 31
+  }
+}
+
 // PUT /api/organization/frameworks — replace active frameworks
 export async function PUT(req: NextRequest) {
   try {
@@ -86,7 +102,7 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    // Upsert selected frameworks
+    // Upsert selected frameworks with default due dates
     const orgFrameworks = await Promise.all(
       frameworkRecords.map((fw) =>
         prisma.orgFramework.upsert({
@@ -97,11 +113,15 @@ export async function PUT(req: NextRequest) {
               targetYear: currentYear,
             },
           },
-          update: {},
+          update: {
+            // Backfill dueDate if it was previously null
+            dueDate: getDefaultDueDate(fw.name, currentYear),
+          },
           create: {
             organizationId: orgId,
             frameworkId: fw.id,
             targetYear: currentYear,
+            dueDate: getDefaultDueDate(fw.name, currentYear),
           },
           include: { framework: { select: { name: true, displayName: true } } },
         })

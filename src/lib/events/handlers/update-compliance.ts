@@ -90,22 +90,32 @@ export async function handleUpdateCompliance(
     }
 
     if (totalRequired === 0) {
-      // No data points at all — base score on whether we have data
-      const baseScore = hasAnyEmissions ? 25 : 0;
-      const docBonus = extractedDocs > 0 ? 15 : 0;
-      const supplierBonus = totalSuppliers > 0 ? 10 : 0;
-      const newCompletionPct = Math.min(100, baseScore + docBonus + supplierBonus);
+      // Framework has no data points defined (stub framework)
+      // Use a conservative heuristic based on data availability
+      let coveredChecks = 0;
+      const totalChecks = 6; // We check 6 things for stub frameworks
 
-      if (newCompletionPct !== orgFw.completionPct) {
-        let newStatus = orgFw.status;
-        if (newCompletionPct > 0 && orgFw.status === "NOT_STARTED") {
-          newStatus = "IN_PROGRESS";
-        }
+      if (hasScope1) coveredChecks++;
+      if (hasScope2) coveredChecks++;
+      if (hasScope3) coveredChecks++;
+      if (extractedDocs > 0) coveredChecks++;
+      if (totalSuppliers > 0) coveredChecks++;
+      if (reportCount > 0) coveredChecks++;
 
+      const newCompletionPct = Math.round((coveredChecks / totalChecks) * 100);
+
+      let newStatus = orgFw.status;
+      if (newCompletionPct > 0 && orgFw.status === "NOT_STARTED") {
+        newStatus = "IN_PROGRESS";
+      }
+
+      if (newCompletionPct !== orgFw.completionPct || orgFw.coveredDataPoints !== coveredChecks || orgFw.totalDataPoints !== totalChecks) {
         await prisma.orgFramework.update({
           where: { id: orgFw.id },
           data: {
             completionPct: newCompletionPct,
+            coveredDataPoints: coveredChecks,
+            totalDataPoints: totalChecks,
             status: newStatus,
           },
         });
@@ -172,33 +182,17 @@ export async function handleUpdateCompliance(
         isCovered = !!reportDataPoint;
       }
 
-      // Give partial credit for having documents even if specific match isn't found
-      if (!isCovered && extractedDocs > 0 && hasAnyEmissions) {
-        // Mark as covered if we have enough supporting data
-        // This prevents 0% when user has active data
-        isCovered = false; // keep false, but we add a baseline below
-      }
-
       if (isCovered) {
         coveredPoints++;
       }
     }
 
-    // Calculate base percentage from data point coverage
-    let newCompletionPct = Math.round((coveredPoints / totalRequired) * 100);
-
-    // Add baseline progress for having any data at all
-    if (newCompletionPct === 0 && (hasAnyEmissions || extractedDocs > 0 || totalSuppliers > 0)) {
-      let baseline = 0;
-      if (hasAnyEmissions) baseline += 10;
-      if (extractedDocs > 0) baseline += 5;
-      if (totalSuppliers > 0) baseline += 5;
-      newCompletionPct = Math.min(100, baseline);
-    }
+    // Calculate percentage from data point coverage
+    const newCompletionPct = Math.round((coveredPoints / totalRequired) * 100);
 
     const previousPct = orgFw.completionPct;
 
-    if (newCompletionPct !== previousPct) {
+    if (newCompletionPct !== previousPct || orgFw.coveredDataPoints !== coveredPoints || orgFw.totalDataPoints !== totalRequired) {
       // Update status based on completion
       let newStatus = orgFw.status;
       if (newCompletionPct > 0 && orgFw.status === "NOT_STARTED") {
@@ -209,19 +203,23 @@ export async function handleUpdateCompliance(
         where: { id: orgFw.id },
         data: {
           completionPct: newCompletionPct,
+          coveredDataPoints: coveredPoints,
+          totalDataPoints: totalRequired,
           status: newStatus,
         },
       });
 
-      await logAudit({
-        organizationId,
-        action: "compliance_progress_updated",
-        entityType: "OrgFramework",
-        entityId: orgFw.id,
-        previousValue: { completionPct: previousPct, status: orgFw.status },
-        newValue: { completionPct: newCompletionPct, status: newStatus },
-        metadata: { trigger: "auto_emission_created" },
-      });
+      if (newCompletionPct !== previousPct) {
+        await logAudit({
+          organizationId,
+          action: "compliance_progress_updated",
+          entityType: "OrgFramework",
+          entityId: orgFw.id,
+          previousValue: { completionPct: previousPct, status: orgFw.status },
+          newValue: { completionPct: newCompletionPct, status: newStatus },
+          metadata: { trigger: "auto_emission_created" },
+        });
+      }
     }
   }
 }

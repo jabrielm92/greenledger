@@ -210,14 +210,16 @@ enum DataPointType {
 }
 
 model OrgFramework {
-  id             String   @id @default(cuid())
-  organizationId String
-  frameworkId     String
-  targetYear      Int
-  status         FrameworkStatus @default(NOT_STARTED)
-  completionPct  Float   @default(0)
-  dueDate        DateTime?
-  createdAt      DateTime @default(now())
+  id                String   @id @default(cuid())
+  organizationId    String
+  frameworkId        String
+  targetYear         Int
+  status            FrameworkStatus @default(NOT_STARTED)
+  completionPct     Float   @default(0)
+  coveredDataPoints Int     @default(0)
+  totalDataPoints   Int     @default(0)
+  dueDate           DateTime?
+  createdAt         DateTime @default(now())
 
   organization   Organization @relation(fields: [organizationId], references: [id])
   framework      ComplianceFramework @relation(fields: [frameworkId], references: [id])

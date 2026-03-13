@@ -16,13 +16,17 @@ interface FrameworkItem {
   id: string;
   name: string;
   completionPct: number;
+  coveredDataPoints: number;
+  totalDataPoints: number;
   status: string;
   targetYear: number;
+  dueDate: string | null;
 }
 
 interface DashboardData {
   stats: DashboardStats;
   daysUntilDeadline: number | null;
+  nextDeadlineFramework: string | null;
   frameworks: FrameworkItem[];
   recentActivity: AuditLogEntry[];
 }
@@ -61,6 +65,7 @@ export default function DashboardPage() {
         stats={data?.stats ?? null}
         isLoading={isLoading}
         daysUntilDeadline={data?.daysUntilDeadline}
+        nextDeadlineFramework={data?.nextDeadlineFramework}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">

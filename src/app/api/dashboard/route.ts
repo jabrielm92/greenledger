@@ -4,6 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { handleUpdateCompliance } from "@/lib/events/handlers/update-compliance";
 import { calculateComplianceScore } from "@/lib/compliance-score";
 
+// Default due dates for frameworks that have none set
+function getDefaultDueDate(frameworkName: string, targetYear: number): Date {
+  switch (frameworkName) {
+    case "CSRD":
+      return new Date(targetYear, 5, 30); // June 30
+    case "SB253":
+      return new Date(targetYear, 2, 31); // March 31
+    default:
+      return new Date(targetYear, 11, 31); // December 31
+  }
+}
+
 export async function GET() {
   try {
     const session = await getServerSession();
@@ -22,35 +34,28 @@ export async function GET() {
       _frameworks,
       recentActivity,
     ] = await Promise.all([
-      // Emissions summary
       prisma.emissionEntry.groupBy({
         by: ["scope"],
         where: { organizationId: orgId },
         _sum: { co2e: true },
       }),
-      // Total documents (extracted or reviewed)
       prisma.document.count({
         where: {
           organizationId: orgId,
           status: { in: ["EXTRACTED", "REVIEWED"] },
         },
       }),
-      // Pending review documents
       prisma.document.count({
         where: { organizationId: orgId, status: "EXTRACTED" },
       }),
-      // Reports count
       prisma.report.count({ where: { organizationId: orgId } }),
-      // Suppliers count
       prisma.supplier.count({ where: { organizationId: orgId } }),
-      // Active frameworks
       prisma.orgFramework.findMany({
         where: { organizationId: orgId },
         include: {
-          framework: { select: { displayName: true } },
+          framework: { select: { displayName: true, name: true } },
         },
       }),
-      // Recent audit log
       prisma.auditLog.findMany({
         where: { organizationId: orgId },
         include: { user: { select: { name: true, email: true } } },
@@ -72,28 +77,40 @@ export async function GET() {
     // Recalculate compliance in case events were missed
     await handleUpdateCompliance({ organizationId: orgId });
 
-    // Re-fetch frameworks after compliance recalculation
+    // Backfill dueDate for any frameworks missing it
+    for (const fw of _frameworks) {
+      if (!fw.dueDate) {
+        const defaultDate = getDefaultDueDate(fw.framework.name, fw.targetYear);
+        await prisma.orgFramework.update({
+          where: { id: fw.id },
+          data: { dueDate: defaultDate },
+        });
+      }
+    }
+
+    // Re-fetch frameworks after compliance recalculation + dueDate backfill
     const updatedFrameworks = await prisma.orgFramework.findMany({
       where: { organizationId: orgId },
       include: {
-        framework: { select: { displayName: true } },
+        framework: { select: { displayName: true, name: true } },
       },
     });
 
-    // Calculate compliance score using the same factor-based scoring as the breakdown page
+    // Calculate compliance score (weighted blend of framework completion + data readiness)
     const { overallPercentage: complianceScore } = await calculateComplianceScore(orgId);
 
-    // Find nearest deadline
-    const nextDeadline = updatedFrameworks
-      .filter((fw) => fw.dueDate)
-      .sort(
-        (a, b) =>
-          new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime()
-      )[0];
+    // Find nearest future deadline
+    const now = Date.now();
+    const futureDeadlines = updatedFrameworks
+      .filter((fw) => fw.dueDate && new Date(fw.dueDate).getTime() > now);
+    const nextDeadline = futureDeadlines.sort(
+      (a, b) =>
+        new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime()
+    )[0];
 
     const daysUntilDeadline = nextDeadline?.dueDate
       ? Math.ceil(
-          (new Date(nextDeadline.dueDate).getTime() - Date.now()) /
+          (new Date(nextDeadline.dueDate).getTime() - now) /
             (1000 * 60 * 60 * 24)
         )
       : null;
@@ -111,12 +128,16 @@ export async function GET() {
         pendingReviews,
       },
       daysUntilDeadline,
+      nextDeadlineFramework: nextDeadline?.framework.displayName ?? null,
       frameworks: updatedFrameworks.map((fw) => ({
         id: fw.id,
         name: fw.framework.displayName,
         completionPct: fw.completionPct,
+        coveredDataPoints: fw.coveredDataPoints,
+        totalDataPoints: fw.totalDataPoints,
         status: fw.status,
         targetYear: fw.targetYear,
+        dueDate: fw.dueDate?.toISOString() ?? null,
       })),
       recentActivity: recentActivity.map((log) => ({
         id: log.id,
