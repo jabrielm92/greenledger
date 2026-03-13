@@ -369,7 +369,7 @@ export default function ComplianceBreakdownPage() {
     );
   }
 
-  const completeFactors = data.factors.filter((f) => f.status === "complete").length;
+  const _completeFactors = data.factors.filter((f) => f.status === "complete").length;
 
   return (
     <div className="space-y-6">
