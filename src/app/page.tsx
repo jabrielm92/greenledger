@@ -103,142 +103,142 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-white py-24 md:py-36">
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-white py-16 sm:py-24 md:py-36">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-brand-primary/[0.04] blur-3xl" />
-            <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-emerald-100/30 blur-3xl" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[800px] w-[800px] rounded-full bg-emerald-50/20 blur-3xl" />
+            <div className="absolute -top-40 -right-40 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] rounded-full bg-brand-primary/[0.04] blur-3xl" />
+            <div className="absolute -bottom-40 -left-40 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] rounded-full bg-emerald-100/30 blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] sm:h-[800px] sm:w-[800px] rounded-full bg-emerald-50/20 blur-3xl" />
           </div>
 
-          <div className="container relative mx-auto px-4 text-center">
-            <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700 mb-8">
-              <Leaf className="mr-2 h-4 w-4" />
+          <div className="container relative mx-auto px-4 sm:px-6 text-center">
+            <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-emerald-700 mb-6 sm:mb-8">
+              <Leaf className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               AI-Powered ESG Compliance Platform
             </div>
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight text-brand-secondary max-w-4xl mx-auto leading-[1.08]">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight text-brand-secondary max-w-4xl mx-auto leading-[1.1]">
               ESG Compliance on{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-emerald-500">
                 Autopilot
               </span>
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Stop drowning in spreadsheets. GreenLedger automates ESG data
               collection, emissions calculation, and multi-framework compliance
               reporting — so you can focus on actually reducing your impact.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center rounded-lg bg-brand-primary px-8 py-3.5 text-base font-semibold text-white hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/25 hover:shadow-xl hover:shadow-brand-primary/30 hover:-translate-y-0.5"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-brand-primary px-6 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/25 hover:shadow-xl hover:shadow-brand-primary/30 hover:-translate-y-0.5"
               >
                 Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
               <Link
                 href="/roi-calculator"
-                className="inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-8 py-3.5 text-base font-semibold text-brand-secondary hover:bg-slate-50 hover:border-slate-300 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-6 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-brand-secondary hover:bg-slate-50 hover:border-slate-300 transition-all"
               >
                 See How Much You Could Save
               </Link>
             </div>
 
             {/* Key value props under CTA */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs sm:text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-brand-primary" />
+                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-primary" />
                 CSRD, GRI, SASB, ISSB
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-brand-primary" />
+                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-primary" />
                 AI document extraction
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-brand-primary" />
+                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-primary" />
                 Audit-ready reports
               </span>
             </div>
 
             {/* Dashboard mockup */}
-            <div className="mt-16 mx-auto max-w-5xl">
-              <div className="rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur shadow-2xl shadow-slate-300/30 overflow-hidden">
-                <div className="flex items-center gap-2 border-b bg-slate-50/80 px-5 py-3">
-                  <div className="h-3 w-3 rounded-full bg-[#FF5F57]" />
-                  <div className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-                  <div className="h-3 w-3 rounded-full bg-[#28C840]" />
-                  <span className="ml-4 text-xs font-medium text-muted-foreground tracking-wide">GreenLedger Dashboard</span>
+            <div className="mt-10 sm:mt-16 mx-auto max-w-5xl">
+              <div className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur shadow-2xl shadow-slate-300/30 overflow-hidden">
+                <div className="flex items-center gap-1.5 sm:gap-2 border-b bg-slate-50/80 px-3 sm:px-5 py-2 sm:py-3">
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#FF5F57]" />
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#FEBC2E]" />
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#28C840]" />
+                  <span className="ml-2 sm:ml-4 text-[10px] sm:text-xs font-medium text-muted-foreground tracking-wide">GreenLedger Dashboard</span>
                 </div>
-                <div className="p-4 sm:p-6 md:p-8">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-                    <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Emissions</p>
-                        <TrendingDown className="h-3.5 w-3.5 text-emerald-600" />
+                <div className="p-3 sm:p-6 md:p-8">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 p-2.5 sm:p-4">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <p className="text-[8px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Emissions</p>
+                        <TrendingDown className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-600" />
                       </div>
-                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">1,247 <span className="text-xs font-normal text-muted-foreground">tCO2e</span></p>
-                      <p className="text-xs font-medium text-emerald-600 mt-1">-12.4% vs last quarter</p>
+                      <p className="text-sm sm:text-2xl font-bold text-brand-secondary">1,247 <span className="text-[10px] sm:text-xs font-normal text-muted-foreground">tCO2e</span></p>
+                      <p className="text-[10px] sm:text-xs font-medium text-emerald-600 mt-0.5 sm:mt-1">-12.4% vs last quarter</p>
                     </div>
-                    <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Docs Processed</p>
-                        <FileText className="h-3.5 w-3.5 text-blue-600" />
+                    <div className="rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 p-2.5 sm:p-4">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <p className="text-[8px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Docs Processed</p>
+                        <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-600" />
                       </div>
-                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">342</p>
-                      <p className="text-xs font-medium text-blue-600 mt-1">99.2% extraction accuracy</p>
+                      <p className="text-sm sm:text-2xl font-bold text-brand-secondary">342</p>
+                      <p className="text-[10px] sm:text-xs font-medium text-blue-600 mt-0.5 sm:mt-1">99.2% accuracy</p>
                     </div>
-                    <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">CSRD Score</p>
-                        <Target className="h-3.5 w-3.5 text-amber-600" />
+                    <div className="rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100 p-2.5 sm:p-4">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <p className="text-[8px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">CSRD Score</p>
+                        <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-600" />
                       </div>
-                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">87%</p>
-                      <p className="text-xs font-medium text-amber-600 mt-1">+9 pts this period</p>
+                      <p className="text-sm sm:text-2xl font-bold text-brand-secondary">87%</p>
+                      <p className="text-[10px] sm:text-xs font-medium text-amber-600 mt-0.5 sm:mt-1">+9 pts this period</p>
                     </div>
-                    <div className="rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-100 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[9px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Suppliers</p>
-                        <Building2 className="h-3.5 w-3.5 text-violet-600" />
+                    <div className="rounded-lg sm:rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-100 p-2.5 sm:p-4">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <p className="text-[8px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Suppliers</p>
+                        <Building2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-violet-600" />
                       </div>
-                      <p className="text-lg sm:text-2xl font-bold text-brand-secondary">24</p>
-                      <p className="text-xs font-medium text-violet-600 mt-1">3 need attention</p>
+                      <p className="text-sm sm:text-2xl font-bold text-brand-secondary">24</p>
+                      <p className="text-[10px] sm:text-xs font-medium text-violet-600 mt-0.5 sm:mt-1">3 need attention</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <div className="sm:col-span-2 h-32 sm:h-40 rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100 flex items-end justify-center p-4 pb-6">
-                      <div className="flex items-end gap-1 w-full max-w-md">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+                    <div className="sm:col-span-2 h-28 sm:h-40 rounded-lg sm:rounded-xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-100 flex items-end justify-center p-3 pb-4 sm:p-4 sm:pb-6">
+                      <div className="flex items-end gap-0.5 sm:gap-1 w-full max-w-md">
                         {[32, 48, 38, 56, 42, 62, 52, 68, 48, 72, 58, 78].map((h, i) => (
-                          <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                          <div key={i} className="flex-1 flex flex-col items-center gap-0.5 sm:gap-1">
                             <div
-                              className="w-full rounded-t-md bg-gradient-to-t from-brand-primary to-emerald-400 min-w-[8px]"
+                              className="w-full rounded-t-sm sm:rounded-t-md bg-gradient-to-t from-brand-primary to-emerald-400 min-w-[4px] sm:min-w-[8px]"
                               style={{ height: `${h}%` }}
                             />
-                            <span className="text-[9px] text-muted-foreground">{["J","F","M","A","M","J","J","A","S","O","N","D"][i]}</span>
+                            <span className="text-[7px] sm:text-[9px] text-muted-foreground">{["J","F","M","A","M","J","J","A","S","O","N","D"][i]}</span>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <div className="h-32 sm:h-40 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-100 p-4 flex flex-col justify-between">
-                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Scope Breakdown</p>
-                      <div className="space-y-2">
+                    <div className="h-28 sm:h-40 rounded-lg sm:rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-100 p-3 sm:p-4 flex flex-col justify-between">
+                      <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Scope Breakdown</p>
+                      <div className="space-y-1.5 sm:space-y-2">
                         <div>
-                          <div className="flex justify-between text-xs mb-1">
+                          <div className="flex justify-between text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                             <span className="text-muted-foreground">Scope 1</span>
                             <span className="font-medium text-brand-secondary">312 tCO2e</span>
                           </div>
-                          <div className="h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-primary w-[25%]" /></div>
+                          <div className="h-1.5 sm:h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-primary w-[25%]" /></div>
                         </div>
                         <div>
-                          <div className="flex justify-between text-xs mb-1">
+                          <div className="flex justify-between text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                             <span className="text-muted-foreground">Scope 2</span>
                             <span className="font-medium text-brand-secondary">498 tCO2e</span>
                           </div>
-                          <div className="h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-400 w-[40%]" /></div>
+                          <div className="h-1.5 sm:h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-400 w-[40%]" /></div>
                         </div>
                         <div>
-                          <div className="flex justify-between text-xs mb-1">
+                          <div className="flex justify-between text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                             <span className="text-muted-foreground">Scope 3</span>
                             <span className="font-medium text-brand-secondary">437 tCO2e</span>
                           </div>
-                          <div className="h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-400 w-[35%]" /></div>
+                          <div className="h-1.5 sm:h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-400 w-[35%]" /></div>
                         </div>
                       </div>
                     </div>
@@ -248,11 +248,11 @@ export default function Home() {
             </div>
 
             {/* Trust bar */}
-            <div className="mt-20">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60 mb-8 font-medium">
+            <div className="mt-12 sm:mt-20">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-muted-foreground/60 mb-5 sm:mb-8 font-medium">
                 Trusted by sustainability-focused organizations
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6">
+              <div className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-16 gap-y-3 sm:gap-y-6">
                 {[
                   "Meridian Tech",
                   "Atlas Group",
@@ -262,9 +262,9 @@ export default function Home() {
                 ].map((name) => (
                   <div
                     key={name}
-                    className="flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base font-semibold tracking-wide text-slate-300/80"
+                    className="flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-base font-semibold tracking-wide text-slate-300/80"
                   >
-                    <div className="h-8 w-8 rounded-lg bg-slate-100/80" />
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-md sm:rounded-lg bg-slate-100/80" />
                     {name}
                   </div>
                 ))}

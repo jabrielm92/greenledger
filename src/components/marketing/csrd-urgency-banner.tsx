@@ -39,24 +39,25 @@ export function CSRDUrgencyBanner() {
   if (dismissed || daysRemaining === null || daysRemaining <= 0) return null;
 
   return (
-    <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white py-2.5 px-4">
-      <div className="container mx-auto flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-3 min-w-0">
-          <Clock className="h-5 w-5 animate-pulse flex-shrink-0" />
+    <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white py-2 px-3 sm:py-2.5 sm:px-4">
+      <div className="container mx-auto flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <Clock className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse flex-shrink-0" />
           <div className="min-w-0">
-            <p className="font-bold text-sm sm:text-base">
-              CSRD Deadline: {daysRemaining} days until first reports due
+            <p className="font-bold text-xs sm:text-sm md:text-base leading-tight truncate">
+              <span className="sm:hidden">{daysRemaining}d to CSRD deadline</span>
+              <span className="hidden sm:inline">CSRD Deadline: {daysRemaining} days until first reports due</span>
             </p>
-            <p className="text-xs sm:text-sm opacity-90 hidden sm:block">
+            <p className="text-xs sm:text-sm opacity-90 hidden md:block">
               EU companies: FY2024 sustainability reports must be published by
               April 30, 2026
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <Link
             href="/register?source=csrd-banner"
-            className="bg-white text-red-600 px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition whitespace-nowrap"
+            className="bg-white text-red-600 px-3 sm:px-6 py-1 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm hover:bg-gray-100 transition whitespace-nowrap"
           >
             Start Now
           </Link>

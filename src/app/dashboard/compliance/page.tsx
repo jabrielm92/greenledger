@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
@@ -318,6 +318,31 @@ function FrameworkDetail({ fw, defaultExpanded }: { fw: FrameworkBreakdown; defa
 }
 
 export default function ComplianceBreakdownPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <PageHeader
+            title="Compliance Score Breakdown"
+            description="Loading your compliance analysis..."
+          />
+          <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+            <div className="h-64 animate-pulse rounded-lg bg-slate-100" />
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-20 animate-pulse rounded-lg bg-slate-100" />
+              ))}
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <ComplianceBreakdownContent />
+    </Suspense>
+  );
+}
+
+function ComplianceBreakdownContent() {
   const searchParams = useSearchParams();
   const focusFrameworkId = searchParams.get("framework");
   const [data, setData] = useState<BreakdownData | null>(null);
