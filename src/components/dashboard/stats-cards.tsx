@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 import {
   BarChart3,
   FileCheck,
@@ -58,6 +59,7 @@ export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsPr
         : stats && stats.complianceScore > 40
         ? "text-yellow-600"
         : "text-red-600",
+      href: "/dashboard/compliance",
     },
     {
       title: "Total Emissions",
@@ -92,8 +94,8 @@ export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsPr
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
-        return (
-          <Card key={card.title}>
+        const cardEl = (
+          <Card className={card.href ? "transition-shadow hover:shadow-md cursor-pointer" : undefined}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">
                 {card.title}
@@ -105,6 +107,13 @@ export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsPr
               <p className="text-xs text-slate-500">{card.subtitle}</p>
             </CardContent>
           </Card>
+        );
+        return card.href ? (
+          <Link key={card.title} href={card.href}>
+            {cardEl}
+          </Link>
+        ) : (
+          <div key={card.title}>{cardEl}</div>
         );
       })}
     </div>
