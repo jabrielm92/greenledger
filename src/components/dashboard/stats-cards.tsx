@@ -22,9 +22,10 @@ interface StatsCardsProps {
   stats: DashboardStats | null;
   isLoading?: boolean;
   daysUntilDeadline?: number | null;
+  nextDeadlineFramework?: string | null;
 }
 
-export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsProps) {
+export function StatsCards({ stats, isLoading, daysUntilDeadline, nextDeadlineFramework }: StatsCardsProps) {
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,9 +81,11 @@ export function StatsCards({ stats, isLoading, daysUntilDeadline }: StatsCardsPr
     {
       title: "Days Until Deadline",
       value: daysUntilDeadline != null ? `${daysUntilDeadline}` : "—",
-      subtitle: daysUntilDeadline != null && daysUntilDeadline < 30
-        ? "Deadline approaching"
-        : "Next compliance deadline",
+      subtitle: daysUntilDeadline != null
+        ? daysUntilDeadline < 30
+          ? `${nextDeadlineFramework ?? "Deadline"} — approaching!`
+          : nextDeadlineFramework ?? "Next compliance deadline"
+        : "No deadlines set",
       icon: Clock,
       color: daysUntilDeadline != null && daysUntilDeadline < 30
         ? "text-red-600"

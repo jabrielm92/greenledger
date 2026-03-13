@@ -38,10 +38,12 @@ export async function GET() {
 
     const orgId = session.user.organizationId;
 
-    // Use shared scoring logic
+    // Use shared scoring logic (weighted blend of framework completion + data readiness)
     const scoreResult = await calculateComplianceScore(orgId);
     const {
       overallPercentage,
+      frameworkPercentage,
+      dataReadinessPercentage,
       totalScore,
       maxPossibleScore,
       factors,
@@ -159,6 +161,8 @@ export async function GET() {
 
     return NextResponse.json({
       overallScore: overallPercentage,
+      frameworkScore: frameworkPercentage,
+      dataReadinessScore: dataReadinessPercentage,
       totalScore,
       maxPossibleScore,
       factors,

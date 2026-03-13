@@ -14,6 +14,8 @@ interface ScoringFactor {
 
 export interface ComplianceScoreResult {
   overallPercentage: number;
+  frameworkPercentage: number;
+  dataReadinessPercentage: number;
   totalScore: number;
   maxPossibleScore: number;
   factors: ScoringFactor[];
@@ -31,8 +33,18 @@ export interface ComplianceScoreResult {
   };
 }
 
+/**
+ * Unified compliance score calculation.
+ *
+ * The overall score is a weighted blend of:
+ * - Framework completion (70%): average of active OrgFramework completionPct values
+ * - Data readiness (30%): factor-based scoring for data coverage
+ *
+ * If no frameworks are active, falls back to data readiness alone.
+ */
 export async function calculateComplianceScore(orgId: string): Promise<ComplianceScoreResult> {
   const [
+    orgFrameworks,
     emissionCategories,
     documentsByType,
     reportCount,
@@ -41,6 +53,10 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
     extractedDocs,
     totalDocs,
   ] = await Promise.all([
+    prisma.orgFramework.findMany({
+      where: { organizationId: orgId },
+      select: { completionPct: true },
+    }),
     prisma.emissionEntry.groupBy({
       by: ["scope", "category"],
       where: { organizationId: orgId },
@@ -69,9 +85,9 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
   const hasScope3 = emissionCategories.some((e) => e.scope === "SCOPE_3");
   const uniqueCategories = new Set(emissionCategories.map((e) => e.category));
 
+  // Build data readiness factors (used for breakdown page detail)
   const factors: ScoringFactor[] = [];
 
-  // Scope 1
   factors.push({
     id: "scope1",
     label: "Scope 1 Emissions (Direct)",
@@ -85,7 +101,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
     action: hasScope1 ? undefined : "Add entries for natural gas, diesel, fleet vehicles, or refrigerants in Emissions > Scope 1",
   });
 
-  // Scope 2
   factors.push({
     id: "scope2",
     label: "Scope 2 Emissions (Indirect)",
@@ -99,7 +114,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
     action: hasScope2 ? undefined : "Upload utility bills or add electricity/heat data in Emissions > Scope 2",
   });
 
-  // Scope 3
   factors.push({
     id: "scope3",
     label: "Scope 3 Emissions (Value Chain)",
@@ -113,7 +127,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
     action: hasScope3 ? undefined : "Add business travel, waste disposal, or employee commuting data in Emissions > Scope 3",
   });
 
-  // Documents
   const docTypes = new Set(documentsByType.map((d) => d.documentType));
   const requiredDocTypes = ["UTILITY_BILL", "FUEL_RECEIPT", "INVOICE"] as const;
   const coveredDocTypes = requiredDocTypes.filter((t) => docTypes.has(t as DocumentType));
@@ -133,7 +146,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
       : undefined,
   });
 
-  // Suppliers
   factors.push({
     id: "suppliers",
     label: "Supply Chain ESG Assessment",
@@ -151,7 +163,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
       : undefined,
   });
 
-  // Reports
   factors.push({
     id: "reports",
     label: "Compliance Reports Generated",
@@ -167,7 +178,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
       : undefined,
   });
 
-  // Governance
   const hasPolicyDocs = docTypes.has("SUPPLIER_REPORT" as DocumentType) || extractedDocs >= 5;
   factors.push({
     id: "governance",
@@ -184,7 +194,6 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
       : undefined,
   });
 
-  // Emission category coverage
   factors.push({
     id: "coverage",
     label: "Emission Category Coverage",
@@ -202,10 +211,31 @@ export async function calculateComplianceScore(orgId: string): Promise<Complianc
 
   const totalScore = factors.reduce((sum, f) => sum + f.score, 0);
   const maxPossibleScore = factors.reduce((sum, f) => sum + f.maxScore, 0);
-  const overallPercentage = maxPossibleScore > 0 ? Math.round((totalScore / maxPossibleScore) * 100) : 0;
+  const dataReadinessPercentage = maxPossibleScore > 0 ? Math.round((totalScore / maxPossibleScore) * 100) : 0;
+
+  // Framework completion: average of active frameworks' completionPct
+  let frameworkPercentage = 0;
+  if (orgFrameworks.length > 0) {
+    frameworkPercentage = Math.round(
+      orgFrameworks.reduce((sum, fw) => sum + fw.completionPct, 0) / orgFrameworks.length
+    );
+  }
+
+  // Weighted blend: 70% framework completion, 30% data readiness
+  // If no frameworks, use data readiness alone
+  let overallPercentage: number;
+  if (orgFrameworks.length > 0) {
+    overallPercentage = Math.round(
+      frameworkPercentage * 0.7 + dataReadinessPercentage * 0.3
+    );
+  } else {
+    overallPercentage = dataReadinessPercentage;
+  }
 
   return {
     overallPercentage,
+    frameworkPercentage,
+    dataReadinessPercentage,
     totalScore,
     maxPossibleScore,
     factors,

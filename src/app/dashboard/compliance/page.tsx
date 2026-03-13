@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,8 @@ import {
   ChevronDown,
   ChevronUp,
   Target,
+  LayoutGrid,
+  Database,
 } from "lucide-react";
 
 interface ScoringFactor {
@@ -65,6 +68,8 @@ interface Recommendation {
 
 interface BreakdownData {
   overallScore: number;
+  frameworkScore: number;
+  dataReadinessScore: number;
   totalScore: number;
   maxPossibleScore: number;
   factors: ScoringFactor[];
@@ -190,13 +195,13 @@ function FactorRow({ factor }: { factor: ScoringFactor }) {
   );
 }
 
-function FrameworkDetail({ fw }: { fw: FrameworkBreakdown }) {
-  const [expanded, setExpanded] = useState(false);
+function FrameworkDetail({ fw, defaultExpanded }: { fw: FrameworkBreakdown; defaultExpanded?: boolean }) {
+  const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const completeSections = fw.sections.filter((s) => s.status === "complete").length;
   const totalSections = fw.sections.filter((s) => s.totalPoints > 0).length;
 
   return (
-    <Card>
+    <Card id={`fw-${fw.frameworkId}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
@@ -231,63 +236,81 @@ function FrameworkDetail({ fw }: { fw: FrameworkBreakdown }) {
             style={{ width: `${fw.completionPct}%` }}
           />
         </div>
+        {fw.totalDataPoints > 0 && (
+          <p className="mt-2 text-[11px] text-slate-500">
+            This percentage is based on {fw.coveredDataPoints} of {fw.totalDataPoints} required data points being satisfied by your uploaded emissions data, documents, and supplier information.
+          </p>
+        )}
+        {fw.totalDataPoints === 0 && (
+          <p className="mt-2 text-[11px] text-amber-600">
+            This framework uses estimated progress based on your overall data coverage (emissions, documents, suppliers). Detailed data point tracking is coming soon.
+          </p>
+        )}
       </CardHeader>
       <CardContent>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setExpanded(!expanded)}
-          className="w-full justify-between text-slate-600"
-        >
-          <span className="text-xs">
-            {completeSections}/{totalSections} sections complete
-          </span>
-          {expanded ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </Button>
+        {totalSections > 0 ? (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setExpanded(!expanded)}
+              className="w-full justify-between text-slate-600"
+            >
+              <span className="text-xs">
+                {completeSections}/{totalSections} sections complete
+              </span>
+              {expanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
 
-        {expanded && (
-          <div className="mt-3 space-y-2">
-            {fw.sections
-              .filter((s) => s.totalPoints > 0)
-              .map((section) => (
-                <div
-                  key={section.code}
-                  className="rounded-lg border px-3 py-2"
-                >
-                  <div className="flex items-center gap-2">
-                    {STATUS_ICON[section.status]}
-                    <span className="text-xs font-medium text-slate-800">
-                      {section.code} — {section.title}
-                    </span>
-                    <span className="ml-auto text-[10px] text-slate-400">
-                      {section.coveredPoints}/{section.totalPoints}
-                    </span>
-                  </div>
-                  {section.missingItems.length > 0 && (
-                    <div className="mt-1.5 pl-6">
-                      <p className="text-[10px] font-medium text-slate-400 uppercase mb-0.5">
-                        Missing:
-                      </p>
-                      <ul className="space-y-0.5">
-                        {section.missingItems.map((item, i) => (
-                          <li
-                            key={i}
-                            className="text-xs text-slate-500 flex items-center gap-1"
-                          >
-                            <Circle className="h-1.5 w-1.5 text-red-300" />
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
+            {expanded && (
+              <div className="mt-3 space-y-2">
+                {fw.sections
+                  .filter((s) => s.totalPoints > 0)
+                  .map((section) => (
+                    <div
+                      key={section.code}
+                      className="rounded-lg border px-3 py-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        {STATUS_ICON[section.status]}
+                        <span className="text-xs font-medium text-slate-800">
+                          {section.code} — {section.title}
+                        </span>
+                        <span className="ml-auto text-[10px] text-slate-400">
+                          {section.coveredPoints}/{section.totalPoints}
+                        </span>
+                      </div>
+                      {section.missingItems.length > 0 && (
+                        <div className="mt-1.5 pl-6">
+                          <p className="text-[10px] font-medium text-slate-400 uppercase mb-0.5">
+                            Missing:
+                          </p>
+                          <ul className="space-y-0.5">
+                            {section.missingItems.map((item, i) => (
+                              <li
+                                key={i}
+                                className="text-xs text-slate-500 flex items-center gap-1"
+                              >
+                                <Circle className="h-1.5 w-1.5 text-red-300" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
-          </div>
+                  ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-xs text-slate-400 py-1">
+            Detailed section breakdown will be available once framework data points are configured.
+          </p>
         )}
       </CardContent>
     </Card>
@@ -295,6 +318,8 @@ function FrameworkDetail({ fw }: { fw: FrameworkBreakdown }) {
 }
 
 export default function ComplianceBreakdownPage() {
+  const searchParams = useSearchParams();
+  const focusFrameworkId = searchParams.get("framework");
   const [data, setData] = useState<BreakdownData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -305,6 +330,16 @@ export default function ComplianceBreakdownPage() {
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, []);
+
+  // Auto-scroll to focused framework
+  useEffect(() => {
+    if (data && focusFrameworkId) {
+      const el = document.getElementById(`fw-${focusFrameworkId}`);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+      }
+    }
+  }, [data, focusFrameworkId]);
 
   if (isLoading) {
     return (
@@ -351,10 +386,22 @@ export default function ComplianceBreakdownPage() {
             <p className="mt-3 text-sm font-medium text-slate-700">
               Overall Compliance Score
             </p>
-            <p className="text-xs text-slate-400 mt-1">
-              {data.totalScore}/{data.maxPossibleScore} points &middot;{" "}
-              {completeFactors}/{data.factors.length} factors complete
-            </p>
+
+            {/* Score composition */}
+            <div className="mt-3 w-full space-y-2">
+              <div className="flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2">
+                <LayoutGrid className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                <span className="text-xs text-blue-700 flex-1">Framework Completion</span>
+                <span className="text-xs font-bold text-blue-700">{data.frameworkScore}%</span>
+                <span className="text-[10px] text-blue-400">x 70%</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2">
+                <Database className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <span className="text-xs text-emerald-700 flex-1">Data Readiness</span>
+                <span className="text-xs font-bold text-emerald-700">{data.dataReadinessScore}%</span>
+                <span className="text-[10px] text-emerald-400">x 30%</span>
+              </div>
+            </div>
 
             {/* Quick data summary */}
             <div className="mt-4 w-full grid grid-cols-2 gap-2">
@@ -390,12 +437,15 @@ export default function ComplianceBreakdownPage() {
           </CardContent>
         </Card>
 
-        {/* Scoring factors */}
+        {/* Data readiness factors */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Scoring Factors</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Database className="h-4 w-4 text-emerald-600" />
+              Data Readiness
+            </CardTitle>
             <p className="text-xs text-slate-500">
-              Each factor contributes to your overall compliance score
+              How complete your uploaded data is across key areas (30% of overall score)
             </p>
           </CardHeader>
           <CardContent>
@@ -412,7 +462,7 @@ export default function ComplianceBreakdownPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-5 w-5 text-emerald-600" />
-              How to Reach 100%
+              How to Improve Your Score
             </CardTitle>
             <p className="text-xs text-slate-500">
               Prioritized actions to improve your compliance score
@@ -456,15 +506,22 @@ export default function ComplianceBreakdownPage() {
         </Card>
       )}
 
-      {/* Framework breakdowns */}
+      {/* Framework breakdowns (70% of overall score) */}
       {data.frameworks.length > 0 && (
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-slate-700">
-            Framework-Level Detail
-          </h3>
+          <div className="flex items-center gap-2 mb-3">
+            <LayoutGrid className="h-4 w-4 text-blue-600" />
+            <h3 className="text-sm font-semibold text-slate-700">
+              Framework Completion (70% of overall score)
+            </h3>
+          </div>
           <div className="grid gap-4">
             {data.frameworks.map((fw) => (
-              <FrameworkDetail key={fw.frameworkId} fw={fw} />
+              <FrameworkDetail
+                key={fw.frameworkId}
+                fw={fw}
+                defaultExpanded={fw.frameworkId === focusFrameworkId}
+              />
             ))}
           </div>
         </div>
@@ -477,7 +534,7 @@ export default function ComplianceBreakdownPage() {
             <p className="text-sm text-slate-500">
               No compliance frameworks are active yet.
             </p>
-            <Link href="/dashboard/frameworks">
+            <Link href="/dashboard/settings/frameworks">
               <Button variant="outline" size="sm" className="mt-3">
                 <ArrowRight className="mr-2 h-4 w-4" />
                 Set Up Frameworks

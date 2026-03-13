@@ -10,14 +10,18 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FrameworkItem {
   id: string;
   name: string;
   completionPct: number;
+  coveredDataPoints: number;
+  totalDataPoints: number;
   status: string;
   targetYear: number;
+  dueDate: string | null;
 }
 
 interface FrameworkProgressProps {
@@ -78,25 +82,48 @@ export function FrameworkProgress({
             </Link>
           </p>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {frameworks.map((fw) => (
-              <div key={fw.id} className="rounded-lg border border-slate-100 bg-slate-50/50 p-3 space-y-2.5 transition-colors hover:bg-slate-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-800">{fw.name}</span>
-                    <Badge
-                      variant="secondary"
-                      className={cn("text-[10px] px-1.5 py-0", statusColor(fw.status))}
-                    >
-                      {statusLabel(fw.status)}
-                    </Badge>
+              <Link
+                key={fw.id}
+                href={`/dashboard/compliance?framework=${fw.id}`}
+                className="block"
+              >
+                <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-3 space-y-2 transition-all hover:bg-slate-100/80 hover:border-slate-200 hover:shadow-sm cursor-pointer group">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-sm font-semibold text-slate-800 truncate">{fw.name}</span>
+                      <Badge
+                        variant="secondary"
+                        className={cn("text-[10px] px-1.5 py-0 shrink-0", statusColor(fw.status))}
+                      >
+                        {statusLabel(fw.status)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-sm font-bold tabular-nums text-slate-700">
+                        {Math.round(fw.completionPct)}%
+                      </span>
+                      <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                    </div>
                   </div>
-                  <span className="text-sm font-bold tabular-nums text-slate-700">
-                    {Math.round(fw.completionPct)}%
-                  </span>
+                  <Progress value={fw.completionPct} className="h-2" />
+                  <div className="flex items-center justify-between text-[10px] text-slate-400">
+                    <span>
+                      {fw.coveredDataPoints}/{fw.totalDataPoints} data points covered
+                    </span>
+                    {fw.dueDate && (
+                      <span>
+                        Due {new Date(fw.dueDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <Progress value={fw.completionPct} className="h-2.5" />
-              </div>
+              </Link>
             ))}
           </div>
         )}
