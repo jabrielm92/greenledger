@@ -74,18 +74,26 @@ export async function GET() {
       if (entry.scope === "SCOPE_3") totalScope3 = entry._sum.co2e ?? 0;
     }
 
-    // Recalculate compliance in case events were missed
-    await handleUpdateCompliance({ organizationId: orgId });
+    // Recalculate compliance in case events were missed (non-blocking)
+    try {
+      await handleUpdateCompliance({ organizationId: orgId });
+    } catch (err) {
+      console.error("[DASHBOARD] compliance recalculation failed:", err);
+    }
 
     // Backfill dueDate for any frameworks missing it
-    for (const fw of _frameworks) {
-      if (!fw.dueDate) {
-        const defaultDate = getDefaultDueDate(fw.framework.name, fw.targetYear);
-        await prisma.orgFramework.update({
-          where: { id: fw.id },
-          data: { dueDate: defaultDate },
-        });
+    try {
+      for (const fw of _frameworks) {
+        if (!fw.dueDate) {
+          const defaultDate = getDefaultDueDate(fw.framework.name, fw.targetYear);
+          await prisma.orgFramework.update({
+            where: { id: fw.id },
+            data: { dueDate: defaultDate },
+          });
+        }
       }
+    } catch (err) {
+      console.error("[DASHBOARD] dueDate backfill failed:", err);
     }
 
     // Re-fetch frameworks after compliance recalculation + dueDate backfill
@@ -97,7 +105,13 @@ export async function GET() {
     });
 
     // Calculate compliance score (weighted blend of framework completion + data readiness)
-    const { overallPercentage: complianceScore } = await calculateComplianceScore(orgId);
+    let complianceScore = 0;
+    try {
+      const result = await calculateComplianceScore(orgId);
+      complianceScore = result.overallPercentage;
+    } catch (err) {
+      console.error("[DASHBOARD] compliance score calculation failed:", err);
+    }
 
     // Find nearest future deadline
     const now = Date.now();

@@ -457,10 +457,363 @@ async function seedComplianceFrameworks() {
   console.log("Seeded compliance frameworks.");
 }
 
+async function seedDemoData() {
+  console.log("Checking for organizations that need demo data...");
+
+  const orgs = await prisma.organization.findMany({
+    include: {
+      users: { take: 1 },
+      _count: { select: { emissionEntries: true } },
+    },
+  });
+
+  for (const org of orgs) {
+    if (org._count.emissionEntries > 0) {
+      console.log(`Organization "${org.name}" already has data, skipping.`);
+      continue;
+    }
+
+    const userId = org.users[0]?.id;
+    if (!userId) {
+      console.log(`Organization "${org.name}" has no users, skipping.`);
+      continue;
+    }
+
+    console.log(`Seeding demo data for organization "${org.name}"...`);
+
+    // Create a reporting period
+    const currentYear = new Date().getFullYear();
+    const reportingPeriod = await prisma.reportingPeriod.upsert({
+      where: {
+        organizationId_name: {
+          organizationId: org.id,
+          name: `FY ${currentYear}`,
+        },
+      },
+      update: {},
+      create: {
+        organizationId: org.id,
+        name: `FY ${currentYear}`,
+        startDate: new Date(`${currentYear}-01-01`),
+        endDate: new Date(`${currentYear}-12-31`),
+        isCurrent: true,
+      },
+    });
+
+    // Seed emission entries across all three scopes with monthly data
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-indexed
+
+    const emissionEntries = [];
+
+    // Scope 1: Natural gas, diesel fleet, company vehicles
+    for (let m = 0; m <= Math.min(currentMonth, 11); m++) {
+      const startDate = new Date(currentYear, m, 1);
+      const endDate = new Date(currentYear, m + 1, 0);
+
+      // Natural gas heating (seasonal pattern)
+      const heatingFactor = m < 3 || m > 9 ? 1.5 : 0.4;
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_1" as const,
+        category: "natural_gas",
+        subcategory: "combustion",
+        source: "Office heating - natural gas",
+        activityValue: Math.round(800 * heatingFactor + Math.random() * 200),
+        activityUnit: "therms",
+        emissionFactor: 5.31,
+        emissionFactorSource: "EPA 2024",
+        co2e: Math.round(800 * heatingFactor * 5.31),
+        co2: Math.round(800 * heatingFactor * 5.28),
+        ch4: Math.round(800 * heatingFactor * 0.01 * 100) / 100,
+        n2o: Math.round(800 * heatingFactor * 0.02 * 100) / 100,
+        startDate,
+        endDate,
+        location: "HQ Office",
+        isEstimated: false,
+        confidenceScore: 0.95,
+        calculationMethod: "activity-based",
+      });
+
+      // Diesel fleet
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_1" as const,
+        category: "diesel",
+        subcategory: "combustion",
+        source: "Delivery fleet - diesel",
+        activityValue: Math.round(450 + Math.random() * 100),
+        activityUnit: "gallons",
+        emissionFactor: 10.21,
+        emissionFactorSource: "EPA 2024",
+        co2e: Math.round(450 * 10.21),
+        co2: Math.round(450 * 10.10),
+        ch4: Math.round(450 * 0.04 * 100) / 100,
+        n2o: Math.round(450 * 0.07 * 100) / 100,
+        startDate,
+        endDate,
+        location: "Fleet operations",
+        isEstimated: false,
+        confidenceScore: 0.92,
+        calculationMethod: "activity-based",
+      });
+
+      // Company vehicles (gasoline)
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_1" as const,
+        category: "vehicle",
+        subcategory: "average_car",
+        source: "Company vehicles - gasoline",
+        activityValue: Math.round(3200 + Math.random() * 800),
+        activityUnit: "km",
+        emissionFactor: 0.171,
+        emissionFactorSource: "DEFRA 2025",
+        co2e: Math.round(3200 * 0.171),
+        co2: Math.round(3200 * 0.170),
+        ch4: Math.round(3200 * 0.0005 * 100) / 100,
+        n2o: Math.round(3200 * 0.0005 * 100) / 100,
+        startDate,
+        endDate,
+        location: "Company car pool",
+        isEstimated: false,
+        confidenceScore: 0.90,
+        calculationMethod: "activity-based",
+      });
+    }
+
+    // Scope 2: Electricity
+    for (let m = 0; m <= Math.min(currentMonth, 11); m++) {
+      const startDate = new Date(currentYear, m, 1);
+      const endDate = new Date(currentYear, m + 1, 0);
+      const summerCooling = m >= 5 && m <= 8 ? 1.3 : 1.0;
+
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_2" as const,
+        category: "electricity",
+        subcategory: "grid",
+        source: "Purchased electricity - grid",
+        activityValue: Math.round(12000 * summerCooling + Math.random() * 2000),
+        activityUnit: "kWh",
+        emissionFactor: 0.417,
+        emissionFactorSource: "EPA 2024 (US average)",
+        co2e: Math.round(12000 * summerCooling * 0.417),
+        co2: Math.round(12000 * summerCooling * 0.390),
+        ch4: Math.round(12000 * summerCooling * 0.012 * 100) / 100,
+        n2o: Math.round(12000 * summerCooling * 0.015 * 100) / 100,
+        startDate,
+        endDate,
+        location: "HQ Office + Warehouse",
+        isEstimated: false,
+        confidenceScore: 0.98,
+        calculationMethod: "activity-based",
+      });
+    }
+
+    // Scope 3: Business travel, employee commuting, waste
+    for (let m = 0; m <= Math.min(currentMonth, 11); m++) {
+      const startDate = new Date(currentYear, m, 1);
+      const endDate = new Date(currentYear, m + 1, 0);
+
+      // Business air travel
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_3" as const,
+        category: "air_travel",
+        subcategory: "short_haul",
+        source: "Business flights - short haul",
+        activityValue: Math.round(8000 + Math.random() * 4000),
+        activityUnit: "km",
+        emissionFactor: 0.156,
+        emissionFactorSource: "DEFRA 2025",
+        co2e: Math.round(8000 * 0.156),
+        co2: Math.round(8000 * 0.149),
+        ch4: Math.round(8000 * 0.001 * 100) / 100,
+        n2o: Math.round(8000 * 0.006 * 100) / 100,
+        startDate,
+        endDate,
+        isEstimated: true,
+        confidenceScore: 0.80,
+        calculationMethod: "activity-based",
+      });
+
+      // Employee commuting
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_3" as const,
+        category: "employee_commute",
+        subcategory: "average_car",
+        source: "Employee commuting (estimated)",
+        activityValue: Math.round(15000 + Math.random() * 3000),
+        activityUnit: "km",
+        emissionFactor: 0.171,
+        emissionFactorSource: "DEFRA 2025",
+        co2e: Math.round(15000 * 0.171),
+        co2: Math.round(15000 * 0.170),
+        ch4: Math.round(15000 * 0.0005 * 100) / 100,
+        n2o: Math.round(15000 * 0.0005 * 100) / 100,
+        startDate,
+        endDate,
+        isEstimated: true,
+        confidenceScore: 0.70,
+        calculationMethod: "activity-based",
+      });
+
+      // Waste
+      emissionEntries.push({
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        scope: "SCOPE_3" as const,
+        category: "waste",
+        subcategory: "landfill_general",
+        source: "Office & warehouse waste",
+        activityValue: Math.round(2 + Math.random() * 1.5),
+        activityUnit: "tonnes",
+        emissionFactor: 457.0,
+        emissionFactorSource: "DEFRA 2025",
+        co2e: Math.round(2 * 457),
+        co2: Math.round(2 * 35),
+        ch4: Math.round(2 * 420 * 100) / 100,
+        n2o: Math.round(2 * 2 * 100) / 100,
+        startDate,
+        endDate,
+        location: "HQ Office",
+        isEstimated: true,
+        confidenceScore: 0.75,
+        calculationMethod: "activity-based",
+      });
+    }
+
+    // Bulk create emission entries
+    await prisma.emissionEntry.createMany({ data: emissionEntries });
+    console.log(`  Created ${emissionEntries.length} emission entries.`);
+
+    // Seed documents
+    const documents = [
+      { fileName: "electricity-bill-jan-2026.pdf", fileType: "application/pdf", filePath: "/uploads/demo/elec-jan.pdf", fileSize: 245000, documentType: "UTILITY_BILL" as const, status: "REVIEWED" as const, extractionConfidence: 0.96 },
+      { fileName: "electricity-bill-feb-2026.pdf", fileType: "application/pdf", filePath: "/uploads/demo/elec-feb.pdf", fileSize: 238000, documentType: "UTILITY_BILL" as const, status: "REVIEWED" as const, extractionConfidence: 0.95 },
+      { fileName: "electricity-bill-mar-2026.pdf", fileType: "application/pdf", filePath: "/uploads/demo/elec-mar.pdf", fileSize: 241000, documentType: "UTILITY_BILL" as const, status: "EXTRACTED" as const, extractionConfidence: 0.94 },
+      { fileName: "fleet-diesel-receipt-q1.pdf", fileType: "application/pdf", filePath: "/uploads/demo/diesel-q1.pdf", fileSize: 128000, documentType: "FUEL_RECEIPT" as const, status: "REVIEWED" as const, extractionConfidence: 0.91 },
+      { fileName: "fleet-diesel-receipt-q2.pdf", fileType: "application/pdf", filePath: "/uploads/demo/diesel-q2.pdf", fileSize: 132000, documentType: "FUEL_RECEIPT" as const, status: "EXTRACTED" as const, extractionConfidence: 0.89 },
+      { fileName: "office-supplies-invoice.pdf", fileType: "application/pdf", filePath: "/uploads/demo/invoice-supplies.pdf", fileSize: 95000, documentType: "INVOICE" as const, status: "REVIEWED" as const, extractionConfidence: 0.93 },
+      { fileName: "waste-disposal-manifest-q1.pdf", fileType: "application/pdf", filePath: "/uploads/demo/waste-q1.pdf", fileSize: 156000, documentType: "WASTE_MANIFEST" as const, status: "EXTRACTED" as const, extractionConfidence: 0.88 },
+      { fileName: "supplier-esg-assessment-meridian.pdf", fileType: "application/pdf", filePath: "/uploads/demo/supplier-meridian.pdf", fileSize: 320000, documentType: "SUPPLIER_REPORT" as const, status: "REVIEWED" as const, extractionConfidence: 0.85 },
+    ];
+
+    for (const doc of documents) {
+      await prisma.document.create({
+        data: {
+          ...doc,
+          organizationId: org.id,
+          uploadedById: userId,
+          extractedData: { demo: true },
+        },
+      });
+    }
+    console.log(`  Created ${documents.length} documents.`);
+
+    // Seed suppliers
+    const suppliers = [
+      { name: "Meridian Tech Solutions", contactEmail: "esg@meridiantech.com", contactName: "Sarah Chen", industry: "TECHNOLOGY" as const, country: "US", esgRiskLevel: "LOW" as const, esgScore: 82, lastAssessment: new Date(currentYear, 1, 15) },
+      { name: "Atlas Industrial Group", contactEmail: "sustainability@atlasgroup.com", contactName: "James Wilson", industry: "MANUFACTURING" as const, country: "DE", esgRiskLevel: "MEDIUM" as const, esgScore: 64, lastAssessment: new Date(currentYear, 0, 20) },
+      { name: "Vantage Supply Co", contactEmail: "compliance@vantagesupply.com", contactName: "Maria Garcia", industry: "LOGISTICS" as const, country: "NL", esgRiskLevel: "LOW" as const, esgScore: 78, lastAssessment: new Date(currentYear, 2, 1) },
+      { name: "Pinnacle Manufacturing", contactEmail: "green@pinnaclemfg.com", contactName: "Tom Anderson", industry: "MANUFACTURING" as const, country: "GB", esgRiskLevel: "HIGH" as const, esgScore: 41, lastAssessment: new Date(currentYear, 1, 28) },
+      { name: "Horizon Energy Partners", contactEmail: "esg@horizonenergy.com", contactName: "Lisa Park", industry: "ENERGY" as const, country: "US", esgRiskLevel: "MEDIUM" as const, esgScore: 58, lastAssessment: new Date(currentYear, 0, 10) },
+      { name: "GreenPack Logistics", contactEmail: "info@greenpack.eu", contactName: "Erik Johansson", industry: "LOGISTICS" as const, country: "SE", esgRiskLevel: "LOW" as const, esgScore: 91 },
+    ];
+
+    for (const supplier of suppliers) {
+      await prisma.supplier.create({
+        data: { ...supplier, organizationId: org.id },
+      });
+    }
+    console.log(`  Created ${suppliers.length} suppliers.`);
+
+    // Assign compliance frameworks to the org
+    const frameworks = await prisma.complianceFramework.findMany({
+      where: { name: { in: ["CSRD", "GRI"] } },
+    });
+
+    for (const fw of frameworks) {
+      await prisma.orgFramework.upsert({
+        where: {
+          organizationId_frameworkId_targetYear: {
+            organizationId: org.id,
+            frameworkId: fw.id,
+            targetYear: currentYear,
+          },
+        },
+        update: {},
+        create: {
+          organizationId: org.id,
+          frameworkId: fw.id,
+          targetYear: currentYear,
+          status: "IN_PROGRESS",
+          completionPct: fw.name === "CSRD" ? 42 : 28,
+          coveredDataPoints: fw.name === "CSRD" ? 5 : 3,
+          totalDataPoints: fw.name === "CSRD" ? 12 : 11,
+          dueDate: fw.name === "CSRD" ? new Date(currentYear, 5, 30) : new Date(currentYear, 11, 31),
+        },
+      });
+    }
+    console.log(`  Assigned ${frameworks.length} compliance frameworks.`);
+
+    // Create a demo report
+    await prisma.report.create({
+      data: {
+        organizationId: org.id,
+        reportingPeriodId: reportingPeriod.id,
+        frameworkType: "CSRD",
+        title: `CSRD Draft Report - FY ${currentYear}`,
+        status: "DRAFT",
+        version: 1,
+      },
+    });
+    console.log("  Created 1 draft report.");
+
+    // Add some audit log entries
+    const auditEntries = [
+      { action: "CREATE", entityType: "Document", entityId: "demo-1", metadata: { fileName: "electricity-bill-jan-2026.pdf" } },
+      { action: "EXTRACT", entityType: "Document", entityId: "demo-2", metadata: { confidence: 0.96 } },
+      { action: "CREATE", entityType: "EmissionEntry", entityId: "demo-3", metadata: { scope: "SCOPE_1", category: "natural_gas" } },
+      { action: "CREATE", entityType: "Supplier", entityId: "demo-4", metadata: { name: "Meridian Tech Solutions" } },
+      { action: "UPDATE", entityType: "OrgFramework", entityId: "demo-5", metadata: { framework: "CSRD", completionPct: 42 } },
+      { action: "CREATE", entityType: "Report", entityId: "demo-6", metadata: { title: `CSRD Draft Report - FY ${currentYear}` } },
+    ];
+
+    for (const entry of auditEntries) {
+      await prisma.auditLog.create({
+        data: {
+          ...entry,
+          organizationId: org.id,
+          userId,
+          metadata: entry.metadata as object,
+          createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random within last 7 days
+        },
+      });
+    }
+    console.log("  Created audit log entries.");
+
+    console.log(`Done seeding demo data for "${org.name}".`);
+  }
+}
+
 async function main() {
   console.log("Starting seed...");
   await seedEmissionFactors();
   await seedComplianceFrameworks();
+  await seedDemoData();
   console.log("Seed complete!");
 }
 
