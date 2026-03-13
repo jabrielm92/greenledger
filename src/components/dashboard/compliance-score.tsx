@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -44,46 +45,49 @@ export function ComplianceScore({ score, className }: ComplianceScoreProps) {
       : "Upload documents to get started";
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Compliance Score</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center pb-5">
-        <div className={cn("relative h-40 w-40 rounded-full", bgGlow && `shadow-lg ${bgGlow}`)}>
-          <svg className="h-40 w-40 -rotate-90" viewBox="0 0 140 140">
-            <circle
-              cx="70"
-              cy="70"
-              r={radius}
-              fill="none"
-              stroke="#f1f5f9"
-              strokeWidth="12"
-            />
-            <circle
-              cx="70"
-              cy="70"
-              r={radius}
-              fill="none"
-              stroke={strokeColor}
-              strokeWidth="12"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-              className="transition-all duration-1000 ease-out"
-              style={{ filter: score > 0 ? `drop-shadow(0 0 6px ${strokeColor}40)` : "none" }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={cn("text-4xl font-extrabold tracking-tight", color)}>
-              {Math.round(score)}
-            </span>
-            <span className={cn("text-sm font-medium -mt-0.5", color)}>%</span>
+    <Link href="/dashboard/compliance" className="block">
+      <Card className={cn(className, "transition-shadow hover:shadow-md cursor-pointer")}>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold">Compliance Score</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center pb-5">
+          <div className={cn("relative h-40 w-40 rounded-full", bgGlow && `shadow-lg ${bgGlow}`)}>
+            <svg className="h-40 w-40 -rotate-90" viewBox="0 0 140 140">
+              <circle
+                cx="70"
+                cy="70"
+                r={radius}
+                fill="none"
+                stroke="#f1f5f9"
+                strokeWidth="12"
+              />
+              <circle
+                cx="70"
+                cy="70"
+                r={radius}
+                fill="none"
+                stroke={strokeColor}
+                strokeWidth="12"
+                strokeDasharray={circumference}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-out"
+                style={{ filter: score > 0 ? `drop-shadow(0 0 6px ${strokeColor}40)` : "none" }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className={cn("text-4xl font-extrabold tracking-tight", color)}>
+                {Math.round(score)}
+              </span>
+              <span className={cn("text-sm font-medium -mt-0.5", color)}>%</span>
+            </div>
           </div>
-        </div>
-        <p className="mt-3 text-center text-xs font-medium text-slate-500">
-          {label}
-        </p>
-      </CardContent>
-    </Card>
+          <p className="mt-3 text-center text-xs font-medium text-slate-500">
+            {label}
+          </p>
+          <span className="mt-1 text-[10px] text-emerald-600 font-medium">View breakdown →</span>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
