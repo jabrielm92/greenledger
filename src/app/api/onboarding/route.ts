@@ -4,6 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { frameworkSelectionSchema } from "@/lib/validations/organization";
 import { z } from "zod";
 
+const FRAMEWORK_DEFINITIONS: Record<string, { displayName: string; version: string; description: string; regions: string[] }> = {
+  CSRD: { displayName: "CSRD / ESRS Report", version: "2024", description: "EU Corporate Sustainability Reporting Directive based on European Sustainability Reporting Standards (ESRS)", regions: ["EU"] },
+  GRI: { displayName: "GRI Standards", version: "2021", description: "Global Reporting Initiative Universal, Sector, and Topic Standards", regions: ["GLOBAL"] },
+  SASB: { displayName: "SASB Standards", version: "2023", description: "Sustainability Accounting Standards Board industry-specific standards", regions: ["GLOBAL"] },
+  ISSB_S1: { displayName: "ISSB S1 — General Sustainability", version: "2023", description: "IFRS S1 General Requirements for Disclosure of Sustainability-related Financial Information", regions: ["GLOBAL"] },
+  ISSB_S2: { displayName: "ISSB S2 — Climate-related Disclosures", version: "2023", description: "IFRS S2 Climate-related Disclosures", regions: ["GLOBAL"] },
+  SB253: { displayName: "California SB-253", version: "2024", description: "Climate Corporate Data Accountability Act requiring Scope 1, 2, and 3 reporting", regions: ["US-CA"] },
+};
+
 // POST /api/onboarding — handles framework selection and onboarding completion
 export async function POST(req: Request) {
   try {
@@ -20,10 +29,42 @@ export async function POST(req: Request) {
 
       const currentYear = new Date().getFullYear();
 
-      // Look up framework records
+      // Look up framework records by name
       const frameworkRecords = await prisma.complianceFramework.findMany({
         where: { name: { in: frameworks } },
       });
+
+      // If no matching records found, create them on-the-fly
+      if (frameworkRecords.length < frameworks.length) {
+        const existingNames = new Set(frameworkRecords.map((fw) => fw.name));
+        const missing = frameworks.filter((name) => !existingNames.has(name));
+
+        for (const name of missing) {
+          const def = FRAMEWORK_DEFINITIONS[name];
+          if (def) {
+            const created = await prisma.complianceFramework.upsert({
+              where: { name },
+              update: {},
+              create: {
+                name,
+                displayName: def.displayName,
+                version: def.version,
+                description: def.description,
+                regions: def.regions,
+                isActive: true,
+              },
+            });
+            frameworkRecords.push(created);
+          }
+        }
+      }
+
+      if (frameworkRecords.length === 0) {
+        return NextResponse.json(
+          { error: "No valid frameworks found" },
+          { status: 400 }
+        );
+      }
 
       // Create OrgFramework records
       const orgFrameworks = await Promise.all(

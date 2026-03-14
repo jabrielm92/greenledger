@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -99,11 +99,13 @@ function VerifyEmailPageContent() {
             {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Resend verification email
           </Button>
-          <Link href="/login">
-            <Button variant="ghost" className="w-full">
-              Back to sign in
-            </Button>
-          </Link>
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+          >
+            Back to sign in
+          </Button>
         </div>
       </CardContent>
     </Card>
