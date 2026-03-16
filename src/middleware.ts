@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const publicRoutes = ["/", "/pricing", "/about", "/contact", "/privacy", "/terms", "/roi-calculator", "/blog"];
 const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+const adminLoginRoute = "/admin/login";
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
@@ -48,6 +49,28 @@ export default auth((req) => {
 
   // Invite accept page — always accessible for signed-in users
   if (pathname.startsWith("/invite/")) {
+    return NextResponse.next();
+  }
+
+  // Admin portal routes
+  if (pathname === adminLoginRoute) {
+    if (session?.user) {
+      const u = session.user as { role?: string };
+      if (u.role === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/admin", req.url));
+      }
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/admin")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
+    const u = session.user as { role?: string };
+    if (u.role !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
     return NextResponse.next();
   }
 

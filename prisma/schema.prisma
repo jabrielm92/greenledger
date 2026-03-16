@@ -73,6 +73,7 @@ model VerificationToken {
 }
 
 enum UserRole {
+  SUPER_ADMIN
   OWNER
   ADMIN
   MEMBER
