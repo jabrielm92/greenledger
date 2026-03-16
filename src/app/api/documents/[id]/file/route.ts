@@ -33,7 +33,7 @@ export async function GET(
 
     const fileBuffer = await getFile(document.filePath);
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         "Content-Type": document.fileType,
         "Content-Disposition": `inline; filename="${document.fileName}"`,
