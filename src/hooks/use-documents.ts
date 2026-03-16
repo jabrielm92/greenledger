@@ -11,6 +11,7 @@ interface Document {
   status: string;
   extractedData: Record<string, unknown> | null;
   extractionConfidence: number | null;
+  aiAnalysis: Record<string, unknown> | null;
   processingError: string | null;
   createdAt: string;
   updatedAt: string;

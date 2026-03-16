@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getFile } from "@/lib/storage";
 
 export async function GET(
   _req: NextRequest,
@@ -31,7 +31,7 @@ export async function GET(
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 
-    const fileBuffer = await readFile(document.filePath);
+    const fileBuffer = await getFile(document.filePath);
 
     return new NextResponse(fileBuffer, {
       headers: {

@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { ExtractionReview } from "@/components/documents/extraction-review";
+import { AIAnalysis } from "@/components/documents/ai-analysis";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { useDocument } from "@/hooks/use-documents";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -290,18 +291,43 @@ export default function DocumentDetailPage() {
         </div>
 
         {document.extractedData && (
-          <ExtractionReview
-            documentId={document.id}
-            documentType={document.documentType}
-            extractedData={
-              document.extractedData as Record<string, unknown> | null
-            }
-            confidence={document.extractionConfidence}
-            onConfirm={handleConfirm}
-            onReExtract={handleReExtract}
-            onReject={handleReject}
-            isSubmitting={isSubmitting}
-          />
+          <div className="space-y-6">
+            <ExtractionReview
+              documentId={document.id}
+              documentType={document.documentType}
+              extractedData={
+                document.extractedData as Record<string, unknown> | null
+              }
+              confidence={document.extractionConfidence}
+              onConfirm={handleConfirm}
+              onReExtract={handleReExtract}
+              onReject={handleReject}
+              isSubmitting={isSubmitting}
+            />
+            {document.aiAnalysis && (
+              <AIAnalysis
+                analysis={
+                  document.aiAnalysis as {
+                    summary: string;
+                    esgRelevance: {
+                      frameworks: string[];
+                      scope: string | null;
+                      category: string | null;
+                      relevanceLevel: "high" | "medium" | "low";
+                      explanation: string;
+                    };
+                    metricsBreakdown: {
+                      metric: string;
+                      value: string;
+                      unit: string | null;
+                      calculationMethod: string;
+                    }[];
+                    recommendations: string[];
+                  }
+                }
+              />
+            )}
+          </div>
         )}
       </div>
     </div>

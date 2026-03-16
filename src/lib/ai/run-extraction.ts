@@ -10,6 +10,7 @@
 import { prisma } from "@/lib/prisma";
 import { getFile } from "@/lib/storage";
 import { extractDocument } from "./extract-document";
+import { analyzeDocument } from "./analyze-document";
 import { parseDocumentContent } from "./parse-document-content";
 import { logAudit } from "@/lib/audit/logger";
 import { emit } from "@/lib/events";
@@ -55,7 +56,19 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
       document.fileName
     );
 
-    // Update document with extraction results
+    // Run AI analysis on the extracted data
+    let aiAnalysis = null;
+    try {
+      aiAnalysis = await analyzeDocument(
+        result.classification.documentType,
+        result.extractedData as Record<string, unknown>,
+        document.fileName
+      );
+    } catch (err) {
+      console.error("[AI_ANALYSIS_ERROR]", err);
+    }
+
+    // Update document with extraction results and AI analysis
     await prisma.document.update({
       where: { id: documentId },
       data: {
@@ -63,6 +76,7 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
         status: result.confidence >= 0.8 ? "EXTRACTED" : "REVIEWED",
         extractedData: result.extractedData as never,
         extractionConfidence: result.confidence,
+        ...(aiAnalysis ? { aiAnalysis: aiAnalysis as never } : {}),
       },
     });
 
