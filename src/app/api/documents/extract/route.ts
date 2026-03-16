@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
 import { z, ZodError } from "zod";
+import { getFile } from "@/lib/storage";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     try {
       // Read and parse file content based on document type
-      const fileBuffer = await readFile(document.filePath);
+      const fileBuffer = await getFile(document.filePath);
       const parsed = await parseDocumentContent(fileBuffer, document.fileType);
 
       // Run AI extraction with the parsed content
