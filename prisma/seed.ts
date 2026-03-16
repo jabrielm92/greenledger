@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -809,8 +810,35 @@ async function seedDemoData() {
   }
 }
 
+async function seedAdminUser() {
+  console.log("Seeding admin user...");
+
+  const adminEmail = "admin@greenledger.com";
+  const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
+  if (existing) {
+    console.log("Admin user already exists, skipping.");
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash("Admin123!", 12);
+
+  await prisma.user.create({
+    data: {
+      email: adminEmail,
+      name: "GreenLedger Admin",
+      hashedPassword,
+      role: "SUPER_ADMIN",
+      emailVerified: new Date(),
+      locale: "en",
+    },
+  });
+
+  console.log("Admin user created: admin@greenledger.com / Admin123!");
+}
+
 async function main() {
   console.log("Starting seed...");
+  await seedAdminUser();
   await seedEmissionFactors();
   await seedComplianceFrameworks();
   await seedDemoData();
