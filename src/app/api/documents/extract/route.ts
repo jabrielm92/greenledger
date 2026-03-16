@@ -4,6 +4,7 @@ import { getFile } from "@/lib/storage";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractDocument } from "@/lib/ai/extract-document";
+import { analyzeDocument } from "@/lib/ai/analyze-document";
 import { parseDocumentContent } from "@/lib/ai/parse-document-content";
 import { logAudit } from "@/lib/audit/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -65,7 +66,19 @@ export async function POST(req: NextRequest) {
         document.fileName
       );
 
-      // Update document with extraction results
+      // Run AI analysis on the extracted data
+      let aiAnalysis = null;
+      try {
+        aiAnalysis = await analyzeDocument(
+          result.classification.documentType,
+          result.extractedData as Record<string, unknown>,
+          document.fileName
+        );
+      } catch (err) {
+        console.error("[AI_ANALYSIS_ERROR]", err);
+      }
+
+      // Update document with extraction results and AI analysis
       const updatedDocument = await prisma.document.update({
         where: { id: documentId },
         data: {
@@ -73,6 +86,7 @@ export async function POST(req: NextRequest) {
           status: result.confidence >= 0.8 ? "EXTRACTED" : "REVIEWED",
           extractedData: result.extractedData as never,
           extractionConfidence: result.confidence,
+          ...(aiAnalysis ? { aiAnalysis: aiAnalysis as never } : {}),
         },
       });
 
