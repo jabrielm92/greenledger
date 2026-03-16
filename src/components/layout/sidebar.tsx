@@ -37,7 +37,7 @@ function TrialBadge() {
 
   const trialEndsAt = user.trialEndsAt ? new Date(user.trialEndsAt) : null;
 
-  let daysRemaining = 3;
+  let daysRemaining = 0;
   if (trialEndsAt) {
     daysRemaining = Math.max(
       0,

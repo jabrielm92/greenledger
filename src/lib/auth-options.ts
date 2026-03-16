@@ -116,8 +116,8 @@ const result = NextAuth({
         if (session.trialEndsAt !== undefined) token.trialEndsAt = session.trialEndsAt;
       }
 
-      // Refresh user data from DB on each request if missing org or not yet verified
-      if (token.id && (!token.organizationId || !token.emailVerified)) {
+      // Refresh user data from DB on each request to keep trial/plan status current
+      if (token.id) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
