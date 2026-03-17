@@ -82,26 +82,26 @@ export function FrameworkProgress({
             </Link>
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {frameworks.map((fw) => (
               <Link
                 key={fw.id}
                 href={`/dashboard/compliance?framework=${fw.id}`}
                 className="block"
               >
-                <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-3 space-y-2 transition-all hover:bg-slate-100/80 hover:border-slate-200 hover:shadow-sm cursor-pointer group">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-sm font-semibold text-slate-800 truncate">{fw.name}</span>
+                <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-2.5 sm:p-3 space-y-1.5 sm:space-y-2 transition-all hover:bg-slate-100/80 hover:border-slate-200 hover:shadow-sm cursor-pointer group">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 overflow-hidden">
+                      <span className="text-xs sm:text-sm font-semibold text-slate-800 truncate">{fw.name}</span>
                       <Badge
                         variant="secondary"
-                        className={cn("text-[10px] px-1.5 py-0 shrink-0", statusColor(fw.status))}
+                        className={cn("text-[10px] px-1.5 py-0 shrink-0 whitespace-nowrap", statusColor(fw.status))}
                       >
                         {statusLabel(fw.status)}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-sm font-bold tabular-nums text-slate-700">
+                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                      <span className="text-xs sm:text-sm font-bold tabular-nums text-slate-700">
                         {Math.round(fw.completionPct)}%
                       </span>
                       <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-600 transition-colors" />
