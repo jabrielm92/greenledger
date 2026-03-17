@@ -4,6 +4,7 @@ import { type DocumentType, type DocumentStatus } from "@prisma/client";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 
 const updateDocumentSchema = z.object({
   status: z.string().optional().transform((v) => v as DocumentStatus | undefined),
@@ -60,6 +61,11 @@ export async function PATCH(
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     const { id } = await params;
@@ -126,6 +132,11 @@ export async function DELETE(
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     const { id } = await params;

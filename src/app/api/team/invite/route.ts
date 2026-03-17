@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 import { sendEmail } from "@/lib/resend";
 import InviteTeamEmail from "@/emails/invite-team";
 import { logAudit } from "@/lib/audit/logger";
@@ -18,6 +19,11 @@ export async function POST(req: Request) {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     // Only OWNER and ADMIN can invite

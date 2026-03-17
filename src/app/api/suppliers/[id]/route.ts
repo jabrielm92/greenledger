@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 import { z } from "zod";
 
 const updateSupplierSchema = z.object({
@@ -79,6 +80,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
+    }
+
     const { id } = await params;
     const body = await req.json();
     const validated = updateSupplierSchema.parse(body);
@@ -143,6 +149,11 @@ export async function DELETE(
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     const { id } = await params;

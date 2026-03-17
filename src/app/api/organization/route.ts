@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 import { z } from "zod";
 
 export async function GET() {
@@ -59,6 +60,11 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
+    }
+
     const body = await req.json();
     const validated = updateOrgSchema.parse(body);
 
@@ -103,6 +109,11 @@ export async function DELETE() {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     // Only OWNER can delete
