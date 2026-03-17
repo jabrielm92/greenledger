@@ -30,9 +30,13 @@ export default auth((req) => {
   // Auth routes (login, register, etc.)
   if (authRoutes.includes(pathname)) {
     if (session?.user) {
-      const user = session.user as { organizationId?: string; emailVerified?: boolean };
+      const user = session.user as { organizationId?: string; emailVerified?: boolean; role?: string };
       if (!user.emailVerified) {
         return NextResponse.redirect(new URL(`/verify-email?email=${encodeURIComponent(session.user.email || "")}`, req.url));
+      }
+      // Redirect SUPER_ADMIN to admin portal
+      if (user.role === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/admin", req.url));
       }
       if (!user.organizationId) {
         return NextResponse.redirect(new URL("/onboarding", req.url));
