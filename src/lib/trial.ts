@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const TRIAL_DAYS = 3;
+const TRIAL_DAYS = 14;
 const GRACE_DAYS = 7;
 
 export interface TrialStatus {

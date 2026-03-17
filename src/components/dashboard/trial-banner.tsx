@@ -23,7 +23,7 @@ export function TrialBanner() {
 
   const expired = daysRemaining <= 0;
 
-  // Always show banner during the 3-day trial
+  // Always show banner during the 14-day trial
 
   return (
     <div
