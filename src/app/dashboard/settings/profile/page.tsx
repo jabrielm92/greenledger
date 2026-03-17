@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -17,8 +18,35 @@ import {
 } from "@/components/ui/select";
 import { getInitials } from "@/lib/utils";
 import { SUPPORTED_LOCALES } from "@/types";
-import { Save, Globe } from "lucide-react";
+import { Save, Globe, Phone, Briefcase, Building2, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+
+const TIMEZONES = [
+  "America/New_York",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+  "America/Anchorage",
+  "Pacific/Honolulu",
+  "America/Sao_Paulo",
+  "America/Argentina/Buenos_Aires",
+  "Europe/London",
+  "Europe/Paris",
+  "Europe/Berlin",
+  "Europe/Madrid",
+  "Europe/Rome",
+  "Europe/Amsterdam",
+  "Europe/Stockholm",
+  "Europe/Helsinki",
+  "Asia/Dubai",
+  "Asia/Kolkata",
+  "Asia/Singapore",
+  "Asia/Shanghai",
+  "Asia/Tokyo",
+  "Asia/Seoul",
+  "Australia/Sydney",
+  "Pacific/Auckland",
+];
 
 export default function ProfileSettingsPage() {
   const { user, updateSession } = useCurrentUser();
@@ -26,6 +54,11 @@ export default function ProfileSettingsPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [locale, setLocale] = useState("en");
+  const [phone, setPhone] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [department, setDepartment] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [bio, setBio] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -36,7 +69,20 @@ export default function ProfileSettingsPage() {
       setName(user.name || "");
       setEmail(user.email || "");
       setLocale(user.locale || "en");
-      setIsLoading(false);
+      // Fetch extended profile fields
+      fetch("/api/users/profile")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) {
+            setPhone(data.phone || "");
+            setJobTitle(data.jobTitle || "");
+            setDepartment(data.department || "");
+            setTimezone(data.timezone || "");
+            setBio(data.bio || "");
+          }
+        })
+        .catch(() => {})
+        .finally(() => setIsLoading(false));
     }
   }, [user]);
 
@@ -48,7 +94,15 @@ export default function ProfileSettingsPage() {
       const res = await fetch("/api/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, locale }),
+        body: JSON.stringify({
+          name,
+          locale,
+          phone: phone || null,
+          jobTitle: jobTitle || null,
+          department: department || null,
+          timezone: timezone || null,
+          bio: bio || null,
+        }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -116,6 +170,63 @@ export default function ProfileSettingsPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5" />
+                Phone Number
+              </Label>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+1 (555) 123-4567"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Briefcase className="h-3.5 w-3.5" />
+                Job Title
+              </Label>
+              <Input
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                placeholder="e.g. Sustainability Manager"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5" />
+                Department
+              </Label>
+              <Input
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                placeholder="e.g. ESG & Compliance"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                Timezone
+              </Label>
+              <Select value={timezone} onValueChange={setTimezone}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIMEZONES.map((tz) => (
+                    <SelectItem key={tz} value={tz}>
+                      {tz.replace(/_/g, " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
               <Label>Role</Label>
               <Input
                 value={user?.role ? user.role.charAt(0) + user.role.slice(1).toLowerCase() : ""}
@@ -144,6 +255,20 @@ export default function ProfileSettingsPage() {
                 Sets your preferred language for the interface and reports
               </p>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Bio</Label>
+            <Textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="A brief description about yourself and your role in sustainability..."
+              rows={3}
+              maxLength={500}
+            />
+            <p className="text-xs text-slate-400">
+              {bio.length}/500 characters
+            </p>
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}

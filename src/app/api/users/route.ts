@@ -16,6 +16,11 @@ const updateProfileSchema = z.object({
     (val) => SUPPORTED_LOCALES.some((l) => l.code === val),
     { message: "Unsupported locale" }
   ).optional(),
+  phone: z.string().max(30).optional().nullable(),
+  jobTitle: z.string().max(100).optional().nullable(),
+  department: z.string().max(100).optional().nullable(),
+  timezone: z.string().max(100).optional().nullable(),
+  bio: z.string().max(500).optional().nullable(),
 });
 
 export async function POST(req: Request) {
@@ -115,6 +120,11 @@ export async function PATCH(req: Request) {
       data: {
         ...(data.name !== undefined ? { name: data.name } : {}),
         ...(data.locale !== undefined ? { locale: data.locale } : {}),
+        ...(data.phone !== undefined ? { phone: data.phone || null } : {}),
+        ...(data.jobTitle !== undefined ? { jobTitle: data.jobTitle || null } : {}),
+        ...(data.department !== undefined ? { department: data.department || null } : {}),
+        ...(data.timezone !== undefined ? { timezone: data.timezone || null } : {}),
+        ...(data.bio !== undefined ? { bio: data.bio || null } : {}),
       },
       select: {
         id: true,
@@ -122,6 +132,11 @@ export async function PATCH(req: Request) {
         email: true,
         locale: true,
         role: true,
+        phone: true,
+        jobTitle: true,
+        department: true,
+        timezone: true,
+        bio: true,
       },
     });
 
