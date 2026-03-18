@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { PLAN_LIMITS } from "@/lib/constants";
 
-const TRIAL_DAYS = 3;
+const TRIAL_DAYS = PLAN_LIMITS.FREE_TRIAL.trialDays;
 const GRACE_DAYS = 7;
 
 export interface TrialStatus {
