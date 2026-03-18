@@ -12,8 +12,11 @@ import { getFile } from "@/lib/storage";
 import { extractDocument } from "./extract-document";
 import { analyzeDocument } from "./analyze-document";
 import { parseDocumentContent } from "./parse-document-content";
+import { selectModel, analyzeComplexity } from "./select-model";
+import { logAIUsage } from "./log-usage";
 import { logAudit } from "@/lib/audit/logger";
 import { emit } from "@/lib/events";
+import { logger } from "@/lib/logger";
 
 interface ExtractionInput {
   documentId: string;
@@ -44,17 +47,44 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
     const fileBuffer = await getFile(document.filePath);
     const parsed = await parseDocumentContent(fileBuffer, document.fileType);
 
-    // Run AI extraction with the parsed content
-    // When the parser falls back to base64 (e.g. scanned PDF), use an image
-    // MIME type so the AI receives it as a vision image, not a text blob.
+    // Analyze document complexity for model selection
+    const complexity = await analyzeComplexity(fileBuffer, document.fileType);
+    // Use document type hint from filename if available
+    if (document.documentType) {
+      complexity.documentType = document.documentType;
+    }
+    const { model, estimatedCost, reason } = selectModel(complexity);
+
+    logger.info("AI model selected for extraction", {
+      documentId,
+      model,
+      estimatedCost,
+      reason,
+      pageCount: complexity.pageCount,
+    });
+
+    // Run AI extraction with the parsed content and selected model
     const effectiveMimeType = parsed.isImage
       ? (document.fileType.startsWith("image/") ? document.fileType : "image/png")
       : "text/plain";
     const result = await extractDocument(
       parsed.content,
       effectiveMimeType,
-      document.fileName
+      document.fileName,
+      model
     );
+
+    // Log AI usage
+    if (result.usage) {
+      await logAIUsage({
+        organizationId,
+        documentId,
+        operation: "document_extraction",
+        model: result.usage.model,
+        inputTokens: result.usage.inputTokens,
+        outputTokens: result.usage.outputTokens,
+      });
+    }
 
     // Run AI analysis on the extracted data
     let aiAnalysis = null;
@@ -90,6 +120,8 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
       newValue: {
         documentType: result.classification.documentType,
         confidence: result.confidence,
+        aiModel: model,
+        estimatedCost,
       },
     });
 

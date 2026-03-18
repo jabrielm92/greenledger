@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email } = schema.parse(body);
 
-    const rl = checkRateLimit(`forgot:${email.toLowerCase()}`, { limit: 3, windowSeconds: 60 });
+    const rl = await checkRateLimit(`forgot:${email.toLowerCase()}`, { limit: 3, windowSeconds: 60 });
     if (rl.limited) {
       return NextResponse.json(rl.response, { status: 429, headers: rl.headers });
     }

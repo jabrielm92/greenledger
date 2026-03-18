@@ -8,12 +8,18 @@ interface ExtractionResult {
   classification: DocumentClassification;
   extractedData: ExtractedData | Record<string, unknown>;
   confidence: number;
+  usage?: {
+    inputTokens: number;
+    outputTokens: number;
+    model: string;
+  };
 }
 
 export async function extractDocument(
   fileContent: string,
   mimeType: string,
-  fileName?: string
+  fileName?: string,
+  modelOverride?: string
 ): Promise<ExtractionResult> {
   // Step 1: Classify
   const classification = await classifyDocument(fileContent, mimeType, fileName);
@@ -21,6 +27,7 @@ export async function extractDocument(
   // Step 2: Extract based on classification
   const extractionPrompt = getExtractionPrompt(classification.documentType);
   const isImage = mimeType.startsWith("image/");
+  const model = modelOverride || AI_MODEL;
 
   const content: ChatCompletionContentPart[] = isImage
     ? [
@@ -43,7 +50,7 @@ export async function extractDocument(
       ];
 
   const response = await openai.chat.completions.create({
-    model: AI_MODEL,
+    model,
     max_tokens: 4096,
     temperature: 0.1,
     messages: [
@@ -86,5 +93,10 @@ export async function extractDocument(
     classification,
     extractedData,
     confidence,
+    usage: {
+      inputTokens: response.usage?.prompt_tokens || 0,
+      outputTokens: response.usage?.completion_tokens || 0,
+      model,
+    },
   };
 }

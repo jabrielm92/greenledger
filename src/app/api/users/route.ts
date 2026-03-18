@@ -26,7 +26,7 @@ const updateProfileSchema = z.object({
 export async function POST(req: Request) {
   try {
     const ip = req.headers.get("x-forwarded-for") || "unknown";
-    const rl = checkRateLimit(`register:${ip}`, { limit: 5, windowSeconds: 60 });
+    const rl = await checkRateLimit(`register:${ip}`, { limit: 5, windowSeconds: 60 });
     if (rl.limited) {
       return NextResponse.json(rl.response, { status: 429, headers: rl.headers });
     }

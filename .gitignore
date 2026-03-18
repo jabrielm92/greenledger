@@ -41,3 +41,6 @@ prisma/compiled/
 # uploads
 /uploads/*
 !/uploads/.gitkeep
+
+# backups
+/backups/
