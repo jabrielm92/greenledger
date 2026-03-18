@@ -12,7 +12,7 @@ export const PLAN_LIMITS = {
     maxStorageMB: 100,
     aiExtractionsPerMonth: 25,
     reportGenerationsPerMonth: 3,
-    trialDays: 14,
+    trialDays: 3,
   },
   BASE: {
     maxDocuments: 250,

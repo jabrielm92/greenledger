@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Leaf } from "lucide-react";
+import { Leaf, Shield } from "lucide-react";
 
 const footerLinks = {
   Product: [
@@ -68,6 +68,13 @@ export function MarketingFooter() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} GreenLedger. All rights reserved.
           </p>
+          <Link
+            href="/admin/login"
+            className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-slate-300 hover:text-foreground"
+          >
+            <Shield className="h-3.5 w-3.5" />
+            Admin Portal
+          </Link>
         </div>
       </div>
     </footer>

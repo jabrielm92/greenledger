@@ -90,11 +90,17 @@ export default auth((req) => {
     emailVerified?: boolean;
     plan?: string;
     trialEndsAt?: string | null;
+    role?: string;
   };
 
   // Gate: unverified email → redirect to verify-email
   if (!user.emailVerified) {
     return NextResponse.redirect(new URL(`/verify-email?email=${encodeURIComponent(session.user.email || "")}`, req.url));
+  }
+
+  // SUPER_ADMIN should never land on tenant routes — always redirect to admin portal
+  if (user.role === "SUPER_ADMIN") {
+    return NextResponse.redirect(new URL("/admin", req.url));
   }
 
   // Onboarding routes — allow access

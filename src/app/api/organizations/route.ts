@@ -3,6 +3,7 @@ import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createOrganizationSchema } from "@/lib/validations/organization";
 import { slugify } from "@/lib/utils";
+import { PLAN_LIMITS } from "@/lib/constants";
 import { z } from "zod";
 
 export async function POST(req: Request) {
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
           website: validated.website || null,
           fiscalYearStart,
           plan: "FREE_TRIAL",
-          trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+          trialEndsAt: new Date(Date.now() + PLAN_LIMITS.FREE_TRIAL.trialDays * 24 * 60 * 60 * 1000),
         },
       });
 
