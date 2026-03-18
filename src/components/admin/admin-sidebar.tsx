@@ -12,6 +12,7 @@ import {
   Shield,
   Users,
   Activity,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/monitoring", label: "Usage Monitoring", icon: Activity },
   { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminSidebar() {

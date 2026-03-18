@@ -813,19 +813,19 @@ async function seedDemoData() {
 async function seedAdminUser() {
   console.log("Seeding admin user...");
 
-  const adminEmail = "admin@greenledger.com";
+  const adminEmail = "jabriel@arisolutionsinc.com";
   const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
   if (existing) {
     console.log("Admin user already exists, skipping.");
     return;
   }
 
-  const hashedPassword = await bcrypt.hash("Admin123!", 12);
+  const hashedPassword = await bcrypt.hash("Finao028!", 12);
 
   await prisma.user.create({
     data: {
       email: adminEmail,
-      name: "GreenLedger Admin",
+      name: "Jabriel - Super Admin",
       hashedPassword,
       role: "SUPER_ADMIN",
       emailVerified: new Date(),
@@ -833,7 +833,7 @@ async function seedAdminUser() {
     },
   });
 
-  console.log("Admin user created: admin@greenledger.com / Admin123!");
+  console.log("Admin user created: jabriel@arisolutionsinc.com");
 }
 
 async function main() {
