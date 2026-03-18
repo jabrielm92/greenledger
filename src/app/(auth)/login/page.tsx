@@ -59,8 +59,8 @@ function LoginPageContent() {
         return;
       }
 
-      // Redirect SUPER_ADMIN users to admin portal unless they have a specific callbackUrl
-      if (session.user.role === "SUPER_ADMIN" && callbackUrl === "/dashboard") {
+      // Always redirect SUPER_ADMIN users to admin portal
+      if (session.user.role === "SUPER_ADMIN") {
         router.push("/admin");
       } else {
         router.push(callbackUrl);
