@@ -4,6 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { frameworkSelectionSchema } from "@/lib/validations/organization";
 import { z } from "zod";
 
+// Default reporting deadlines per framework (must match /api/organization/frameworks)
+function getDefaultDueDate(frameworkName: string, targetYear: number): Date {
+  switch (frameworkName) {
+    case "CSRD":
+      return new Date(targetYear, 5, 30); // June 30
+    case "SB253":
+      return new Date(targetYear, 2, 31); // March 31
+    default:
+      return new Date(targetYear, 11, 31); // December 31
+  }
+}
+
 const FRAMEWORK_DEFINITIONS: Record<string, { displayName: string; version: string; description: string; regions: string[] }> = {
   CSRD: { displayName: "CSRD / ESRS Report", version: "2024", description: "EU Corporate Sustainability Reporting Directive based on European Sustainability Reporting Standards (ESRS)", regions: ["EU"] },
   GRI: { displayName: "GRI Standards", version: "2021", description: "Global Reporting Initiative Universal, Sector, and Topic Standards", regions: ["GLOBAL"] },
@@ -66,7 +78,7 @@ export async function POST(req: Request) {
         );
       }
 
-      // Create OrgFramework records
+      // Create OrgFramework records with default due dates
       const orgFrameworks = await Promise.all(
         frameworkRecords.map((fw) =>
           prisma.orgFramework.upsert({
@@ -77,11 +89,14 @@ export async function POST(req: Request) {
                 targetYear: currentYear,
               },
             },
-            update: {},
+            update: {
+              dueDate: getDefaultDueDate(fw.name, currentYear),
+            },
             create: {
               organizationId: session.user.organizationId!,
               frameworkId: fw.id,
               targetYear: currentYear,
+              dueDate: getDefaultDueDate(fw.name, currentYear),
             },
           })
         )

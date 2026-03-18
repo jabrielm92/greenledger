@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 import { z } from "zod";
 
 // GET /api/organization/frameworks — list available frameworks and which are active
@@ -70,6 +71,11 @@ export async function PUT(req: NextRequest) {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     const orgId = session.user.organizationId;

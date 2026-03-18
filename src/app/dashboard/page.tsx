@@ -55,7 +55,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <PageHeader
         title="Dashboard"
         description="Your ESG compliance overview at a glance"
@@ -68,12 +68,12 @@ export default function DashboardPage() {
         nextDeadlineFramework={data?.nextDeadlineFramework}
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         <EmissionsChart data={summary?.byMonth ?? []} />
         <ComplianceScore score={data?.stats.complianceScore ?? 0} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         <FrameworkProgress frameworks={data?.frameworks ?? []} />
         <QuickActions />
       </div>

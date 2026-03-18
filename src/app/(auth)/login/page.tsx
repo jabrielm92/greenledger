@@ -59,7 +59,12 @@ function LoginPageContent() {
         return;
       }
 
-      router.push(callbackUrl);
+      // Redirect SUPER_ADMIN users to admin portal unless they have a specific callbackUrl
+      if (session.user.role === "SUPER_ADMIN" && callbackUrl === "/dashboard") {
+        router.push("/admin");
+      } else {
+        router.push(callbackUrl);
+      }
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");

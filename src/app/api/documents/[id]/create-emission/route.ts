@@ -3,6 +3,7 @@ import { z, ZodError } from "zod";
 import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit/logger";
+import { enforceTrialWriteAccess } from "@/lib/trial";
 import { calculateEmissions } from "@/lib/emissions/calculator";
 import { mapExtractedDataToEmission } from "@/lib/ai/document-to-emissions";
 import { emit } from "@/lib/events";
@@ -21,6 +22,11 @@ export async function POST(
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
+    if (trialBlock) {
+      return NextResponse.json(trialBlock, { status: 403 });
     }
 
     const { id: documentId } = await params;

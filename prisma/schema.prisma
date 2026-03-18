@@ -21,6 +21,11 @@ model User {
   image           String?
   role            UserRole  @default(MEMBER)
   locale          String    @default("en")
+  phone           String?
+  jobTitle        String?
+  department      String?
+  timezone        String?
+  bio             String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

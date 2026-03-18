@@ -2,8 +2,6 @@
 
 import { signOut } from "next-auth/react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getInitials } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Globe, LogOut, Settings, User } from "lucide-react";
+import { Globe, Languages, LogOut, Settings, User } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import { NotificationBell } from "./notification-bell";
 import Link from "next/link";
@@ -53,7 +51,7 @@ export function Topbar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative" title="Language">
-              <Globe className="h-5 w-5 text-slate-500" />
+              <Languages className="h-5 w-5 text-slate-500" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
@@ -75,13 +73,12 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full p-0">
-              <Avatar className="h-9 w-9 ring-2 ring-slate-200">
-                <AvatarImage src={user?.image || undefined} />
-                <AvatarFallback className="bg-emerald-600 text-white text-sm font-semibold">
-                  {user?.name ? getInitials(user.name) : "U"}
-                </AvatarFallback>
-              </Avatar>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative h-9 w-9 rounded-full bg-emerald-50 p-0 hover:bg-emerald-100"
+            >
+              <Globe className="h-5 w-5 text-emerald-600" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">

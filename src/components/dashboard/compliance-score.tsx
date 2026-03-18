@@ -50,9 +50,9 @@ export function ComplianceScore({ score, className }: ComplianceScoreProps) {
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold">Compliance Score</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center pb-5">
-          <div className={cn("relative h-40 w-40 rounded-full", bgGlow && `shadow-lg ${bgGlow}`)}>
-            <svg className="h-40 w-40 -rotate-90" viewBox="0 0 140 140">
+        <CardContent className="flex flex-col items-center pb-4 sm:pb-5">
+          <div className={cn("relative h-32 w-32 sm:h-40 sm:w-40 rounded-full", bgGlow && `shadow-lg ${bgGlow}`)}>
+            <svg className="h-32 w-32 sm:h-40 sm:w-40 -rotate-90" viewBox="0 0 140 140">
               <circle
                 cx="70"
                 cy="70"
@@ -76,7 +76,7 @@ export function ComplianceScore({ score, className }: ComplianceScoreProps) {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={cn("text-4xl font-extrabold tracking-tight", color)}>
+              <span className={cn("text-3xl sm:text-4xl font-extrabold tracking-tight", color)}>
                 {Math.round(score)}
               </span>
               <span className={cn("text-sm font-medium -mt-0.5", color)}>%</span>
