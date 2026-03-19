@@ -14,7 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Save } from "lucide-react";
+import { AlertTriangle, Save, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 const INDUSTRIES = [
   { value: "MANUFACTURING", label: "Manufacturing" },
@@ -323,6 +324,32 @@ export default function GeneralSettingsPage() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* GDPR Account Deletion */}
+      <Card className="border-red-200">
+        <CardHeader>
+          <CardTitle className="text-base text-red-600">Account Deletion (GDPR)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Delete Your Account</p>
+              <p className="text-xs text-slate-500">
+                Permanently delete your account and all personal data (GDPR Art. 17).
+              </p>
+            </div>
+            <Link href="/dashboard/settings/delete-account">
+              <Button
+                variant="outline"
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Account
+              </Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

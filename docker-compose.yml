@@ -10,16 +10,18 @@ services:
     environment:
       - DATABASE_URL=postgresql://greenledger:greenledger@db:5432/greenledger
       - NEXTAUTH_URL=http://localhost:3000
+      - REDIS_URL=redis://redis:6379
     env_file:
       - .env.local
     volumes:
       - .:/app
       - /app/node_modules
       - /app/.next
-      - uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     command: npm run dev
 
   db:
@@ -38,6 +40,35 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: greenledger-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  backup:
+    image: prodrigestivill/postgres-backup-local:16-alpine
+    container_name: greenledger-backup
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: greenledger
+      POSTGRES_USER: greenledger
+      POSTGRES_PASSWORD: greenledger
+      SCHEDULE: "0 2 * * *"
+      BACKUP_KEEP_DAYS: 30
+      BACKUP_KEEP_WEEKS: 8
+      BACKUP_KEEP_MONTHS: 12
+      HEALTHCHECK_PORT: 8080
+      BACKUP_DIR: /backups
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - db
+    restart: unless-stopped
+
 volumes:
   postgres_data:
-  uploads:
+  redis_data:

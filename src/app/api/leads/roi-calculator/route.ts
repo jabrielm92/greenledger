@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     // Rate limit by IP — 5 submissions per minute
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const rl = checkRateLimit(`roi-lead:${ip}`, {
+    const rl = await checkRateLimit(`roi-lead:${ip}`, {
       limit: 5,
       windowSeconds: 60,
     });

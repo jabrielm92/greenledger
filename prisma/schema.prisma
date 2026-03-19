@@ -128,6 +128,7 @@ model Organization {
   complianceFrameworks OrgFramework[]
   reportingPeriods     ReportingPeriod[]
   notifications        Notification[]
+  aiUsageLogs          AIUsageLog[]
 
   @@index([slug])
   @@index([stripeCustomerId])
@@ -287,6 +288,7 @@ model Document {
   uploadedBy       User @relation("UploadedBy", fields: [uploadedById], references: [id])
   emissionEntries  EmissionEntry[]
   auditReferences  AuditLog[] @relation("AuditDocument")
+  aiUsageLogs      AIUsageLog[]
 
   @@index([organizationId])
   @@index([documentType])
@@ -372,9 +374,10 @@ enum EmissionScope {
 }
 
 model EmissionFactor {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   category     String
   subcategory  String?
+  scope        String?   // "1", "2", "3"
   region       String
   unit         String
   co2ePerUnit  Float
@@ -383,12 +386,20 @@ model EmissionFactor {
   n2oPerUnit   Float?
   source       String
   year         Int
-  validFrom    DateTime
+  validFrom    DateTime  @default(now())
   validTo      DateTime?
-  isActive     Boolean  @default(true)
+  version      String    @default("v1.0")
+  isActive     Boolean   @default(true)
+  sourceUrl    String?
+  notes        String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@unique([category, subcategory, region, source, year])
-  @@index([category, region])
+  @@index([category, region, isActive])
+  @@index([validFrom, validTo])
+  @@index([source, version])
 }
 
 model CustomEmissionFactor {
@@ -553,6 +564,30 @@ model AuditLog {
   @@index([organizationId, createdAt])
   @@index([entityType, entityId])
   @@index([action])
+}
+
+// ============================================
+// AI USAGE TRACKING
+// ============================================
+
+model AIUsageLog {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  documentId      String?
+  document        Document?    @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  operation       String       // "document_extraction", "report_generation", etc.
+  model           String       // "gpt-4o", "gpt-4o-mini"
+  inputTokens     Int
+  outputTokens    Int
+  estimatedCost   Float        // USD
+
+  createdAt       DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([operation, model])
 }
 
 // ============================================
