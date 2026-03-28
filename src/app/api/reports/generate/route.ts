@@ -5,6 +5,7 @@ import { enforceTrialWriteAccess } from "@/lib/trial";
 import { generateReport } from "@/lib/ai/generate-report";
 import { logAudit } from "@/lib/audit/logger";
 import { sendEmail } from "@/lib/resend";
+import { checkRateLimit } from "@/lib/rate-limit";
 import ReportReadyEmail from "@/emails/report-ready";
 import { z } from "zod";
 
@@ -25,6 +26,18 @@ export async function POST(req: NextRequest) {
     const trialBlock = await enforceTrialWriteAccess(session.user.organizationId);
     if (trialBlock) {
       return NextResponse.json(trialBlock, { status: 403 });
+    }
+
+    // Rate limit: 5 report generations per minute per org (AI-intensive)
+    const rl = await checkRateLimit(
+      `report-gen:${session.user.organizationId}`,
+      { limit: 5, windowSeconds: 60 }
+    );
+    if (rl.limited) {
+      return NextResponse.json(rl.response, {
+        status: 429,
+        headers: rl.headers,
+      });
     }
 
     const body = await req.json();

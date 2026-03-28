@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { ScopeBreakdown } from "@/components/emissions/scope-breakdown";
+import dynamic from "next/dynamic";
+const ScopeBreakdown = dynamic(
+  () => import("@/components/emissions/scope-breakdown").then((m) => m.ScopeBreakdown),
+  { ssr: false }
+);
 import { EmissionsTable } from "@/components/emissions/emissions-table";
 import { EmissionsForm } from "@/components/emissions/emissions-form";
 import { useEmissions, useEmissionsSummary } from "@/hooks/use-emissions";

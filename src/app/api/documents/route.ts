@@ -146,7 +146,7 @@ export async function GET(req: NextRequest) {
       ...(status ? { status: status as never } : {}),
     };
 
-    const [documents, total] = await Promise.all([
+    const [documents, total] = await prisma.$transaction([
       prisma.document.findMany({
         where,
         orderBy: { createdAt: "desc" },

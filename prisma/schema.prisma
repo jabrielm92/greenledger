@@ -291,8 +291,10 @@ model Document {
   aiUsageLogs      AIUsageLog[]
 
   @@index([organizationId])
+  @@index([organizationId, createdAt])
   @@index([documentType])
   @@index([status])
+  @@index([uploadedById])
 }
 
 enum DocumentType {
@@ -363,7 +365,9 @@ model EmissionEntry {
   document         Document? @relation(fields: [documentId], references: [id])
 
   @@index([organizationId, scope])
+  @@index([organizationId, category])
   @@index([organizationId, startDate, endDate])
+  @@index([organizationId, documentId])
   @@index([reportingPeriodId])
 }
 
@@ -443,6 +447,8 @@ model Report {
   exports          ReportExport[]
 
   @@index([organizationId])
+  @@index([organizationId, createdAt])
+  @@index([reportingPeriodId])
   @@index([status])
 }
 
@@ -504,6 +510,7 @@ model Supplier {
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId])
+  @@index([organizationId, lastAssessment])
   @@index([esgRiskLevel])
 }
 
@@ -562,6 +569,7 @@ model AuditLog {
   document       Document? @relation("AuditDocument", fields: [documentId], references: [id])
 
   @@index([organizationId, createdAt])
+  @@index([organizationId, userId])
   @@index([entityType, entityId])
   @@index([action])
 }

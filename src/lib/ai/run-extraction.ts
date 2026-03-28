@@ -86,17 +86,17 @@ export async function runDocumentExtraction(input: ExtractionInput): Promise<voi
       });
     }
 
-    // Run AI analysis on the extracted data
-    let aiAnalysis = null;
-    try {
-      aiAnalysis = await analyzeDocument(
+    // Run AI analysis in parallel with usage logging for faster processing
+    const [aiAnalysis] = await Promise.all([
+      analyzeDocument(
         result.classification.documentType,
         result.extractedData as Record<string, unknown>,
         document.fileName
-      );
-    } catch (err) {
-      console.error("[AI_ANALYSIS_ERROR]", err);
-    }
+      ).catch((err) => {
+        console.error("[AI_ANALYSIS_ERROR]", err);
+        return null;
+      }),
+    ]);
 
     // Update document with extraction results and AI analysis
     await prisma.document.update({

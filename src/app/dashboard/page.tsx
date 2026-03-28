@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { ComplianceScore } from "@/components/dashboard/compliance-score";
-import { EmissionsChart } from "@/components/dashboard/emissions-chart";
+import dynamic from "next/dynamic";
+const EmissionsChart = dynamic(
+  () => import("@/components/dashboard/emissions-chart").then((m) => m.EmissionsChart),
+  { ssr: false }
+);
 import { FrameworkProgress } from "@/components/dashboard/framework-progress";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { RecentActivity } from "@/components/dashboard/recent-activity";

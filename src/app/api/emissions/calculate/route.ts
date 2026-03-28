@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { calculateEmissions } from "@/lib/emissions/calculator";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const calculateSchema = z.object({
@@ -18,6 +19,18 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession();
     if (!session?.user?.organizationId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit: 30 calculations per minute per org
+    const rl = await checkRateLimit(
+      `emissions-calc:${session.user.organizationId}`,
+      { limit: 30, windowSeconds: 60 }
+    );
+    if (rl.limited) {
+      return NextResponse.json(rl.response, {
+        status: 429,
+        headers: rl.headers,
+      });
     }
 
     const body = await req.json();

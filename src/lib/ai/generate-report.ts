@@ -60,71 +60,95 @@ export async function generateReport(
     unassessed: suppliers.filter((s) => !s.lastAssessment).length,
   };
 
-  // 5. Generate each section
+  // 5. Generate all sections in parallel for faster report generation
   const template = getTemplate(input.frameworkType);
   const generatedSections: Record<string, GeneratedSection> = {};
 
-  for (const sectionCode of input.sections) {
-    const sectionInfo = getSectionByCode(template, sectionCode);
-    if (!sectionInfo) continue;
+  const orgContext = {
+    name: org.name,
+    industry: org.industry || "Unknown",
+    employeeCount: org.employeeCount || 0,
+    country: org.country || "Unknown",
+    reportingYear: new Date().getFullYear() - 1,
+  };
 
-    const sectionData = buildSectionData(
-      sectionCode,
-      emissionsSummary,
-      supplierSummary
-    );
+  const sectionPromises = input.sections
+    .map((sectionCode) => {
+      const sectionInfo = getSectionByCode(template, sectionCode);
+      if (!sectionInfo) return null;
 
-    const prompt = buildReportSectionPrompt(
-      sectionCode,
-      sectionInfo.title,
-      {
-        name: org.name,
-        industry: org.industry || "Unknown",
-        employeeCount: org.employeeCount || 0,
-        country: org.country || "Unknown",
-        reportingYear: new Date().getFullYear() - 1,
-      },
-      sectionData
-    );
-
-    const response = await openai.chat.completions.create({
-      model: AI_MODEL,
-      max_tokens: 4096,
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const text = response.choices[0]?.message?.content ?? "";
-
-    try {
-      const parsed = JSON.parse(
-        text.replace(/```json|```/g, "").trim()
+      const sectionData = buildSectionData(
+        sectionCode,
+        emissionsSummary,
+        supplierSummary
       );
-      generatedSections[sectionCode] = {
-        code: sectionCode,
-        title: sectionInfo.title,
-        content: parsed.content || "",
-        dataPointsUsed: parsed.dataPointsCovered || [],
-        dataGaps: parsed.dataGaps || [],
-        recommendations: parsed.recommendations || [],
-        confidence: parsed.confidence || 0,
-        methodology: `AI-generated using ${input.frameworkType} template with available emissions and organizational data`,
-      };
-    } catch {
-      // Fallback if response isn't valid JSON
-      generatedSections[sectionCode] = {
-        code: sectionCode,
-        title: sectionInfo.title,
-        content: text,
-        dataPointsUsed: [],
-        dataGaps: [],
-        recommendations: [],
-        confidence: 0.5,
-        methodology: "AI-generated (raw text response)",
-      };
+
+      const prompt = buildReportSectionPrompt(
+        sectionCode,
+        sectionInfo.title,
+        orgContext,
+        sectionData
+      );
+
+      return generateSingleSection(
+        sectionCode,
+        sectionInfo.title,
+        prompt,
+        input.frameworkType
+      );
+    })
+    .filter(Boolean);
+
+  const results = await Promise.all(sectionPromises);
+  for (const section of results) {
+    if (section) {
+      generatedSections[section.code] = section;
     }
   }
 
   return generatedSections;
+}
+
+async function generateSingleSection(
+  sectionCode: string,
+  sectionTitle: string,
+  prompt: string,
+  frameworkType: string
+): Promise<GeneratedSection> {
+  const response = await openai.chat.completions.create({
+    model: AI_MODEL,
+    max_tokens: 4096,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const text = response.choices[0]?.message?.content ?? "";
+
+  try {
+    const parsed = JSON.parse(
+      text.replace(/```json|```/g, "").trim()
+    );
+    return {
+      code: sectionCode,
+      title: sectionTitle,
+      content: parsed.content || "",
+      dataPointsUsed: parsed.dataPointsCovered || [],
+      dataGaps: parsed.dataGaps || [],
+      recommendations: parsed.recommendations || [],
+      confidence: parsed.confidence || 0,
+      methodology: `AI-generated using ${frameworkType} template with available emissions and organizational data`,
+    };
+  } catch {
+    return {
+      code: sectionCode,
+      title: sectionTitle,
+      content: text,
+      dataPointsUsed: [],
+      dataGaps: [],
+      recommendations: [],
+      confidence: 0.5,
+      methodology: "AI-generated (raw text response)",
+    };
+  }
 }
 
 interface EmissionsSummaryAgg {

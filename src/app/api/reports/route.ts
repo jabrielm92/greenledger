@@ -84,22 +84,37 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
     const frameworkType = searchParams.get("frameworkType");
+    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20")));
 
-    const reports = await prisma.report.findMany({
-      where: {
-        organizationId: session.user.organizationId,
-        ...(status ? { status: status as never } : {}),
-        ...(frameworkType ? { frameworkType } : {}),
-      },
-      orderBy: { updatedAt: "desc" },
-      include: {
-        reportingPeriod: {
-          select: { id: true, name: true, startDate: true, endDate: true },
+    const where = {
+      organizationId: session.user.organizationId,
+      ...(status ? { status: status as never } : {}),
+      ...(frameworkType ? { frameworkType } : {}),
+    };
+
+    const [reports, total] = await prisma.$transaction([
+      prisma.report.findMany({
+        where,
+        orderBy: { updatedAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          reportingPeriod: {
+            select: { id: true, name: true, startDate: true, endDate: true },
+          },
         },
-      },
-    });
+      }),
+      prisma.report.count({ where }),
+    ]);
 
-    return NextResponse.json({ items: reports });
+    return NextResponse.json({
+      items: reports,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
   } catch (error) {
     console.error("[REPORTS_GET]", error);
     return NextResponse.json(
